@@ -59,10 +59,11 @@ const HeroSection = () => {
 
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-up" style={{ animationDelay: '0.3s' }}>
             <Button variant="cta" size="lg" className="btn-glow group" asChild>
-              <a 
+              <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-gtm="whatsapp-hero"
               >
                 <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
                 Fale no WhatsApp
