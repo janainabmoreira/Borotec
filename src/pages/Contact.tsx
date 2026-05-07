@@ -65,14 +65,8 @@ const Contact = () => {
 
   const handleWhatsApp = () => {
     const message = encodeURIComponent('Olá, BOROTEC Industrial! Gostaria de mais informações sobre seus produtos.');
-    const url = `https://wa.me/5511999999999?text=${message}`;
-    
-    // Google Ads - Conversão: WhatsApp da página de Contato
-    if (typeof (window as any).gtag_report_whatsapp === 'function') {
-      (window as any).gtag_report_whatsapp(url);
-    } else {
-      window.open(url, '_blank');
-    }
+    const url = `https://wa.me/5511932876195?text=${message}`;
+    window.open(url, '_blank');
   };
 
   const contactInfo = [

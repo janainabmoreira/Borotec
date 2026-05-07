@@ -6,13 +6,7 @@ const WHATSAPP_MESSAGE = 'Olá! Gostaria de mais informações sobre os produtos
 const WhatsAppFloatingButton = () => {
   const handleClick = () => {
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
-    
-    // Google Ads - Conversão WhatsApp (dispara antes de abrir)
-    if (typeof (window as any).gtag_report_whatsapp === 'function') {
-      (window as any).gtag_report_whatsapp(url);
-    } else {
-      window.open(url, '_blank');
-    }
+    window.open(url, '_blank');
   };
 
   return (

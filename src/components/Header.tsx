@@ -16,17 +16,6 @@ const categories = [
   { label: 'Ver Todas', path: '/categorias' },
 ];
 
-// Google Ads - Tracking do clique no botão "Solicite um Orçamento"
-// IMPORTANTE: usa a mesma conversão do WhatsApp (intenção de orçamento) - pode trocar
-// para gtag_report_form se quiser contar como conversão de formulário ao invés de contato
-const trackOrcamentoClick = () => {
-  if (typeof (window as any).gtag_report_whatsapp === 'function') {
-    // Não passamos URL para não redirecionar - o React Router cuida da navegação
-    (window as any).gtag('event', 'conversion', {
-      'send_to': 'AW-17974974395/mwgwCKn1waccELuvkftC'
-    });
-  }
-};
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -158,7 +147,7 @@ const Header = () => {
 
               {/* Desktop CTA */}
               <Button variant="cta" className="hidden md:flex" asChild>
-                <Link to="/contato" onClick={trackOrcamentoClick}>Solicite um Orçamento</Link>
+                <Link to="/contato">Solicite um Orçamento</Link>
               </Button>
 
               {/* Mobile Menu Button */}
@@ -231,7 +220,7 @@ const Header = () => {
 
                 {/* Mobile CTA */}
                 <Button variant="cta" className="mt-4" asChild>
-                  <Link to="/contato" onClick={() => { setIsMenuOpen(false); trackOrcamentoClick(); }}>
+                  <Link to="/contato" onClick={() => setIsMenuOpen(false)}>
                     Solicite um Orçamento
                   </Link>
                 </Button>
