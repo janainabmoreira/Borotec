@@ -104,8 +104,10 @@ async function prerender() {
   await new Promise((resolve) => server.listen(PORT, resolve));
   console.log(`📡 Servidor local em http://localhost:${PORT}\n`);
 
+  // Use system Chrome (supports modern JS) instead of the bundled old Chromium
+  const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
   const browser = await puppeteer.launch({
-    executablePath: puppeteer.executablePath(),
+    executablePath: CHROME_PATH,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
     headless: true,
   });
