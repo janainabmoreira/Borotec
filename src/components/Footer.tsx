@@ -110,8 +110,8 @@ const Footer = () => {
                 <div className="w-10 h-10 bg-cyan/10 rounded-lg flex items-center justify-center flex-shrink-0">
                   <Mail className="w-5 h-5 text-cyan" />
                 </div>
-                <a href="mailto:vendas@berotec.com.br" className="font-body text-sm text-primary-foreground/60 hover:text-cyan transition-colors">
-                  vendas@berotec.com.br
+                <a href="mailto:vendas@borotec.com.br" className="font-body text-sm text-primary-foreground/60 hover:text-cyan transition-colors">
+                  vendas@borotec.com.br
                 </a>
               </li>
             </ul>
