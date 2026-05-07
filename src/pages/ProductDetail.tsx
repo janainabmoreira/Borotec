@@ -7,9 +7,9 @@ import { products } from '@/data/products';
 import { useQuoteCart } from '@/contexts/QuoteCartContext';
 import { ArrowLeft, Plus, Check, MessageCircle, FileText, ChevronRight } from 'lucide-react';
 
-import productEndoscope from '@/assets/product-endoscope.jpg';
-import productVideoscope from '@/assets/product-videoscope.jpg';
-import productLightSource from '@/assets/product-light-source.jpg';
+import productEndoscope from '@/assets/product-endoscope.webp';
+import productVideoscope from '@/assets/product-videoscope.webp';
+import productLightSource from '@/assets/product-light-source.webp';
 
 const getProductImage = (productId: string) => {
   if (productId.includes('robo') || productId.includes('robot')) {

@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
 import { CheckCircle, Target, Eye, Award } from 'lucide-react';
-import aboutImage from '@/assets/about-company.jpg';
+import aboutImage from '@/assets/about-company.webp';
 
 const About = () => {
   const values = [

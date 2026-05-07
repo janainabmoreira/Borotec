@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Linkedin, Instagram, Youtube } from 'lucide-react';
-import logo from '@/assets/logo-borotec.png';
+import logo from '@/assets/logo-borotec.webp';
 
 const WHATSAPP_NUMBER = '5511932876195';
 

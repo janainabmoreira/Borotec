@@ -4,7 +4,7 @@ import { Menu, X, ShoppingCart, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQuoteCart } from '@/contexts/QuoteCartContext';
 import QuoteCartSheet from './QuoteCartSheet';
-import logo from '@/assets/logo-borotec.png';
+import logo from '@/assets/logo-borotec.webp';
 
 const categories = [
   { label: 'Linha T - Tubulações', path: '/produtos?categoria=Linha%20T%20-%20Tubula%C3%A7%C3%B5es' },

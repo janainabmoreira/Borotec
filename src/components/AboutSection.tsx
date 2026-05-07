@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AnimateOnScroll } from '@/hooks/useScrollAnimation';
-import aboutImage from '@/assets/about-company.jpg';
+import aboutImage from '@/assets/about-company.webp';
 
 const AboutSection = () => {
   const highlights = [

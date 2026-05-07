@@ -1,4 +1,4 @@
-import whatsappIcon from '@/assets/whatsapp-icon.png';
+import whatsappIcon from '@/assets/whatsapp-icon.webp';
 
 const WHATSAPP_NUMBER = '5511932876195';
 const WHATSAPP_MESSAGE = 'Olá! Gostaria de mais informações sobre os produtos da BOROTEC.';

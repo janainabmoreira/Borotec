@@ -8,16 +8,16 @@ import {
 } from "@/components/ui/carousel";
 import { AnimateOnScroll } from '@/hooks/useScrollAnimation';
 
-import logoPetrobras from '@/assets/logo-petrobras.png';
-import logoVale from '@/assets/logo-vale.png';
-import logoEmbraer from '@/assets/logo-embraer.png';
-import logoBasf from '@/assets/logo-basf.png';
-import logoAmbev from '@/assets/logo-ambev.png';
-import logoBraskem from '@/assets/logo-braskem.png';
-import logoGerdau from '@/assets/logo-gerdau.png';
-import logoCsn from '@/assets/logo-csn.png';
-import logoUsiminas from '@/assets/logo-usiminas.png';
-import logoWeg from '@/assets/logo-weg.png';
+import logoPetrobras from '@/assets/logo-petrobras.webp';
+import logoVale from '@/assets/logo-vale.webp';
+import logoEmbraer from '@/assets/logo-embraer.webp';
+import logoBasf from '@/assets/logo-basf.webp';
+import logoAmbev from '@/assets/logo-ambev.webp';
+import logoBraskem from '@/assets/logo-braskem.webp';
+import logoGerdau from '@/assets/logo-gerdau.webp';
+import logoCsn from '@/assets/logo-csn.webp';
+import logoUsiminas from '@/assets/logo-usiminas.webp';
+import logoWeg from '@/assets/logo-weg.webp';
 
 interface Logo {
   id: string;
