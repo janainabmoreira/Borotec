@@ -16,7 +16,7 @@ const QuoteCartSheet = ({ open, onOpenChange }: QuoteCartSheetProps) => {
     const message = encodeURIComponent(
       `Olá, BOROTEC Industrial! Gostaria de solicitar um orçamento para os seguintes itens: ${productList}.`
     );
-    const whatsappNumber = '5511999999999'; // Replace with actual number
+    const whatsappNumber = '5511932876195';
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
@@ -92,6 +92,7 @@ const QuoteCartSheet = ({ open, onOpenChange }: QuoteCartSheetProps) => {
                   size="lg"
                   className="w-full"
                   onClick={handleWhatsAppQuote}
+                  aria-label="Solicitar WhatsApp Carrinho"
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />
                   Solicitar Cotação via WhatsApp

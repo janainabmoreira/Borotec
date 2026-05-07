@@ -55,7 +55,7 @@ const ProductDetail = () => {
     const message = encodeURIComponent(
       `Olá, BOROTEC Industrial! Gostaria de solicitar informações sobre o produto: ${product.name}.`
     );
-    const whatsappNumber = '5511999999999';
+    const whatsappNumber = '5511932876195';
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
   };
 
@@ -192,6 +192,7 @@ const ProductDetail = () => {
                     size="lg"
                     className="w-full"
                     onClick={handleWhatsAppDirect}
+                    aria-label="Solicitar WhatsApp Produto"
                   >
                     <MessageCircle className="w-5 h-5 mr-2" />
                     Solicitar Informações via WhatsApp
