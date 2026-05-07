@@ -167,7 +167,7 @@ const ProductDetail = () => {
                   {product.name}
                 </h1>
                 
-                <p className="font-body text-lg text-primary-foreground/60 leading-relaxed mb-8">
+                <p className="font-body text-lg text-primary-foreground/80 leading-relaxed mb-8">
                   {product.description}
                 </p>
 
