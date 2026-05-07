@@ -51,7 +51,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </h3>
         </Link>
         
-        <p className="font-body text-xs text-muted-foreground line-clamp-2 mb-3 hidden sm:block">
+        <p className="font-body text-xs text-primary-foreground/60 line-clamp-2 mb-3 hidden sm:block">
           {product.description}
         </p>
 
