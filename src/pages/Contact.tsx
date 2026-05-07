@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
-const WEB3FORMS_ACCESS_KEY = 'SUA_ACCESS_KEY_WEB3FORMS';
+const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
