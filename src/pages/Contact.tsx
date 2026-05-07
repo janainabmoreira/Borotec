@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import emailjs from '@emailjs/browser';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+
+const EMAILJS_SERVICE_ID = 'SEU_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'SEU_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY = 'SUA_PUBLIC_KEY';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -21,22 +26,43 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Mensagem enviada!",
-      description: "Entraremos em contato em breve.",
-    });
 
-    // Google Ads - Conversão: Formulário Solicite Orçamento
-    if (typeof (window as any).gtag_report_form === 'function') {
-      (window as any).gtag_report_form();
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          phone: formData.phone || 'Não informado',
+          company: formData.company || 'Não informada',
+          message: formData.message,
+          to_email: 'contato@borotec.com.br',
+          subject: 'Nova Solicitação de Orçamento',
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+
+      toast({
+        title: "Mensagem enviada!",
+        description: "Entraremos em contato em breve.",
+      });
+
+      // Google Ads - Conversão: Formulário Solicite Orçamento
+      if (typeof (window as any).gtag_report_form === 'function') {
+        (window as any).gtag_report_form();
+      }
+
+      setFormData({ name: '', email: '', phone: '', company: '', message: '' });
+    } catch {
+      toast({
+        title: "Erro ao enviar",
+        description: "Não foi possível enviar a mensagem. Tente novamente ou entre em contato pelo WhatsApp.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    setFormData({ name: '', email: '', phone: '', company: '', message: '' });
-    setIsSubmitting(false);
   };
 
   const handleWhatsApp = () => {
