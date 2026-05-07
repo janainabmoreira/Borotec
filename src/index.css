@@ -1,0 +1,274 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* BOROTEC Industrial Design System - Based on Official Logo */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&display=swap');
+
+@layer base {
+  :root {
+    /* BOROTEC Brand Colors - Extracted from Logo */
+    --background: 220 20% 97%; /* Light gray background */
+    --foreground: 220 25% 15%; /* Dark charcoal text */
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 15%;
+
+    /* Navy Blue - From "BORO" text in logo */
+    --primary: 215 55% 28%; /* #1E3A5F - Deep navy blue */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Steel gray from gear elements */
+    --secondary: 215 20% 92%;
+    --secondary-foreground: 220 25% 20%;
+
+    --muted: 215 20% 90%;
+    --muted-foreground: 215 15% 45%;
+
+    /* Orange/Copper - From "TEC" text and swooshes */
+    --accent: 28 90% 50%; /* #E87722 - Vibrant copper orange */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 25% 88%;
+    --input: 215 25% 88%;
+    --ring: 215 55% 28%;
+
+    --radius: 0.5rem;
+
+    /* Extended BOROTEC palette */
+    --navy: 215 55% 28%; /* Deep navy #1E3A5F */
+    --navy-dark: 220 60% 18%; /* Darker navy #0F1A2E */
+    --navy-light: 215 45% 38%; /* Lighter navy #3D5A7A */
+    
+    --orange: 28 90% 50%; /* Copper orange #E87722 */
+    --orange-dark: 25 85% 42%; /* Darker orange #C45E0A */
+    --orange-light: 30 95% 58%; /* Lighter orange #F59E0B */
+    
+    --cyan: 187 85% 43%; /* Tech cyan #0EA5B8 */
+    --cyan-glow: 185 95% 55%; /* Glowing cyan #06D6E1 */
+    
+    --steel: 215 20% 50%; /* Metallic steel #6B7A8C */
+    --steel-light: 215 15% 70%; /* Light steel #A3AEBB */
+    --charcoal: 220 30% 12%; /* Dark charcoal #141B26 */
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(220 60% 12%) 0%, hsl(220 50% 20%) 50%, hsl(215 55% 28%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(28 90% 50%) 0%, hsl(25 85% 42%) 100%);
+    --gradient-tech: linear-gradient(135deg, hsl(187 85% 43%) 0%, hsl(215 55% 28%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(220 60% 12%) 0%, hsl(220 40% 8%) 100%);
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px hsla(215, 55%, 28%, 0.08);
+    --shadow-md: 0 4px 16px hsla(215, 55%, 28%, 0.12);
+    --shadow-lg: 0 8px 32px hsla(215, 55%, 28%, 0.16);
+    --shadow-card: 0 4px 20px hsla(220, 30%, 12%, 0.1);
+    --shadow-hover: 0 12px 40px hsla(215, 55%, 28%, 0.2);
+    --shadow-glow: 0 0 30px hsla(187, 85%, 43%, 0.4);
+    --shadow-orange-glow: 0 0 30px hsla(28, 90%, 50%, 0.4);
+
+    /* Typography */
+    --font-heading: 'Montserrat', sans-serif;
+    --font-body: 'Roboto', sans-serif;
+
+    /* Sidebar */
+    --sidebar-background: 220 60% 12%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 28 90% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 45% 38%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 40% 20%;
+    --sidebar-ring: 187 85% 43%;
+  }
+
+  .dark {
+    --background: 220 40% 8%;
+    --foreground: 0 0% 95%;
+
+    --card: 220 35% 12%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 220 35% 12%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 28 90% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 30% 18%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 220 25% 22%;
+    --muted-foreground: 215 15% 60%;
+
+    --accent: 187 85% 43%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 220 30% 22%;
+    --input: 220 30% 22%;
+    --ring: 28 90% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply py-16 md:py-24 px-4 md:px-8;
+  }
+
+  .container-wide {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--orange-light)) 100%);
+  }
+
+  .text-gradient-cyan {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--cyan)) 0%, hsl(var(--cyan-glow)) 100%);
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-hover hover:-translate-y-1;
+  }
+
+  .btn-glow {
+    box-shadow: 0 0 25px hsla(28, 90%, 50%, 0.5);
+  }
+
+  .btn-glow-cyan {
+    box-shadow: 0 0 25px hsla(187, 85%, 43%, 0.5);
+  }
+
+  .glass-effect {
+    backdrop-filter: blur(12px);
+    background: hsla(0, 0%, 100%, 0.8);
+  }
+
+  .dark-glass {
+    backdrop-filter: blur(16px);
+    background: hsla(220, 40%, 8%, 0.9);
+  }
+
+  .tech-border {
+    border: 1px solid hsla(187, 85%, 43%, 0.3);
+  }
+
+  .glow-line {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--cyan)), transparent);
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+  }
+
+  .animate-glow-pulse {
+    animation: glowPulse 2s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes glowPulse {
+    0%, 100% {
+      box-shadow: 0 0 20px hsla(187, 85%, 43%, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 40px hsla(187, 85%, 43%, 0.7);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes whatsappPulse {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+    }
+    50% {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+    }
+  }
+
+  .animate-whatsapp-pulse {
+    animation: whatsappPulse 2s ease-in-out infinite;
+  }
+}
