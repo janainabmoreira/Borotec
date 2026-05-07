@@ -77,13 +77,13 @@ const BlogPost = () => {
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-charcoal">
         <Header />
 
         <main className="pt-24 pb-16">
           {/* Breadcrumb */}
           <div className="container mx-auto px-4 mb-8">
-            <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+            <nav className="flex items-center gap-2 text-sm text-primary-foreground/50">
               <Link to="/" className="hover:text-cyan transition-colors">Início</Link>
               <ChevronRight className="w-4 h-4" />
               <Link to="/blog" className="hover:text-cyan transition-colors">Blog</Link>
@@ -105,23 +105,23 @@ const BlogPost = () => {
 
           {/* Article content */}
           <article className="container mx-auto px-4 max-w-3xl">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-6 flex-wrap">
               <Badge variant="secondary">{post.category}</Badge>
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1 text-sm text-primary-foreground/50">
                 <Calendar className="w-4 h-4" />
                 {formatDate(post.date)}
               </span>
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1 text-sm text-primary-foreground/50">
                 <Clock className="w-4 h-4" />
                 {post.readTime} de leitura
               </span>
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-6 leading-tight">
+            <h1 className="font-heading text-3xl md:text-4xl font-black text-primary-foreground mb-6 leading-tight">
               {post.title}
             </h1>
 
-            <p className="text-lg text-muted-foreground mb-8 leading-relaxed border-l-4 border-cyan pl-4">
+            <p className="text-lg text-primary-foreground/60 mb-8 leading-relaxed border-l-4 border-cyan pl-4">
               {post.excerpt}
             </p>
 
