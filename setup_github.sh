@@ -11,17 +11,22 @@ RESPONSE=$(curl -s -X POST \
   -d '{"name":"Borotec","private":false,"description":"Projeto Borotec Oficial"}' \
   https://api.github.com/user/repos)
 
-echo $RESPONSE | grep -o '"full_name":"[^"]*"'
+echo "Resposta da API: $RESPONSE" | head -c 300
+
+if echo "$RESPONSE" | grep -q '"full_name"'; then
+  echo ""
+  echo "Repositório criado com sucesso!"
+else
+  echo ""
+  echo "Erro ao criar repositório. Verificando se já existe..."
+fi
 
 echo ""
-echo "Configurando git local..."
+echo "Configurando remote e fazando push..."
 cd /e/PROJETOS/Borotec_oficial
-git init
-git add .
-git commit -m "primeiro commit"
-git branch -M main
+git remote remove origin 2>/dev/null
 git remote add origin https://$TOKEN@github.com/$USERNAME/$REPO.git
 git push -u origin main
 
 echo ""
-echo "Pronto! Repositório configurado."
+echo "Concluído!"
