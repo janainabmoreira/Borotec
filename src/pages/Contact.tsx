@@ -24,6 +24,9 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    (window as any).dataLayer = (window as any).dataLayer || [];
+    (window as any).dataLayer.push({ event: 'Formulario_contato' });
+
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -46,9 +49,6 @@ const Contact = () => {
         title: "Mensagem enviada!",
         description: "Entraremos em contato em breve.",
       });
-
-      (window as any).dataLayer = (window as any).dataLayer || [];
-      (window as any).dataLayer.push({ event: 'Formulario_contato' });
 
       setFormData({ name: '', email: '', phone: '', company: '', message: '' });
     } catch {
