@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import emailjs from '@emailjs/browser';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -9,9 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
-const EMAILJS_SERVICE_ID = 'SEU_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'SEU_TEMPLATE_ID';
-const EMAILJS_PUBLIC_KEY = 'SUA_PUBLIC_KEY';
+const WEB3FORMS_ACCESS_KEY = 'SUA_ACCESS_KEY_WEB3FORMS';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -28,20 +25,22 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: 'Nova Solicitação de Orçamento',
           from_name: formData.name,
-          from_email: formData.email,
+          email: formData.email,
           phone: formData.phone || 'Não informado',
           company: formData.company || 'Não informada',
           message: formData.message,
-          to_email: 'contato@borotec.com.br',
-          subject: 'Nova Solicitação de Orçamento',
-        },
-        EMAILJS_PUBLIC_KEY
-      );
+        }),
+      });
+
+      const data = await response.json();
+      if (!data.success) throw new Error('Falha no envio');
 
       toast({
         title: "Mensagem enviada!",
