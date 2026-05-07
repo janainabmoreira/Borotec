@@ -63,7 +63,10 @@ const HeroSection = () => {
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                data-gtm="whatsapp-hero"
+                onClick={() => {
+                  window.dataLayer = window.dataLayer || [];
+                  window.dataLayer.push({ event: 'whatsapp_hero_click' });
+                }}
               >
                 <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
                 Fale no WhatsApp
