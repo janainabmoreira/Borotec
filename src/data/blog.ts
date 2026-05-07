@@ -58,7 +58,7 @@ A BOROTEC Industrial oferece linha completa de endoscópios e videoscópios para
     category: 'Guia de Compra',
     date: '2024-01-10',
     readTime: '8 min',
-    image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a2aa?w=1200&h=630&fit=crop',
+    image: 'https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=1200&h=630&fit=crop',
     content: `
 Escolher o boroscópio certo é fundamental para garantir eficiência na inspeção e durabilidade do equipamento. Com tantas opções disponíveis no mercado, é fácil se perder nas especificações técnicas. Este guia resume os critérios mais importantes para a seleção correta.
 

@@ -106,7 +106,7 @@ const Blog = () => {
             <h2 className="text-2xl md:text-3xl font-display font-bold text-primary-foreground mb-4">
               Receba Novidades
             </h2>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-primary-foreground/70 mb-6">
               Inscreva-se para receber artigos exclusivos sobre inspeção industrial e lançamentos de produtos.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
