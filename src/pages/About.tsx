@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
@@ -33,9 +34,18 @@ const About = () => {
   ];
 
   return (
+    <>
+      <Helmet>
+        <title>Sobre a BOROTEC | +20 Anos em Metrologia Óptica Industrial</title>
+        <meta name="description" content="Conheça a BOROTEC Industrial: fundada em 2003, líder nacional em equipamentos de inspeção industrial. Endoscópios, videoscópios e boroscópios com tecnologia nacional." />
+        <link rel="canonical" href="https://borotec.com.br/sobre" />
+        <meta property="og:title" content="Sobre a BOROTEC | +20 Anos em Metrologia Óptica Industrial" />
+        <meta property="og:description" content="Fundada em 2003, a BOROTEC Industrial é referência nacional em metrologia óptica e equipamentos de inspeção industrial." />
+        <meta property="og:url" content="https://borotec.com.br/sobre" />
+      </Helmet>
     <div className="min-h-screen bg-charcoal">
       <Header />
-      
+
       <main className="pt-20">
         {/* Hero */}
         <section className="relative bg-charcoal py-16 md:py-24 overflow-hidden">
@@ -102,7 +112,8 @@ const About = () => {
                 <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-primary-foreground/10">
                   <img
                     src={aboutImage}
-                    alt="BOROTEC Industrial"
+                    alt="Equipe e instalações da BOROTEC Industrial em São Paulo"
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -204,6 +215,7 @@ const About = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

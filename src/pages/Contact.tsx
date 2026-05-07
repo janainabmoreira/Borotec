@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -96,9 +97,18 @@ const Contact = () => {
   ];
 
   return (
+    <>
+      <Helmet>
+        <title>Fale Conosco | BOROTEC Industrial</title>
+        <meta name="description" content="Entre em contato com a BOROTEC Industrial. Solicite orçamento de equipamentos de inspeção industrial por formulário, e-mail ou WhatsApp." />
+        <link rel="canonical" href="https://borotec.com.br/contato" />
+        <meta property="og:title" content="Fale Conosco | BOROTEC Industrial" />
+        <meta property="og:description" content="Entre em contato com a BOROTEC Industrial para orçamentos e informações sobre equipamentos de inspeção industrial." />
+        <meta property="og:url" content="https://borotec.com.br/contato" />
+      </Helmet>
     <div className="min-h-screen bg-charcoal">
       <Header />
-      
+
       <main className="pt-20">
         {/* Hero */}
         <section className="relative bg-charcoal py-16 md:py-24 overflow-hidden">
@@ -287,6 +297,7 @@ const Contact = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

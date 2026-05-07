@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
@@ -16,6 +17,15 @@ const Products = () => {
     : products.filter(p => p.category === selectedCategory);
 
   return (
+    <>
+      <Helmet>
+        <title>Produtos de Metrologia Óptica | BOROTEC Industrial</title>
+        <meta name="description" content="Linha completa de boroscópios, videoscópios e endoscópios industriais. Equipamentos para inspeção de tubulações, máquinas e áreas classificadas ATEX." />
+        <link rel="canonical" href="https://borotec.com.br/produtos" />
+        <meta property="og:title" content="Produtos de Metrologia Óptica | BOROTEC Industrial" />
+        <meta property="og:description" content="Linha completa de boroscópios, videoscópios e endoscópios industriais." />
+        <meta property="og:url" content="https://borotec.com.br/produtos" />
+      </Helmet>
     <div className="min-h-screen bg-charcoal">
       <Header />
       
@@ -145,6 +155,7 @@ const Products = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

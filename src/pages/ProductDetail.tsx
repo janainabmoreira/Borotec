@@ -1,4 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -43,6 +44,32 @@ const ProductDetail = () => {
   const inCart = isInCart(product.id);
   const productImage = product.image || getProductImage(product.id);
 
+  const productUrl = `https://borotec.com.br/produtos/${product.id}`;
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://borotec.com.br/' },
+      { '@type': 'ListItem', position: 2, name: 'Produtos', item: 'https://borotec.com.br/produtos' },
+      { '@type': 'ListItem', position: 3, name: product.name, item: productUrl },
+    ],
+  };
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    brand: { '@type': 'Brand', name: 'BOROTEC Industrial' },
+    category: product.category,
+    url: productUrl,
+    offers: {
+      '@type': 'Offer',
+      availability: 'https://schema.org/InStock',
+      seller: { '@type': 'Organization', name: 'BOROTEC Industrial' },
+      priceCurrency: 'BRL',
+    },
+  };
+
   const handleToggleCart = () => {
     if (inCart) {
       removeItem(product.id);
@@ -62,6 +89,17 @@ const ProductDetail = () => {
   };
 
   return (
+    <>
+      <Helmet>
+        <title>{product.name} | BOROTEC Industrial</title>
+        <meta name="description" content={`${product.description} Categoria: ${product.category}. Solicite orçamento.`} />
+        <link rel="canonical" href={productUrl} />
+        <meta property="og:title" content={`${product.name} | BOROTEC Industrial`} />
+        <meta property="og:description" content={product.description} />
+        <meta property="og:url" content={productUrl} />
+        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+      </Helmet>
     <div className="min-h-screen bg-charcoal">
       <Header />
       
@@ -104,13 +142,14 @@ const ProductDetail = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-4 gap-4">
                   {[1, 2, 3, 4].map((i) => (
                     <div key={i} className="aspect-square bg-navy-dark/50 rounded-lg overflow-hidden border-2 border-transparent hover:border-cyan transition-colors cursor-pointer">
                       <img
                         src={productImage}
                         alt={`${product.name} - Imagem ${i}`}
+                        loading="lazy"
                         className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity"
                       />
                     </div>
@@ -208,6 +247,7 @@ const ProductDetail = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 
