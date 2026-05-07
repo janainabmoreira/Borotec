@@ -125,11 +125,11 @@ const Footer = () => {
               © {currentYear} BOROTEC Industrial. Todos os direitos reservados.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="font-body text-sm text-primary-foreground/40 hover:text-cyan transition-colors">
+              <Link to="/privacidade" className="font-body text-sm text-primary-foreground/40 hover:text-cyan transition-colors">
                 Política de Privacidade
-              </a>
-              <a href="#" className="font-body text-sm text-primary-foreground/40 hover:text-cyan transition-colors">
-                Termos de Uso
+              </Link>
+              <a href="mailto:contato@borotec.com.br" className="font-body text-sm text-primary-foreground/40 hover:text-cyan transition-colors">
+                Fale Conosco
               </a>
             </div>
           </div>
