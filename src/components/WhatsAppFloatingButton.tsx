@@ -5,6 +5,8 @@ const WHATSAPP_MESSAGE = 'Olá! Gostaria de mais informações sobre os produtos
 
 const WhatsAppFloatingButton = () => {
   const handleClick = () => {
+    (window as any).dataLayer = (window as any).dataLayer || [];
+    (window as any).dataLayer.push({ event: 'Botao_Whatsapp_flutuante' });
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
     window.open(url, '_blank');
   };

@@ -12,6 +12,8 @@ const QuoteCartSheet = ({ open, onOpenChange }: QuoteCartSheetProps) => {
   const { items, removeItem, clearCart } = useQuoteCart();
 
   const handleWhatsAppQuote = () => {
+    (window as any).dataLayer = (window as any).dataLayer || [];
+    (window as any).dataLayer.push({ event: 'Botao_whatsapp_carrinho' });
     const productList = items.map(item => item.name).join(', ');
     const message = encodeURIComponent(
       `Olá, BOROTEC Industrial! Gostaria de solicitar um orçamento para os seguintes itens: ${productList}.`

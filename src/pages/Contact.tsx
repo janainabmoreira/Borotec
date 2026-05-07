@@ -47,9 +47,8 @@ const Contact = () => {
         description: "Entraremos em contato em breve.",
       });
 
-      // GTM - Evento de conversão do formulário
-      window.dataLayer = (window as any).dataLayer || [];
-      (window as any).dataLayer.push({ event: 'formulario_contato_enviado' });
+      (window as any).dataLayer = (window as any).dataLayer || [];
+      (window as any).dataLayer.push({ event: 'Formulario_contato' });
 
       setFormData({ name: '', email: '', phone: '', company: '', message: '' });
     } catch {

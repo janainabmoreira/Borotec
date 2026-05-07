@@ -52,6 +52,8 @@ const ProductDetail = () => {
   };
 
   const handleWhatsAppDirect = () => {
+    (window as any).dataLayer = (window as any).dataLayer || [];
+    (window as any).dataLayer.push({ event: 'Botao_Whatsapp_produto' });
     const message = encodeURIComponent(
       `Olá, BOROTEC Industrial! Gostaria de solicitar informações sobre o produto: ${product.name}.`
     );
