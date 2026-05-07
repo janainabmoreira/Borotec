@@ -30,7 +30,7 @@ const Contact = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           access_key: WEB3FORMS_ACCESS_KEY,
-          subject: 'Nova Solicitação de Orçamento',
+          subject: 'Novo Contato pelo Site',
           from_name: formData.name,
           email: formData.email,
           phone: formData.phone || 'Não informado',
