@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estratégia Google Ads — Borotec</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --primary: #1a56db;
+    --primary-dark: #1140a6;
+    --accent: #f59e0b;
+    --dark: #111827;
+    --gray: #6b7280;
+    --light: #f9fafb;
+    --border: #e5e7eb;
+    --success: #059669;
+    --danger: #dc2626;
+    --warning: #d97706;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--dark);
+    background: #fff;
+  }
+
+  /* ---- COVER PAGE ---- */
+  .cover {
+    height: 100vh;
+    min-height: 900px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1a56db 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 50%;
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    right: 100px;
+    width: 700px;
+    height: 700px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 50%;
+  }
+
+  .cover-badge {
+    background: rgba(245,158,11,0.15);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .cover h1 {
+    font-size: 52px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    max-width: 700px;
+  }
+
+  .cover h1 span {
+    color: var(--accent);
+  }
+
+  .cover-subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 48px;
+    max-width: 500px;
+    line-height: 1.5;
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+  }
+
+  .cover-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cover-meta-item .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .cover-meta-item .value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 4px;
+    background: var(--accent);
+    margin: 32px 0;
+    border-radius: 2px;
+  }
+
+  /* ---- SECTION PAGES ---- */
+  .page {
+    padding: 60px 70px;
+    min-height: 100vh;
+  }
+
+  .page-break { page-break-before: always; }
+
+  /* ---- SECTION HEADER ---- */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .section-number {
+    width: 44px;
+    height: 44px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--dark);
+    line-height: 1.2;
+  }
+
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+
+  /* ---- SUMMARY PAGE ---- */
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--light);
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+  }
+
+  .toc-num {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    min-width: 32px;
+  }
+
+  .toc-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--dark);
+    line-height: 1.3;
+  }
+
+  /* ---- CALLOUT BOXES ---- */
+  .callout {
+    padding: 18px 22px;
+    border-radius: 12px;
+    margin: 20px 0;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .callout.info { background: #eff6ff; border-left: 4px solid var(--primary); }
+  .callout.warning { background: #fffbeb; border-left: 4px solid var(--accent); }
+  .callout.success { background: #f0fdf4; border-left: 4px solid var(--success); }
+  .callout.danger { background: #fef2f2; border-left: 4px solid var(--danger); }
+
+  .callout-icon { font-size: 20px; flex-shrink: 0; }
+  .callout-body { flex: 1; }
+  .callout-title { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .callout-text { font-size: 12px; line-height: 1.5; color: #374151; }
+
+  /* ---- TABLES ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 12px;
+  }
+
+  thead tr {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  thead th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:nth-child(even) { background: var(--light); }
+  tbody tr:hover { background: #e0e7ff20; }
+
+  tbody td {
+    padding: 11px 14px;
+    vertical-align: top;
+    line-height: 1.4;
+  }
+
+  /* ---- BADGES ---- */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-primary { background: #dbeafe; color: var(--primary-dark); }
+  .badge-success { background: #d1fae5; color: var(--success); }
+  .badge-warning { background: #fef3c7; color: #92400e; }
+  .badge-danger { background: #fee2e2; color: var(--danger); }
+  .badge-gray { background: #f3f4f6; color: #374151; }
+
+  /* ---- METRIC CARDS ---- */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .metric-card {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .metric-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ---- CODE BLOCKS ---- */
+  .code-block {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 20px 24px;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 16px 0;
+    overflow-x: auto;
+  }
+
+  .code-block .comment { color: #64748b; }
+  .code-block .highlight { color: var(--accent); }
+  .code-block .success { color: #4ade80; }
+  .code-block .danger { color: #f87171; }
+
+  /* ---- KEYWORD PILLS ---- */
+  .keyword-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0;
+  }
+
+  .keyword-pill {
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    border: 1px solid;
+  }
+
+  .kp-exact { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+  .kp-phrase { background: #dcfce7; color: #166534; border-color: #86efac; }
+  .kp-negative { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+  .kp-monitor { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+
+  /* ---- RSA ANUNCIO ---- */
+  .rsa-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 24px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .rsa-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .rsa-header .rsa-name { font-weight: 700; font-size: 14px; }
+  .rsa-header .rsa-group { font-size: 11px; opacity: 0.8; }
+
+  .rsa-body { padding: 20px; }
+
+  .rsa-section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gray);
+    font-weight: 700;
+    margin-bottom: 10px;
+    margin-top: 16px;
+  }
+
+  .headline-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .headline-item {
+    background: #f0f4ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary-dark);
+  }
+
+  .headline-num {
+    font-size: 9px;
+    color: #9ca3af;
+    margin-bottom: 2px;
+  }
+
+  .desc-item {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  .desc-num {
+    font-size: 9px;
+    color: #9ca3af;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ---- CHECKLIST ---- */
+  .checklist { list-style: none; margin: 12px 0; }
+  .checklist li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 7px 0;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 12px;
+  }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ---- TIMELINE ---- */
+  .timeline { position: relative; padding-left: 32px; margin: 20px 0; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .timeline-item { position: relative; margin-bottom: 24px; }
+  .timeline-dot {
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+
+  .timeline-period {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .timeline-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+
+  /* ---- STRUCTURE DIAGRAM ---- */
+  .structure-box {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--dark);
+  }
+
+  .struct-campaign { color: var(--primary); font-weight: 700; }
+  .struct-group { color: var(--success); font-weight: 600; }
+  .struct-ad { color: #7c3aed; }
+  .struct-kw { color: var(--gray); }
+
+  /* ---- PRIORITY PILLS ---- */
+  .priority-5::after { content: '★★★★★'; color: #f59e0b; font-size: 11px; }
+  .priority-4::after { content: '★★★★☆'; color: #f59e0b; font-size: 11px; }
+  .priority-3::after { content: '★★★☆☆'; color: #f59e0b; font-size: 11px; }
+
+  /* ---- HEADINGS ---- */
+  h2 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: var(--dark); }
+  h3 { font-size: 15px; font-weight: 700; margin: 24px 0 10px; color: var(--dark); }
+  h4 { font-size: 13px; font-weight: 700; margin: 16px 0 8px; color: #374151; }
+
+  p { margin: 8px 0; color: #374151; font-size: 13px; line-height: 1.6; }
+
+  ul, ol {
+    margin: 8px 0 8px 20px;
+    color: #374151;
+  }
+
+  li { margin: 4px 0; font-size: 12px; line-height: 1.5; }
+
+  strong { color: var(--dark); }
+
+  /* ---- PRINT ---- */
+  @media print {
+    .page-break { page-break-before: always; }
+    .cover { page-break-after: always; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  .info-card {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+
+  .info-card-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+  .footer-page {
+    position: fixed;
+    bottom: 30px;
+    right: 70px;
+    font-size: 10px;
+    color: var(--gray);
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== CAPA ========== -->
+<div class="cover">
+  <div class="cover-badge">Documento Estratégico Confidencial</div>
+  <h1>Estratégia<br>Google Ads<br><span>Borotec</span></h1>
+  <div class="cover-divider"></div>
+  <p class="cover-subtitle">Campanha de Geração de Leads B2B Industrial para Boroscópios e Videoscópios Industriais no Brasil</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="label">Orçamento</span>
+      <span class="value">R$ 350</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label">Fase</span>
+      <span class="value">Validação</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label">Plataforma</span>
+      <span class="value">Google Search</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label">Data</span>
+      <span class="value">Maio 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SUMÁRIO ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">◈</div>
+    <div>
+      <div class="section-title">Sumário Executivo</div>
+      <div class="section-subtitle">Visão geral do documento</div>
+    </div>
+  </div>
+
+  <div class="toc-grid">
+    <div class="toc-item"><span class="toc-num">01</span><span class="toc-text">Racional Estratégico e Decisões</span></div>
+    <div class="toc-item"><span class="toc-num">02</span><span class="toc-text">Estrutura da Campanha</span></div>
+    <div class="toc-item"><span class="toc-num">03</span><span class="toc-text">Pesquisa de Palavras-chave</span></div>
+    <div class="toc-item"><span class="toc-num">04</span><span class="toc-text">Lista de Palavras Negativas</span></div>
+    <div class="toc-item"><span class="toc-num">05</span><span class="toc-text">Estratégia de Correspondência</span></div>
+    <div class="toc-item"><span class="toc-num">06</span><span class="toc-text">Estratégia Geográfica</span></div>
+    <div class="toc-item"><span class="toc-num">07</span><span class="toc-text">Anúncios RSA Completos + Assets</span></div>
+    <div class="toc-item"><span class="toc-num">08</span><span class="toc-text">Estratégia de Landing Page</span></div>
+    <div class="toc-item"><span class="toc-num">09</span><span class="toc-text">Conversões e Tracking</span></div>
+    <div class="toc-item"><span class="toc-num">10</span><span class="toc-text">Estratégia de Lances</span></div>
+    <div class="toc-item"><span class="toc-num">11</span><span class="toc-text">Plano de Otimização 7/14/30 dias</span></div>
+    <div class="toc-item"><span class="toc-num">12</span><span class="toc-text">Insights Estratégicos</span></div>
+    <div class="toc-item"><span class="toc-num">13</span><span class="toc-text">Checklists de Implementação</span></div>
+    <div class="toc-item"><span class="toc-num">14</span><span class="toc-text">Passo a Passo: Configuração Google Ads</span></div>
+  </div>
+
+  <div class="metrics-grid" style="margin-top: 40px;">
+    <div class="metric-card">
+      <div class="metric-value">R$350</div>
+      <div class="metric-label">Orçamento Total</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">44–100</div>
+      <div class="metric-label">Cliques Estimados</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">1–8</div>
+      <div class="metric-label">Leads Esperados</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">21 dias</div>
+      <div class="metric-label">Duração Sugerida</div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <div class="callout-title">Contexto Estratégico</div>
+      <div class="callout-text">O mercado brasileiro de boroscópios industriais não investe em Google Ads. Os leilões estão subprecificados. A Borotec entra num espaço com alta demanda e baixa concorrência paga — momento ideal para validar com orçamento mínimo antes de escalar.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 1: RACIONAL ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <div>
+      <div class="section-title">Racional Estratégico</div>
+      <div class="section-subtitle">Por que Google Search + O que NÃO fazer</div>
+    </div>
+  </div>
+
+  <h3>Por que Google Ads (Search) é a escolha certa agora</h3>
+  <p>O estudo competitivo confirmou: <strong>nenhum concorrente direto faz Google Ads agressivo</strong> no segmento B2B industrial de boroscópios. O mercado vive de SEO orgânico — Instrucorp, Fleximill e R&Damasco dependem exclusivamente de posicionamento orgânico. Os leilões estão menos competitivos do que parecem.</p>
+
+  <div class="callout success">
+    <span class="callout-icon">✅</span>
+    <div class="callout-body">
+      <div class="callout-title">Oportunidade de mercado confirmada</div>
+      <div class="callout-text">O comprador de boroscópio industrial não está descobrindo a necessidade no Instagram — ele já sabe o que precisa e busca ativamente no Google. É o cenário ideal para Search: alta intenção de compra + baixa competição paga.</div>
+    </div>
+  </div>
+
+  <h3>Diagnóstico do orçamento</h3>
+  <table>
+    <thead><tr><th>Parâmetro</th><th>Valor</th><th>Observação</th></tr></thead>
+    <tbody>
+      <tr><td>Orçamento total</td><td><strong>R$ 350</strong></td><td>Campanha de validação</td></tr>
+      <tr><td>Orçamento diário (21 dias)</td><td><strong>R$ 16,67/dia</strong></td><td>Distribuição uniforme</td></tr>
+      <tr><td>CPC médio estimado (B2B industrial)</td><td><strong>R$ 3,50 – R$ 8,00</strong></td><td>Menos competitivo que outros B2Bs</td></tr>
+      <tr><td>Cliques estimados</td><td><strong>44 – 100 cliques</strong></td><td>Variação conforme CPC real</td></tr>
+      <tr><td>Taxa de conversão LP esperada</td><td><strong>3% – 8%</strong></td><td>B2B industrial com LP otimizada</td></tr>
+      <tr><td>Leads esperados</td><td><strong>1 – 8 leads</strong></td><td>Objetivo: aprender, não escalar</td></tr>
+    </tbody>
+  </table>
+
+  <h3>O que NÃO fazer nessa fase</h3>
+  <div class="callout danger">
+    <span class="callout-icon">🚫</span>
+    <div class="callout-body">
+      <div class="callout-title">Erros que vão destruir o orçamento de R$ 350</div>
+      <div class="callout-text">
+        <ul style="margin: 8px 0 0 16px;">
+          <li>Usar correspondência <strong>ampla</strong> — vai consumir tudo em buscas irrelevantes</li>
+          <li>Criar <strong>múltiplas campanhas</strong> — fragmenta orçamento e dificulta aprendizado</li>
+          <li>Ativar <strong>Display ou Search Partners</strong> — qualidade inferior</li>
+          <li>Usar <strong>lances automáticos</strong> sem histórico de conversões</li>
+          <li>Colocar mais de <strong>2 grupos de anúncios</strong> no começo</li>
+          <li>Apontar anúncios para a <strong>home do site</strong></li>
+          <li>Deixar rodar <strong>sem monitoramento diário</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 2: ESTRUTURA ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <div>
+      <div class="section-title">Estrutura da Campanha</div>
+      <div class="section-subtitle">Arquitetura e configurações essenciais</div>
+    </div>
+  </div>
+
+  <div class="structure-box">
+<span class="struct-campaign">CONTA GOOGLE ADS — BOROTEC</span>
+│
+└── <span class="struct-campaign">CAMPANHA: BRTC_Search_Leads_BoroscopioIndustrial_Mai2026</span>
+    ├── Orçamento diário: R$ 16,67  │  Rede: Somente Pesquisa
+    ├── Estratégia de lances: CPC Manual  │  Parceiros: DESATIVADO
+    │
+    ├── <span class="struct-group">GRUPO 1: GRP1_FundoFunil_CompraOrcamento</span>
+    │   ├── Foco: intenção direta de compra/orçamento
+    │   ├── CPC máximo: R$ 9,00
+    │   └── <span class="struct-ad">RSA 1-A: Foco em "comprar + orçamento"</span>
+    │
+    └── <span class="struct-group">GRUPO 2: GRP2_TecnicoIndustrial_Produto</span>
+        ├── Foco: buscas técnicas com alta especificidade
+        ├── CPC máximo: R$ 7,00
+        └── <span class="struct-ad">RSA 2-A + RSA 2-B: Diferencial técnico + ROI</span>
+  </div>
+
+  <h3>Configurações obrigatórias</h3>
+  <table>
+    <thead><tr><th>Configuração</th><th>Valor</th><th>Motivo</th></tr></thead>
+    <tbody>
+      <tr><td>Tipo de campanha</td><td><span class="badge badge-primary">Rede de Pesquisa</span></td><td>Maior intenção de compra</td></tr>
+      <tr><td>Estratégia de lances</td><td><span class="badge badge-warning">CPC Manual</span></td><td>Controle total sem dados históricos</td></tr>
+      <tr><td>Search Partners</td><td><span class="badge badge-danger">DESATIVADO</span></td><td>Qualidade inferior, desperdício</td></tr>
+      <tr><td>Display</td><td><span class="badge badge-danger">DESATIVADO</span></td><td>Fora do escopo nessa fase</td></tr>
+      <tr><td>Programação</td><td><span class="badge badge-success">Seg–Sex 07h–19h</span></td><td>Decisores B2B não compram à noite</td></tr>
+      <tr><td>Ajuste mobile</td><td><span class="badge badge-warning">-20%</span></td><td>Menor conversão B2B em mobile</td></tr>
+      <tr><td>Ajuste desktop</td><td><span class="badge badge-success">+20%</span></td><td>Maior conversão B2B em desktop</td></tr>
+      <tr><td>Rotação de anúncios</td><td>Otimizar</td><td>Google escolhe o melhor RSA</td></tr>
+      <tr><td>Idioma</td><td>Português</td><td>Target BR</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== SEÇÃO 3: KEYWORDS ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <div>
+      <div class="section-title">Palavras-chave</div>
+      <div class="section-subtitle">Classificadas por intenção e grupo de anúncios</div>
+    </div>
+  </div>
+
+  <h3>Grupo 1 — Fundo de Funil (Compra, Orçamento, Preço)</h3>
+  <p style="margin-bottom: 12px;">Intenção direta de compra. Máximo valor por clique — esses leads já tomaram a decisão.</p>
+
+  <h4>Correspondência Exata <span class="badge badge-primary">[exata]</span></h4>
+  <div class="keyword-grid">
+    <span class="keyword-pill kp-exact">[comprar boroscópio industrial]</span>
+    <span class="keyword-pill kp-exact">[boroscópio industrial preço]</span>
+    <span class="keyword-pill kp-exact">[boroscópio industrial orçamento]</span>
+    <span class="keyword-pill kp-exact">[videoscópio industrial preço]</span>
+    <span class="keyword-pill kp-exact">[câmera de inspeção industrial preço]</span>
+    <span class="keyword-pill kp-exact">[boroscópio articulado comprar]</span>
+    <span class="keyword-pill kp-exact">[boroscópio industrial onde comprar]</span>
+    <span class="keyword-pill kp-exact">[câmera inspeção tubulação orçamento]</span>
+    <span class="keyword-pill kp-exact">[endoscópio industrial comprar]</span>
+    <span class="keyword-pill kp-exact">[boroscópio industrial fornecedor]</span>
+  </div>
+
+  <h4>Correspondência de Frase <span class="badge badge-success">"frase"</span></h4>
+  <div class="keyword-grid">
+    <span class="keyword-pill kp-phrase">"comprar boroscópio industrial"</span>
+    <span class="keyword-pill kp-phrase">"preço boroscópio industrial"</span>
+    <span class="keyword-pill kp-phrase">"orçamento boroscópio industrial"</span>
+    <span class="keyword-pill kp-phrase">"fornecedor boroscópio industrial brasil"</span>
+    <span class="keyword-pill kp-phrase">"câmera de inspeção industrial orçamento"</span>
+    <span class="keyword-pill kp-phrase">"videoscópio industrial comprar"</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>Grupo 2 — Termos Técnicos Industriais</h3>
+  <p style="margin-bottom: 12px;">Quem usa linguagem técnica correta sabe o que quer. Lead altamente qualificado.</p>
+
+  <h4>Correspondência Exata <span class="badge badge-primary">[exata]</span></h4>
+  <div class="keyword-grid">
+    <span class="keyword-pill kp-exact">[boroscópio articulado 360]</span>
+    <span class="keyword-pill kp-exact">[boroscópio industrial ip68]</span>
+    <span class="keyword-pill kp-exact">[boroscópio industrial articulado]</span>
+    <span class="keyword-pill kp-exact">[videoscópio industrial articulado]</span>
+    <span class="keyword-pill kp-exact">[câmera inspeção industrial tubulação]</span>
+    <span class="keyword-pill kp-exact">[boroscópio inspeção tubulação]</span>
+    <span class="keyword-pill kp-exact">[câmera inspeção remota industrial]</span>
+    <span class="keyword-pill kp-exact">[boroscópio inspeção petroquímica]</span>
+    <span class="keyword-pill kp-exact">[câmera boroscópio industrial]</span>
+    <span class="keyword-pill kp-exact">[videoscópio inspeção visual]</span>
+    <span class="keyword-pill kp-exact">[boroscópio industrial sonda]</span>
+    <span class="keyword-pill kp-exact">[câmera inspeção motor industrial]</span>
+    <span class="keyword-pill kp-exact">[boroscópio manutenção preditiva]</span>
+    <span class="keyword-pill kp-exact">[inspeção visual remota industrial]</span>
+    <span class="keyword-pill kp-exact">[câmera inspeção interna industrial]</span>
+  </div>
+
+  <h4>Correspondência de Frase <span class="badge badge-success">"frase"</span></h4>
+  <div class="keyword-grid">
+    <span class="keyword-pill kp-phrase">"boroscópio articulado industrial"</span>
+    <span class="keyword-pill kp-phrase">"câmera de inspeção industrial"</span>
+    <span class="keyword-pill kp-phrase">"videoscópio industrial"</span>
+    <span class="keyword-pill kp-phrase">"câmera inspeção tubulação industrial"</span>
+    <span class="keyword-pill kp-phrase">"inspeção visual remota"</span>
+    <span class="keyword-pill kp-phrase">"boroscópio ip68 industrial"</span>
+    <span class="keyword-pill kp-phrase">"câmera inspeção sem desmontagem"</span>
+    <span class="keyword-pill kp-phrase">"boroscópio para inspeção industrial"</span>
+  </div>
+
+  <h4>Keywords de Monitoramento (fase 2 — não ativar agora) <span class="badge badge-warning">esperar</span></h4>
+  <div class="keyword-grid">
+    <span class="keyword-pill kp-monitor">boroscópio saneamento</span>
+    <span class="keyword-pill kp-monitor">câmera inspeção caldeira</span>
+    <span class="keyword-pill kp-monitor">videoscópio inspeção turbina</span>
+    <span class="keyword-pill kp-monitor">câmera inspeção tubulação offshore</span>
+    <span class="keyword-pill kp-monitor">boroscópio inspeção duto gás</span>
+    <span class="keyword-pill kp-monitor">câmera inspeção espaço confinado</span>
+    <span class="keyword-pill kp-monitor">videoscópio inspeção petroquímica</span>
+    <span class="keyword-pill kp-monitor">câmera inspeção soldas industrial</span>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 4: NEGATIVOS ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <div>
+      <div class="section-title">Palavras Negativas</div>
+      <div class="section-subtitle">Lista completa para bloquear tráfego irrelevante</div>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <div class="callout-title">Crítico com orçamento pequeno</div>
+      <div class="callout-text">Com R$ 350, cada clique desperdiçado representa ~0,5–2% do orçamento total. Adicionar esta lista ANTES de publicar é obrigatório.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4>🏥 Médico / Hospitalar</h4>
+      <div class="keyword-grid">
+        <span class="keyword-pill kp-negative">médico</span>
+        <span class="keyword-pill kp-negative">cirurgia</span>
+        <span class="keyword-pill kp-negative">gastroscopia</span>
+        <span class="keyword-pill kp-negative">colonoscopia</span>
+        <span class="keyword-pill kp-negative">laparoscopia</span>
+        <span class="keyword-pill kp-negative">broncoscopia</span>
+        <span class="keyword-pill kp-negative">endoscopia digestiva</span>
+        <span class="keyword-pill kp-negative">endoscopia médica</span>
+        <span class="keyword-pill kp-negative">endoscopia hospitalar</span>
+        <span class="keyword-pill kp-negative">hospital</span>
+        <span class="keyword-pill kp-negative">paciente</span>
+        <span class="keyword-pill kp-negative">biópsia</span>
+        <span class="keyword-pill kp-negative">anestesia</span>
+        <span class="keyword-pill kp-negative">clínica médica</span>
+        <span class="keyword-pill kp-negative">procedimento médico</span>
+        <span class="keyword-pill kp-negative">diagnóstico médico</span>
+      </div>
+
+      <h4 style="margin-top: 16px;">📱 Celular / USB / Doméstico</h4>
+      <div class="keyword-grid">
+        <span class="keyword-pill kp-negative">celular</span>
+        <span class="keyword-pill kp-negative">smartphone</span>
+        <span class="keyword-pill kp-negative">iphone</span>
+        <span class="keyword-pill kp-negative">android</span>
+        <span class="keyword-pill kp-negative">USB</span>
+        <span class="keyword-pill kp-negative">tipo c</span>
+        <span class="keyword-pill kp-negative">bluetooth</span>
+        <span class="keyword-pill kp-negative">wifi celular</span>
+        <span class="keyword-pill kp-negative">app</span>
+        <span class="keyword-pill kp-negative">aplicativo</span>
+      </div>
+
+      <h4 style="margin-top: 16px;">🔧 DIY / Tutorial / Hobby</h4>
+      <div class="keyword-grid">
+        <span class="keyword-pill kp-negative">DIY</span>
+        <span class="keyword-pill kp-negative">tutorial</span>
+        <span class="keyword-pill kp-negative">como fazer</span>
+        <span class="keyword-pill kp-negative">passo a passo</span>
+        <span class="keyword-pill kp-negative">aprenda</span>
+        <span class="keyword-pill kp-negative">curso</span>
+        <span class="keyword-pill kp-negative">video aula</span>
+        <span class="keyword-pill kp-negative">faça você mesmo</span>
+        <span class="keyword-pill kp-negative">hobby</span>
+        <span class="keyword-pill kp-negative">bricolagem</span>
+      </div>
+    </div>
+
+    <div>
+      <h4>🏠 Encanamento Residencial</h4>
+      <div class="keyword-grid">
+        <span class="keyword-pill kp-negative">residencial</span>
+        <span class="keyword-pill kp-negative">ralo entupido</span>
+        <span class="keyword-pill kp-negative">desentupidora</span>
+        <span class="keyword-pill kp-negative">conserto cano</span>
+        <span class="keyword-pill kp-negative">banheiro</span>
+        <span class="keyword-pill kp-negative">apartamento</span>
+        <span class="keyword-pill kp-negative">condomínio</span>
+        <span class="keyword-pill kp-negative">obra residencial</span>
+        <span class="keyword-pill kp-negative">vaso sanitário</span>
+        <span class="keyword-pill kp-negative">cozinha doméstica</span>
+      </div>
+
+      <h4 style="margin-top: 16px;">💰 Preço Baixo / Marketplace</h4>
+      <div class="keyword-grid">
+        <span class="keyword-pill kp-negative">barato</span>
+        <span class="keyword-pill kp-negative">promoção</span>
+        <span class="keyword-pill kp-negative">oferta</span>
+        <span class="keyword-pill kp-negative">cupom</span>
+        <span class="keyword-pill kp-negative">mercado livre</span>
+        <span class="keyword-pill kp-negative">amazon</span>
+        <span class="keyword-pill kp-negative">shopee</span>
+        <span class="keyword-pill kp-negative">aliexpress</span>
+        <span class="keyword-pill kp-negative">magazine luiza</span>
+        <span class="keyword-pill kp-negative">americanas</span>
+      </div>
+
+      <h4 style="margin-top: 16px;">📷 Câmeras Não Industriais</h4>
+      <div class="keyword-grid">
+        <span class="keyword-pill kp-negative">câmera fotográfica</span>
+        <span class="keyword-pill kp-negative">câmera dslr</span>
+        <span class="keyword-pill kp-negative">câmera segurança</span>
+        <span class="keyword-pill kp-negative">câmera cctv</span>
+        <span class="keyword-pill kp-negative">drone</span>
+        <span class="keyword-pill kp-negative">gopro</span>
+        <span class="keyword-pill kp-negative">selfie</span>
+        <span class="keyword-pill kp-negative">câmera 360 imóvel</span>
+        <span class="keyword-pill kp-negative">tour virtual</span>
+      </div>
+
+      <h4 style="margin-top: 16px;">🔍 Informacional (não compra)</h4>
+      <div class="keyword-grid">
+        <span class="keyword-pill kp-negative">o que é</span>
+        <span class="keyword-pill kp-negative">como funciona</span>
+        <span class="keyword-pill kp-negative">para que serve</span>
+        <span class="keyword-pill kp-negative">significado</span>
+        <span class="keyword-pill kp-negative">wikipedia</span>
+        <span class="keyword-pill kp-negative">grátis</span>
+        <span class="keyword-pill kp-negative">download</span>
+        <span class="keyword-pill kp-negative">manual pdf</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 5+6: CORRESPONDÊNCIA + GEO ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <div>
+      <div class="section-title">Correspondência e Estratégia Geográfica</div>
+      <div class="section-subtitle">Como usar cada tipo de match + estados prioritários</div>
+    </div>
+  </div>
+
+  <h3>Estratégia de Correspondência</h3>
+  <table>
+    <thead><tr><th>Tipo</th><th>Símbolo</th><th>Como Funciona</th><th>Risco</th><th>Usar?</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Exata</strong></td>
+        <td><code>[keyword]</code></td>
+        <td>Busca exatamente igual (e variações próximas)</td>
+        <td><span class="badge badge-success">Baixo</span></td>
+        <td><span class="badge badge-success">✓ Sim (70%)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Frase</strong></td>
+        <td><code>"keyword"</code></td>
+        <td>Contém a frase na ordem com contexto</td>
+        <td><span class="badge badge-warning">Médio</span></td>
+        <td><span class="badge badge-success">✓ Sim (30%)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Ampla</strong></td>
+        <td><code>keyword</code></td>
+        <td>Google decide variações amplas</td>
+        <td><span class="badge badge-danger">Alto</span></td>
+        <td><span class="badge badge-danger">✗ Não agora</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body">
+      <div class="callout-title">Decisão para R$ 350: 70% Exata + 30% Frase. Zero Ampla.</div>
+      <div class="callout-text">Com R$ 350 e 44–100 cliques, cada clique desperdiçado representa 1–2% do orçamento total. Correspondência ampla em orçamento pequeno é o caminho mais rápido para desperdiçar tudo. Progressão: <strong>Fase 1</strong> → Exata+Frase | <strong>Fase 2 (R$1k+)</strong> → Ampla nas keywords que já converteram</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-header" style="margin-top: 0; margin-bottom: 24px;">
+    <div class="section-number">6</div>
+    <div>
+      <div class="section-title">Estratégia Geográfica</div>
+      <div class="section-subtitle">Estados prioritários e configuração</div>
+    </div>
+  </div>
+
+  <h3>Tier 1 — Ativar imediatamente (foco do orçamento)</h3>
+  <table>
+    <thead><tr><th>Estado</th><th>Justificativa</th><th>Polos Industriais Principais</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>🔵 São Paulo</strong></td>
+        <td>Maior parque industrial do BR, refinarias, petroquímica</td>
+        <td>ABC Paulista, Campinas, Santos, Sorocaba, São José dos Campos</td>
+      </tr>
+      <tr>
+        <td><strong>🔵 Minas Gerais</strong></td>
+        <td>Siderurgia, mineração, energia, manutenção pesada</td>
+        <td>BH, Contagem, Betim, Ipatinga, Juiz de Fora</td>
+      </tr>
+      <tr>
+        <td><strong>🔵 Rio de Janeiro</strong></td>
+        <td>Petróleo e gás (Petrobras), naval, offshore</td>
+        <td>Rio de Janeiro, Macaé, Campos dos Goytacazes, Volta Redonda</td>
+      </tr>
+      <tr>
+        <td><strong>🔵 Rio Grande do Sul</strong></td>
+        <td>Petroquímica (Triunfo), metal-mecânica, energia</td>
+        <td>Porto Alegre, Canoas, Caxias do Sul, Triunfo</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Tier 2 — Adicionar se sobrar orçamento</h3>
+  <div class="keyword-grid">
+    <span class="keyword-pill kp-monitor">Bahia — Polo Petroquímico Camaçari</span>
+    <span class="keyword-pill kp-monitor">Paraná — REPAR + Metal-mecânica</span>
+    <span class="keyword-pill kp-monitor">Pernambuco — SUAPE + Porto</span>
+    <span class="keyword-pill kp-monitor">Espírito Santo — Vale + Naval</span>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚙️</span>
+    <div class="callout-body">
+      <div class="callout-title">Configuração crítica</div>
+      <div class="callout-text">No Google Ads, selecionar <strong>"Presença"</strong> como método de segmentação — NÃO "interesse". A opção "interesse" inclui pessoas que apenas pesquisam sobre o estado, aumentando cliques irrelevantes.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 7: RSA ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">7</div>
+    <div>
+      <div class="section-title">Anúncios RSA Completos</div>
+      <div class="section-subtitle">3 RSAs prontos para publicar + Assets/Extensões</div>
+    </div>
+  </div>
+
+  <!-- RSA 1-A -->
+  <div class="rsa-card">
+    <div class="rsa-header">
+      <div>
+        <div class="rsa-name">RSA 1-A — Grupo 1</div>
+        <div class="rsa-group">Ângulo: Orçamento + Resultado | GRP1_FundoFunil_CompraOrcamento</div>
+      </div>
+      <span class="badge" style="background:rgba(255,255,255,0.15);color:#fff;">15 Headlines · 4 Descrições</span>
+    </div>
+    <div class="rsa-body">
+      <div class="rsa-section-label">Headlines (máx. 30 chars cada)</div>
+      <div class="headline-list">
+        <div class="headline-item"><div class="headline-num">H1</div>Boroscópio Industrial B2B</div>
+        <div class="headline-item"><div class="headline-num">H2</div>Peça Seu Orçamento Agora</div>
+        <div class="headline-item"><div class="headline-num">H3</div>Resposta em Até 2 Horas</div>
+        <div class="headline-item"><div class="headline-num">H4</div>Inspeção Sem Desmontagem</div>
+        <div class="headline-item"><div class="headline-num">H5</div>IP68 · Articulação 360°</div>
+        <div class="headline-item"><div class="headline-num">H6</div>Câmera HD Para Indústria</div>
+        <div class="headline-item"><div class="headline-num">H7</div>Videoscópio Profissional BR</div>
+        <div class="headline-item"><div class="headline-num">H8</div>Manutenção Preditiva Eficiente</div>
+        <div class="headline-item"><div class="headline-num">H9</div>Sonda Intercambiável Inclusa</div>
+        <div class="headline-item"><div class="headline-num">H10</div>Suporte Técnico Especializado</div>
+        <div class="headline-item"><div class="headline-num">H11</div>Para Petroquímica e Siderurgia</div>
+        <div class="headline-item"><div class="headline-num">H12</div>Gravação DVR + Cartão SD</div>
+        <div class="headline-item"><div class="headline-num">H13</div>Ver Sem Abrir a Máquina</div>
+        <div class="headline-item"><div class="headline-num">H14</div>Boroscópio Articulado 360°</div>
+        <div class="headline-item"><div class="headline-num">H15</div>Líder em Inspeção Industrial</div>
+      </div>
+      <div class="rsa-section-label">Descrições (máx. 90 chars cada)</div>
+      <div class="desc-item"><div class="desc-num">D1</div>Boroscópios industriais com sonda articulada 360°, IP68 e gravação HD. Solicite orçamento agora e receba proposta em até 2 horas.</div>
+      <div class="desc-item"><div class="desc-num">D2</div>Equipamentos para inspeção visual remota em turbinas, tubulações e motores. Sem desmontagem. Sem parada. Diagnóstico preciso em minutos.</div>
+      <div class="desc-item"><div class="desc-num">D3</div>Atendemos petroquímica, siderurgia, saneamento e manutenção industrial. Envie sua necessidade pelo WhatsApp — fale com especialista.</div>
+      <div class="desc-item"><div class="desc-num">D4</div>Câmeras de inspeção com articulação mecânica, câmera dupla e tela HD. Garantia de 2 anos + suporte técnico nacional. Peça orçamento.</div>
+    </div>
+  </div>
+
+  <!-- RSA 2-A -->
+  <div class="rsa-card">
+    <div class="rsa-header">
+      <div>
+        <div class="rsa-name">RSA 2-A — Grupo 2</div>
+        <div class="rsa-group">Ângulo: Técnico + Diferencial Competitivo | GRP2_TecnicoIndustrial_Produto</div>
+      </div>
+      <span class="badge" style="background:rgba(255,255,255,0.15);color:#fff;">15 Headlines · 4 Descrições</span>
+    </div>
+    <div class="rsa-body">
+      <div class="rsa-section-label">Headlines</div>
+      <div class="headline-list">
+        <div class="headline-item"><div class="headline-num">H1</div>Boroscópio IP68 Industrial</div>
+        <div class="headline-item"><div class="headline-num">H2</div>Articulação Mecânica 360°</div>
+        <div class="headline-item"><div class="headline-num">H3</div>Câmera Dupla Frontal e Lateral</div>
+        <div class="headline-item"><div class="headline-num">H4</div>Inspeção Visual Remota HD</div>
+        <div class="headline-item"><div class="headline-num">H5</div>Para Turbinas e Petroquímica</div>
+        <div class="headline-item"><div class="headline-num">H6</div>Sonda 5,5mm a 23mm</div>
+        <div class="headline-item"><div class="headline-num">H7</div>Câmera HD + Gravação DVR</div>
+        <div class="headline-item"><div class="headline-num">H8</div>Sem Desmontagem de Equipamento</div>
+        <div class="headline-item"><div class="headline-num">H9</div>Videoscópio Portátil 750g</div>
+        <div class="headline-item"><div class="headline-num">H10</div>Entrega Nacional + Suporte</div>
+        <div class="headline-item"><div class="headline-num">H11</div>Garantia 2 Anos Inclusa</div>
+        <div class="headline-item"><div class="headline-num">H12</div>Tela LCD 7" Alta Resolução</div>
+        <div class="headline-item"><div class="headline-num">H13</div>Inspeção de Difícil Acesso</div>
+        <div class="headline-item"><div class="headline-num">H14</div>Boroscópio Para Caldeiras</div>
+        <div class="headline-item"><div class="headline-num">H15</div>Câmera Interna Sem Abrir Motor</div>
+      </div>
+      <div class="rsa-section-label">Descrições</div>
+      <div class="desc-item"><div class="desc-num">D1</div>Boroscópios industriais com articulação 360°, sonda em aço inox IP68 e câmera Full HD. Diagnóstico sem parada de produção. Solicite agora.</div>
+      <div class="desc-item"><div class="desc-num">D2</div>Equipamentos de inspeção visual para manutenção preditiva em turbinas, motores e tubulações. Câmera dupla frontal/lateral. Peça orçamento.</div>
+      <div class="desc-item"><div class="desc-num">D3</div>Ver o interior sem desmontar reduz custos e elimina paradas. Nossos boroscópios atendem petroquímica, energia e siderurgia. Fale conosco.</div>
+      <div class="desc-item"><div class="desc-num">D4</div>Linha profissional de videoscópios com tela de alta resolução, gravação integrada e sondas intercambiáveis. Resposta em 2h via WhatsApp.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 7 CONT: RSA 2-B + ASSETS ========== -->
+<div class="page page-break">
+  <!-- RSA 2-B -->
+  <div class="rsa-card">
+    <div class="rsa-header" style="background: #7c3aed;">
+      <div>
+        <div class="rsa-name">RSA 2-B — Grupo 2 (variação para teste A/B)</div>
+        <div class="rsa-group">Ângulo: Dor / ROI | GRP2_TecnicoIndustrial_Produto</div>
+      </div>
+      <span class="badge" style="background:rgba(255,255,255,0.15);color:#fff;">Teste vs RSA 2-A</span>
+    </div>
+    <div class="rsa-body">
+      <div class="rsa-section-label">Headlines</div>
+      <div class="headline-list">
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H1</div>Parada Não Programada Custa Caro</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H2</div>Detecte Falhas Antes de Quebrar</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H3</div>Boroscópio Industrial Profissional</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H4</div>Inspeção Interna Sem Desmontagem</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H5</div>Locais de Difícil Acesso: Visível</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H6</div>Diagnóstico Em Minutos</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H7</div>ROI Comprovado em 3 Meses</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H8</div>Veja Por Dentro Sem Abrir Nada</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H9</div>Equipamento Que Paga Sozinho</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H10</div>Câmera Para Espaços Confinados</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H11</div>0 Desmontagem · 100% Precisão</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H12</div>Vídeo HD Para Laudos Técnicos</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H13</div>Câmera Industrial IP68 Garantia</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H14</div>Inspeção Em Tempo Real</div>
+        <div class="headline-item" style="background:#fdf4ff; border-color:#e9d5ff;"><div class="headline-num">H15</div>Industriais Usam Boroscópio HD</div>
+      </div>
+      <div class="rsa-section-label">Descrições</div>
+      <div class="desc-item"><div class="desc-num">D1</div>Cada parada não programada custa em média R$ 50.000 às indústrias. Um boroscópio detecta o problema antes. Calcule seu ROI agora.</div>
+      <div class="desc-item"><div class="desc-num">D2</div>Inspecione turbinas, caldeiras e motores em minutos. Sem desmontagem, sem parada longa e com imagem Full HD gravada. Solicite orçamento.</div>
+      <div class="desc-item"><div class="desc-num">D3</div>Engenheiros de manutenção usam videoscópio para reduzir downtime e manter a planta operando. Equipamento profissional, garantia 2 anos.</div>
+      <div class="desc-item"><div class="desc-num">D4</div>Da petroquímica ao saneamento: boroscópios industriais para qualquer setor. Sonda IP68, articulação 360° e câmera dupla. Peça proposta.</div>
+    </div>
+  </div>
+
+  <h3>Assets / Extensões</h3>
+  <h4>Sitelinks</h4>
+  <table>
+    <thead><tr><th>Título (25 max)</th><th>Linha 1</th><th>Linha 2</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>Boroscópio Industrial</td><td>Câmera HD, IP68, Articulado 360°</td><td>Para Turbinas, Motores e Dutos</td><td>/boroscopio-industrial</td></tr>
+      <tr><td>Videoscópio Profissional</td><td>Tela LCD, Sonda Intercambiável</td><td>Manutenção Preditiva Industrial</td><td>/videoscopio</td></tr>
+      <tr><td>Solicitar Orçamento</td><td>Resposta em Até 2 Horas</td><td>Especialistas em Inspeção Visual</td><td>/orcamento</td></tr>
+      <tr><td>Aplicações Industriais</td><td>Petroquímica, Siderurgia, Energia</td><td>Câmeras Para Todo Setor Industrial</td><td>/aplicacoes</td></tr>
+      <tr><td>Fale com Especialista</td><td>WhatsApp Direto com Técnico</td><td>Tire Dúvidas Sem Compromisso</td><td>/contato</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Callouts</h4>
+  <div class="keyword-grid">
+    <span class="keyword-pill kp-exact">IP68 Certificado</span>
+    <span class="keyword-pill kp-exact">Articulação 360°</span>
+    <span class="keyword-pill kp-exact">Garantia 2 Anos</span>
+    <span class="keyword-pill kp-exact">Entrega Nacional</span>
+    <span class="keyword-pill kp-exact">Suporte Técnico</span>
+    <span class="keyword-pill kp-exact">Câmera Full HD</span>
+    <span class="keyword-pill kp-exact">Gravação Integrada</span>
+    <span class="keyword-pill kp-exact">Resposta em 2 Horas</span>
+    <span class="keyword-pill kp-exact">Sonda em Aço Inox</span>
+    <span class="keyword-pill kp-exact">Atendimento B2B</span>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 8: LP ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">8</div>
+    <div>
+      <div class="section-title">Estratégia de Landing Page</div>
+      <div class="section-subtitle">Estrutura ideal para maximizar conversão de leads B2B</div>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">🏆</span>
+    <div class="callout-body">
+      <div class="callout-title">Oportunidade competitiva única</div>
+      <div class="callout-text">Nenhum concorrente B2B tem landing page otimizada para conversão. Instrucorp, Watt e R&Damasco usam páginas de produto técnicas sem prova social. A Borotec pode ser a primeira com uma LP B2B industrial voltada para geração de leads.</div>
+    </div>
+  </div>
+
+  <h3>Estrutura ideal da Landing Page</h3>
+  <table>
+    <thead><tr><th>#</th><th>Seção</th><th>Conteúdo Obrigatório</th><th>Objetivo</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Hero</strong></td><td>Headline com dor+solução, subheadline técnica, foto HD em campo, CTA primário + WhatsApp, 3 ícones de confiança (IP68, Garantia, Suporte)</td><td>Capturar atenção e comunicar valor em 3 segundos</td></tr>
+      <tr><td>2</td><td><strong>Prova Social</strong></td><td>Logos de clientes OU depoimento de engenheiro com nome+cargo+empresa OU "X empresas atendidas"</td><td>Eliminar desconfiança inicial</td></tr>
+      <tr><td>3</td><td><strong>Problema → Solução</strong></td><td>3 dores visuais (ícone + texto) + solução direta</td><td>Criar identificação e urgência</td></tr>
+      <tr><td>4</td><td><strong>Produto + Diferenciais</strong></td><td>Foto com setas + specs: IP68, 360°, câmera dupla, HD, DVR, inox + setores de aplicação</td><td>Justificar tecnicamente a escolha</td></tr>
+      <tr><td>5</td><td><strong>CTA intermediário</strong></td><td>"Solicitar Orçamento — Resposta em Até 2 Horas"</td><td>Converter antes de precisar rolar até o fim</td></tr>
+      <tr><td>6</td><td><strong>Cases / Social Proof</strong></td><td>Case: "Cliente X economizou R$ Y" + depoimentos com foto</td><td>Provar resultado real</td></tr>
+      <tr><td>7</td><td><strong>Formulário</strong></td><td>4 campos: Nome + WhatsApp + Empresa + Setor (select) + botão CTA</td><td>Capturar lead qualificado</td></tr>
+      <tr><td>8</td><td><strong>FAQ</strong></td><td>Garantia / Região / Temperatura / Prazo orçamento</td><td>Eliminar objeções finais</td></tr>
+      <tr><td>9</td><td><strong>Footer</strong></td><td>Logo + CNPJ + endereço + WhatsApp + e-mail</td><td>Credibilidade institucional</td></tr>
+    </tbody>
+  </table>
+
+  <div class="two-col">
+    <div>
+      <h4>✅ Elementos obrigatórios</h4>
+      <ul class="checklist">
+        <li><div class="check-box"></div>WhatsApp flutuante sempre visível</li>
+        <li><div class="check-box"></div>CTA acima da dobra (sem rolar)</li>
+        <li><div class="check-box"></div>Formulário máximo 4 campos</li>
+        <li><div class="check-box"></div>Foto do produto em uso real (não render)</li>
+        <li><div class="check-box"></div>Certificações visíveis (IP67/IP68)</li>
+        <li><div class="check-box"></div>Telefone clicável (tel: link)</li>
+        <li><div class="check-box"></div>Velocidade &lt; 3 segundos mobile</li>
+        <li><div class="check-box"></div>UTM parameters na URL</li>
+        <li><div class="check-box"></div>Tag do Google Ads instalada</li>
+      </ul>
+    </div>
+    <div>
+      <h4>🚫 O que evitar</h4>
+      <ul style="margin: 8px 0 0 16px;">
+        <li>Formulários com mais de 5 campos</li>
+        <li>Preço totalmente oculto (aumenta rejeição)</li>
+        <li>Páginas genéricas (LP deve ser específica)</li>
+        <li>Menu de navegação completo (distrai)</li>
+        <li>Fotos de banco de imagem (pessoas em fundo branco)</li>
+        <li>Texto denso sem bullets e escaneabilidade</li>
+        <li>Apontar para a home do site</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 9: TRACKING ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">9</div>
+    <div>
+      <div class="section-title">Conversões e Tracking</div>
+      <div class="section-subtitle">Hierarquia de conversões + GA4 + UTMs</div>
+    </div>
+  </div>
+
+  <h3>Hierarquia de conversões (configurar no Google Ads)</h3>
+  <table>
+    <thead><tr><th>Conversão</th><th>Evento</th><th>Tipo</th><th>Contagem</th><th>Motivo</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>WhatsApp Hero</strong></td>
+        <td><code>whatsapp_hero_click</code></td>
+        <td><span class="badge badge-success">PRIMÁRIA</span></td>
+        <td>Uma por clique</td>
+        <td>Maior intenção — viu a oferta e quer conversar</td>
+      </tr>
+      <tr>
+        <td><strong>Formulário Contato</strong></td>
+        <td>Envio do formulário</td>
+        <td><span class="badge badge-success">PRIMÁRIA</span></td>
+        <td>Uma por sessão</td>
+        <td>Ação de lead gerado mais clara e qualificada</td>
+      </tr>
+      <tr>
+        <td><strong>WhatsApp Flutuante</strong></td>
+        <td>Evento personalizado</td>
+        <td><span class="badge badge-gray">SECUNDÁRIA</span></td>
+        <td>Uma vez</td>
+        <td>Dado comportamental — não entra na otimização</td>
+      </tr>
+      <tr>
+        <td><strong>WhatsApp Produto</strong></td>
+        <td>Evento personalizado</td>
+        <td><span class="badge badge-gray">SECUNDÁRIA</span></td>
+        <td>Uma vez</td>
+        <td>Dado comportamental — indica interesse em produto</td>
+      </tr>
+      <tr>
+        <td><strong>WhatsApp Carrinho</strong></td>
+        <td>Evento personalizado</td>
+        <td><span class="badge badge-gray">SECUNDÁRIA</span></td>
+        <td>Uma vez</td>
+        <td>Intenção de compra — útil para análise futura</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>UTM obrigatório para todos os anúncios</h3>
+  <div class="code-block">
+<span class="highlight">?utm_source=</span>google
+<span class="highlight">&utm_medium=</span>cpc
+<span class="highlight">&utm_campaign=</span>BRTC_Search_Leads_BoroscopioIndustrial_Mai2026
+<span class="highlight">&utm_content=</span>GRP1_FundoFunil
+<span class="highlight">&utm_term=</span>{keyword}
+
+<span class="comment">// {keyword} é substituído automaticamente pelo Google Ads</span>
+<span class="comment">// Mudar utm_content para GRP2_TecnicoIndustrial no Grupo 2</span>
+  </div>
+
+  <h3>Checklist de Tracking (verificar ANTES de publicar)</h3>
+  <ul class="checklist">
+    <li><div class="check-box"></div>Tag do Google Ads instalada na página (verificar no Tag Assistant)</li>
+    <li><div class="check-box"></div>Conversão <code>whatsapp_hero_click</code> disparando no clique correto</li>
+    <li><div class="check-box"></div>Conversão formulário disparando no ENVIO (não no clique do botão)</li>
+    <li><div class="check-box"></div>GA4 recebendo os eventos corretamente</li>
+    <li><div class="check-box"></div>Importação de conversões do GA4 para Google Ads ativada</li>
+    <li><div class="check-box"></div>UTM parameters funcionando e aparecendo no GA4</li>
+    <li><div class="check-box"></div>Teste de conversão simulado manualmente (clique real no WA + envio de form)</li>
+  </ul>
+</div>
+
+<!-- ========== SEÇÃO 10: LANCES ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">10</div>
+    <div>
+      <div class="section-title">Estratégia de Lances</div>
+      <div class="section-subtitle">CPC Manual agora + Progressão para automação</div>
+    </div>
+  </div>
+
+  <h3>Progressão de estratégia de lances</h3>
+  <table>
+    <thead><tr><th>Fase</th><th>Orçamento</th><th>Estratégia</th><th>Gatilho para mudança</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Fase 1 (agora)</strong></td>
+        <td>R$ 350</td>
+        <td><span class="badge badge-warning">CPC Manual</span></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>Fase 2</strong></td>
+        <td>R$ 1.000+</td>
+        <td><span class="badge badge-primary">Max. Cliques + teto</span></td>
+        <td>50+ cliques, CTR > 5%, orçamento diário sendo gasto</td>
+      </tr>
+      <tr>
+        <td><strong>Fase 3</strong></td>
+        <td>R$ 3.000+</td>
+        <td><span class="badge badge-success">CPA Alvo</span></td>
+        <td>20–30 conversões, CPA estável por 7 dias</td>
+      </tr>
+      <tr>
+        <td><strong>Fase 4</strong></td>
+        <td>Escala</td>
+        <td><span class="badge badge-success">Max. Conversões</span></td>
+        <td>Volume suficiente para automação completa</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>CPC Manual — Valores configurados</h3>
+  <div class="two-col">
+    <div class="info-card">
+      <div class="info-card-title">Grupo 1 — Fundo de Funil</div>
+      <p style="font-size: 28px; font-weight: 800; color: var(--primary); margin: 8px 0;">R$ 9,00</p>
+      <p style="font-size: 12px; color: var(--gray);">CPC máximo por keyword. Maior intenção = pode pagar mais por clique.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Grupo 2 — Técnico Industrial</div>
+      <p style="font-size: 28px; font-weight: 800; color: var(--primary); margin: 8px 0;">R$ 7,00</p>
+      <p style="font-size: 12px; color: var(--gray);">CPC máximo por keyword. Qualificado mas menor urgência de compra imediata.</p>
+    </div>
+  </div>
+
+  <h3>Ajustes de lance</h3>
+  <table>
+    <thead><tr><th>Segmento</th><th>Ajuste</th><th>Motivo</th></tr></thead>
+    <tbody>
+      <tr><td>Desktop</td><td><span class="badge badge-success">+20%</span></td><td>Decisores B2B usam mais desktop no trabalho</td></tr>
+      <tr><td>Dispositivos móveis</td><td><span class="badge badge-danger">-20%</span></td><td>Menor taxa de conversão B2B em mobile</td></tr>
+      <tr><td>Horário de pico (9h–12h, 14h–17h)</td><td><span class="badge badge-success">+15%</span></td><td>Hora de trabalho dos tomadores de decisão</td></tr>
+      <tr><td>Finais de semana</td><td><span class="badge badge-danger">-50% ou pausar</span></td><td>Baixa atividade B2B industrial</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== SEÇÃO 11: PLANO OTIMIZAÇÃO ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">11</div>
+    <div>
+      <div class="section-title">Plano de Otimização</div>
+      <div class="section-subtitle">7 dias · 14 dias · 30 dias</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Semana 1 — Dias 1 a 7</div>
+      <div class="timeline-title">Monitoramento e controle</div>
+      <table style="margin-top: 10px;">
+        <thead><tr><th>Ação</th><th>Frequência</th><th>O que procurar</th></tr></thead>
+        <tbody>
+          <tr><td>Relatório de termos de pesquisa</td><td>Diário</td><td>Keywords irrelevantes → adicionar como negativas</td></tr>
+          <tr><td>Gasto por grupo</td><td>Diário</td><td>Um grupo com >80% do gasto → rebalancear CPCs</td></tr>
+          <tr><td>CTR por keyword</td><td>Diário</td><td>CTR &lt;2% em 50+ impressões → pausar keyword</td></tr>
+          <tr><td>Tracking de conversões</td><td>Dias 1, 3 e 7</td><td>Conversão não disparando = parar e corrigir</td></tr>
+          <tr><td>Índice de Qualidade</td><td>Dias 3 e 7</td><td>IQ &lt;5 = problema de relevância no anúncio</td></tr>
+        </tbody>
+      </table>
+      <div class="callout danger" style="margin-top: 12px;">
+        <span class="callout-icon">🛑</span>
+        <div class="callout-body">
+          <div class="callout-title">Pausar imediatamente se:</div>
+          <div class="callout-text">Keyword consumindo >R$ 30 sem clique | CTR &lt;0,5% em 50+ impressões | Gasto diário excedendo orçamento | Conversão não disparando há 24h</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Semana 2 — Dias 8 a 14</div>
+      <div class="timeline-title">Primeiros ajustes com dados reais</div>
+      <table style="margin-top: 10px;">
+        <thead><tr><th>Ação</th><th>Decisão a tomar</th></tr></thead>
+        <tbody>
+          <tr><td>Termos de pesquisa acumulados</td><td>Novas negativas + descoberta de keywords para adicionar</td></tr>
+          <tr><td>CTR dos RSAs por headline</td><td>Fixar (PIN) as headlines com melhor desempenho</td></tr>
+          <tr><td>Posição média das keywords</td><td>Posição >3: aumentar CPC | Posição 1 constante: pode baixar</td></tr>
+          <tr><td>Performance grupo 1 vs grupo 2</td><td>Concentrar orçamento no grupo com melhor resultado</td></tr>
+        </tbody>
+      </table>
+      <h4 style="margin-top: 16px;">Metas ao final da semana 2</h4>
+      <div class="metrics-grid" style="grid-template-columns: repeat(5,1fr); margin: 10px 0;">
+        <div class="metric-card"><div class="metric-value" style="font-size:20px;">500+</div><div class="metric-label">Impressões</div></div>
+        <div class="metric-card"><div class="metric-value" style="font-size:20px;">20+</div><div class="metric-label">Cliques</div></div>
+        <div class="metric-card"><div class="metric-value" style="font-size:20px;">>4%</div><div class="metric-label">CTR</div></div>
+        <div class="metric-card"><div class="metric-value" style="font-size:20px;">&lt;R$8</div><div class="metric-label">CPC médio</div></div>
+        <div class="metric-card"><div class="metric-value" style="font-size:20px;">1+</div><div class="metric-label">Lead</div></div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Mês 1 — Dias 15 a 30</div>
+      <div class="timeline-title">Consolidação e base para escala</div>
+      <table style="margin-top: 10px;">
+        <thead><tr><th>Ação</th><th>Resultado esperado</th></tr></thead>
+        <tbody>
+          <tr><td>Top 3 keywords por conversão</td><td>Base da próxima campanha com orçamento maior</td></tr>
+          <tr><td>Top 2 anúncios por CTR + conversão</td><td>Ângulos vencedores para replicar e escalar</td></tr>
+          <tr><td>Taxa de conversão da LP</td><td>Se &lt;2%, revisar LP antes de escalar</td></tr>
+          <tr><td>CPL (Custo por Lead) real</td><td>Benchmark para justificar próximo orçamento</td></tr>
+        </tbody>
+      </table>
+      <div class="callout info" style="margin-top: 12px;">
+        <span class="callout-icon">📊</span>
+        <div class="callout-body">
+          <div class="callout-title">Decisão ao final do mês:</div>
+          <div class="callout-text"><strong>CPL &lt;R$150 + Lead bom</strong> → Escalar para R$1.000–2.000/mês | <strong>CPL R$150–300</strong> → Otimizar LP antes de escalar | <strong>CPL >R$300</strong> → Revisar estrutura e proposta de valor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 12: INSIGHTS ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">12</div>
+    <div>
+      <div class="section-title">Insights Estratégicos</div>
+      <div class="section-subtitle">Oportunidades, erros dos concorrentes e como vencer com orçamento pequeno</div>
+    </div>
+  </div>
+
+  <h3>Maiores oportunidades identificadas</h3>
+  <table>
+    <thead><tr><th>#</th><th>Oportunidade</th><th>Como capitalizar</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Leilão subprecificado</strong><br><small>Nenhum concorrente investe em Google Ads agressivo no nicho</small></td>
+        <td>Aparecer na posição 1–3 com CPC relativamente baixo para B2B industrial</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Zero landing pages otimizadas</strong><br><small>Instrucorp, Fleximill e R&Damasco mandam para páginas de produto sem CRO</small></td>
+        <td>Criar LP com formulário + WhatsApp + prova social e converter acima da média</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Gap de prova social B2B</strong><br><small>Nenhum player B2B mostra casos reais ou depoimentos de engenheiros</small></td>
+        <td>Um case simples com resultado mensurável se torna ativo de conversão exclusivo</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Cauda longa com alta intenção e baixo CPC</strong><br><small>Keywords técnicas específicas têm baixo volume mas altíssima intenção</small></td>
+        <td>Engenheiro que busca "boroscópio articulado 360 inspeção turbina" já tomou a decisão</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Erros dos concorrentes = oportunidades da Borotec</h3>
+  <table>
+    <thead><tr><th>Erro do Concorrente</th><th>Oportunidade</th></tr></thead>
+    <tbody>
+      <tr><td>Todos escondem preço (cria atrito)</td><td>Mostrar faixa "a partir de R$ X" qualifica e acelera ciclo de venda</td></tr>
+      <tr><td>WhatsApp como único CTA</td><td>Formulário + WhatsApp captura diferentes perfis de comprador</td></tr>
+      <tr><td>Linguagem só técnica (sem ROI)</td><td>Combinar specs técnicas com ROI concreto diferencia radicalmente</td></tr>
+      <tr><td>Zero prova social B2B</td><td>Primeiro case publicado vira vantagem competitiva duradoura</td></tr>
+      <tr><td>Ninguém menciona tempo de resposta</td><td>"Orçamento em 2 horas" é CTA diferenciado que nenhum concorrente usa</td></tr>
+    </tbody>
+  </table>
+
+  <h3>As 6 regras para vencer com orçamento pequeno</h3>
+  <div class="three-col">
+    <div class="info-card" style="text-align: center;">
+      <div style="font-size: 28px; margin-bottom: 8px;">🎯</div>
+      <div class="info-card-title">Concentração</div>
+      <p style="font-size: 11px;">1 campanha, 2 grupos, 2 RSAs por grupo. Não dispersar.</p>
+    </div>
+    <div class="info-card" style="text-align: center;">
+      <div style="font-size: 28px; margin-bottom: 8px;">🔍</div>
+      <div class="info-card-title">Exatidão</div>
+      <p style="font-size: 11px;">Só exata e frase. Zero broadmatch. Zero clique desperdiçado.</p>
+    </div>
+    <div class="info-card" style="text-align: center;">
+      <div style="font-size: 28px; margin-bottom: 8px;">🏆</div>
+      <div class="info-card-title">Qualidade > Volume</div>
+      <p style="font-size: 11px;">30 cliques qualificados &gt; 150 cliques irrelevantes.</p>
+    </div>
+    <div class="info-card" style="text-align: center;">
+      <div style="font-size: 28px; margin-bottom: 8px;">🚫</div>
+      <div class="info-card-title">Negativos Primeiro</div>
+      <p style="font-size: 11px;">Lista de 100+ negativas ANTES de publicar. Revisar a cada 2 dias.</p>
+    </div>
+    <div class="info-card" style="text-align: center;">
+      <div style="font-size: 28px; margin-bottom: 8px;">📄</div>
+      <div class="info-card-title">LP Específica</div>
+      <p style="font-size: 11px;">Nunca apontar para a home. Cada grupo = LP coerente com a intenção.</p>
+    </div>
+    <div class="info-card" style="text-align: center;">
+      <div style="font-size: 28px; margin-bottom: 8px;">📊</div>
+      <div class="info-card-title">Tracking Perfeito</div>
+      <p style="font-size: 11px;">Zero clique sem rastreamento. Se conversão não dispara, pause.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 13: CHECKLISTS ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">13</div>
+    <div>
+      <div class="section-title">Checklists de Implementação</div>
+      <div class="section-subtitle">Pré-lançamento + Passo a passo completo Google Ads</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4>✅ Checklist Pré-Lançamento — Conta e Estrutura</h4>
+      <ul class="checklist">
+        <li><div class="check-box"></div>Conta Google Ads criada e verificada</li>
+        <li><div class="check-box"></div>Faturamento configurado</li>
+        <li><div class="check-box"></div>URL da empresa verificada</li>
+        <li><div class="check-box"></div>Conversões configuradas e testadas</li>
+        <li><div class="check-box"></div>GA4 vinculado ao Google Ads</li>
+        <li><div class="check-box"></div>Importação de conversões do GA4 ativada</li>
+      </ul>
+
+      <h4>✅ Checklist — Landing Page</h4>
+      <ul class="checklist">
+        <li><div class="check-box"></div>LP criada (não apontar para home)</li>
+        <li><div class="check-box"></div>Velocidade &lt;3 segundos mobile</li>
+        <li><div class="check-box"></div>Mobile-friendly verificado</li>
+        <li><div class="check-box"></div>Formulário disparando evento de conversão</li>
+        <li><div class="check-box"></div>WhatsApp Hero disparando evento</li>
+        <li><div class="check-box"></div>WhatsApp flutuante ativado</li>
+        <li><div class="check-box"></div>UTM parameters funcionando</li>
+      </ul>
+    </div>
+    <div>
+      <h4>✅ Checklist — Campanha e Grupos</h4>
+      <ul class="checklist">
+        <li><div class="check-box"></div>Campanha sem Display e sem Search Partners</li>
+        <li><div class="check-box"></div>Orçamento diário R$ 16,67 configurado</li>
+        <li><div class="check-box"></div>CPC manual ativado</li>
+        <li><div class="check-box"></div>Localização: SP + MG + RJ + RS</li>
+        <li><div class="check-box"></div>Programação: Seg–Sex 07h–19h</li>
+        <li><div class="check-box"></div>Ajuste mobile -20%, desktop +20%</li>
+        <li><div class="check-box"></div>Grupo 1 criado com keywords Grupo 1</li>
+        <li><div class="check-box"></div>Grupo 2 criado com keywords Grupo 2</li>
+        <li><div class="check-box"></div>RSA 1-A criado no Grupo 1</li>
+        <li><div class="check-box"></div>RSA 2-A e RSA 2-B criados no Grupo 2</li>
+        <li><div class="check-box"></div>Negativas adicionadas a nível campanha</li>
+        <li><div class="check-box"></div>5 Sitelinks configurados</li>
+        <li><div class="check-box"></div>10 Callouts configurados</li>
+        <li><div class="check-box"></div>Snippets estruturados configurados</li>
+        <li><div class="check-box"></div>Extensão de chamada configurada</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SEÇÃO 14: PASSO A PASSO ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">14</div>
+    <div>
+      <div class="section-title">Passo a Passo — Configuração Google Ads</div>
+      <div class="section-subtitle">Guia operacional completo para implementação</div>
+    </div>
+  </div>
+
+  <h3>Passo 1 — Criar a Campanha</h3>
+  <div class="code-block">
+1. Acesse <span class="highlight">ads.google.com</span> → "+ Nova campanha"
+2. Objetivo: <span class="success">"Leads"</span>
+3. Tipo: <span class="success">"Rede de Pesquisa"</span>
+4. Selecionar: "Formulários de lead do site" + "Visitas ao site"
+5. Nome: <span class="highlight">BRTC_Search_Leads_BoroscopioIndustrial_Mai2026</span>
+6. Orçamento diário: <span class="success">R$ 16,67</span>
+7. Estratégia de lances: <span class="success">CPC Manual</span>
+   → "Mais configurações" → "CPC máximo padrão": R$ 7,00
+8. Redes: <span class="danger">DESMARCAR</span> "Parceiros de pesquisa"
+          <span class="danger">DESMARCAR</span> "Rede de Display"
+9. Localização: SP, MG, RJ, RS → Opção: <span class="success">"Presença"</span>
+10. Idioma: <span class="success">Português</span>
+11. Programação: <span class="success">Seg–Sex 07h00–19h00</span>
+12. Salvar e continuar → Criar grupos de anúncios
+  </div>
+
+  <h3>Passo 2 — Criar os Grupos de Anúncios</h3>
+  <div class="code-block">
+<span class="highlight">GRUPO 1:</span>
+  Nome: <span class="success">GRP1_FundoFunil_CompraOrcamento</span>
+  CPC padrão: R$ 9,00
+  → Adicionar keywords da Seção 3 (Grupo 1)
+  → Criar RSA 1-A (headlines e descrições da Seção 7)
+  → URL final: [URL da landing page]
+
+<span class="highlight">GRUPO 2:</span>
+  Nome: <span class="success">GRP2_TecnicoIndustrial_Produto</span>
+  CPC padrão: R$ 7,00
+  → Adicionar keywords da Seção 3 (Grupo 2)
+  → Criar RSA 2-A e RSA 2-B (Seção 7)
+  → URL final: [URL da landing page]
+  </div>
+
+  <h3>Passo 3 — Adicionar Palavras Negativas</h3>
+  <div class="code-block">
+1. Campanha → "Palavras-chave" → "Palavras-chave negativas"
+2. Clique em "+" → "Adicionar palavras-chave negativas"
+3. Selecione: <span class="success">"Campanha"</span> (para aplicar globalmente)
+4. Cole toda a lista da Seção 4 (uma por linha)
+5. Tipo: <span class="success">Correspondência ampla</span> para negativas
+   <span class="comment">// Negativas amplas excluem mais variações — recomendado</span>
+6. Para marcas de concorrentes: usar <span class="highlight">[correspondência exata]</span>
+7. Salvar
+  </div>
+
+  <h3>Passo 4 — Configurar Conversões</h3>
+  <div class="code-block">
+<span class="highlight">CONVERSÃO 1 — WhatsApp Hero (PRIMÁRIA):</span>
+  Google Ads → Metas → Conversões → Nova ação de conversão
+  Tipo: Site | Categoria: Lead | Nome: "GA - Conv - WhatsApp Hero"
+  Contagem: Uma | Janela: 30 dias | Tipo: <span class="success">Conversão PRIMÁRIA</span>
+
+<span class="highlight">CONVERSÃO 2 — Formulário (PRIMÁRIA):</span>
+  Mesmos passos | Nome: "GA - Conv - Formulário Contato"
+  Tipo: <span class="success">Conversão PRIMÁRIA</span>
+
+<span class="highlight">CONVERSÕES 3, 4, 5 — WhatsApps secundários:</span>
+  Mesmos passos | Tipo: <span class="danger">Conversão SECUNDÁRIA</span>
+  <span class="comment">// Não entram na otimização do algoritmo</span>
+  </div>
+
+  <h3>Passo 5 — Configurar Assets/Extensões</h3>
+  <div class="code-block">
+1. Campanha selecionada → <span class="highlight">Assets</span>
+2. Sitelinks: "+ Criar" → Adicionar os 5 sitelinks da Seção 7
+3. Frases de destaque (Callouts): Adicionar os 10 callouts
+4. Snippets estruturados:
+   → "Modelos": Boroscópio Articulado | Videoscópio HD | Câmera Inspeção...
+   → "Setores": Petroquímica | Siderurgia | Energia | Saneamento...
+5. Extensão de chamada: Número + horário Seg-Sex 08h-18h
+6. Salvar tudo
+  </div>
+
+  <h3>Passo 6 — Publicar a Campanha</h3>
+  <div class="code-block">
+1. Revisar <span class="success">TODOS</span> os itens do checklist (Seção 13)
+2. Garantir que pelo menos 1 conversão <span class="success">está testada e funcionando</span>
+3. Verificar que a LP está <span class="success">no ar e abrindo corretamente</span>
+4. Verificar status dos grupos: <span class="success">"Elegível"</span>
+5. Verificar status dos RSAs: <span class="success">"Bom"</span> ou <span class="success">"Excelente"</span>
+6. Publicar campanha → aguardar aprovação (1–24h)
+7. <span class="highlight">NO DIA SEGUINTE:</span> verificar primeiras impressões e cliques
+8. Monitorar diariamente na primeira semana (checklist Seção 11)
+  </div>
+</div>
+
+<!-- ========== KPIs FINAIS ========== -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">✓</div>
+    <div>
+      <div class="section-title">KPIs e Análise Final</div>
+      <div class="section-subtitle">Métricas de sucesso desta campanha de validação</div>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>KPI</th><th>Meta Mínima</th><th>Meta Ideal</th><th>O que fazer se não atingir</th></tr></thead>
+    <tbody>
+      <tr><td><strong>CPL (Custo por Lead)</strong></td><td>&lt;R$ 200</td><td>&lt;R$ 80</td><td>Revisar LP e relevância dos anúncios</td></tr>
+      <tr><td><strong>CTR médio</strong></td><td>&gt;4%</td><td>&gt;7%</td><td>Testar novas headlines no RSA</td></tr>
+      <tr><td><strong>Taxa de conversão LP</strong></td><td>&gt;2%</td><td>&gt;5%</td><td>Simplificar formulário + melhorar hero</td></tr>
+      <tr><td><strong>Leads gerados</strong></td><td>≥ 2</td><td>≥ 6</td><td>Aumentar orçamento ou expandir keywords</td></tr>
+      <tr><td><strong>Índice de Qualidade médio</strong></td><td>≥ 6/10</td><td>≥ 8/10</td><td>Melhorar relevância keyword-anúncio-LP</td></tr>
+      <tr><td><strong>Termos com intenção correta</strong></td><td>&gt;70%</td><td>&gt;90%</td><td>Ampliar lista de negativas</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout success" style="margin-top: 32px;">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-body">
+      <div class="callout-title">Conclusão Estratégica</div>
+      <div class="callout-text">
+        A Borotec entra num mercado com <strong>concorrência orgânica forte mas mídia paga fraca</strong>. Os leilões estão subprecificados, a demanda é real e constante, e nenhum concorrente tem landing page otimizada para lead B2B industrial.<br><br>
+        Com R$ 350 e execução correta, a Borotec pode aparecer na posição 1–3 para as keywords mais quentes, captar 3–8 leads qualificados, e ter dados reais para justificar investimento de escala.<br><br>
+        <strong>O sucesso desta fase não se mede em vendas. Mede-se em aprendizado e CPL.</strong>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 60px; padding-top: 24px; border-top: 2px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <p style="font-size: 11px; color: var(--gray);">Documento estratégico preparado para:</p>
+      <p style="font-size: 18px; font-weight: 800; color: var(--dark);">Borotec</p>
+      <p style="font-size: 11px; color: var(--gray);">Campanha de Validação — Google Ads Search</p>
+    </div>
+    <div style="text-align: right;">
+      <p style="font-size: 11px; color: var(--gray);">Data</p>
+      <p style="font-size: 14px; font-weight: 700; color: var(--dark);">Maio 2026</p>
+      <p style="font-size: 11px; color: var(--gray);">Versão 1.0</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
