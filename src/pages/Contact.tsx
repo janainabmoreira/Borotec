@@ -47,12 +47,9 @@ const Contact = () => {
         description: "Entraremos em contato em breve.",
       });
 
-      // Google Ads - Conversão: Formulário
-      if (typeof (window as any).gtag === 'function') {
-        (window as any).gtag('event', 'conversion', {
-          send_to: 'AW-17974974395/zvFbCIrLwqccELuvkftC',
-        });
-      }
+      // GTM - Evento de conversão do formulário
+      window.dataLayer = (window as any).dataLayer || [];
+      (window as any).dataLayer.push({ event: 'formulario_contato_enviado' });
 
       setFormData({ name: '', email: '', phone: '', company: '', message: '' });
     } catch {
