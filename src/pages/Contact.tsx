@@ -47,9 +47,11 @@ const Contact = () => {
         description: "Entraremos em contato em breve.",
       });
 
-      // Google Ads - Conversão: Formulário Solicite Orçamento
-      if (typeof (window as any).gtag_report_form === 'function') {
-        (window as any).gtag_report_form();
+      // Google Ads - Conversão: Formulário
+      if (typeof (window as any).gtag === 'function') {
+        (window as any).gtag('event', 'conversion', {
+          send_to: 'AW-17974974395/zvFbCIrLwqccELuvkftC',
+        });
       }
 
       setFormData({ name: '', email: '', phone: '', company: '', message: '' });
