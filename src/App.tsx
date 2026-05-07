@@ -1,8 +1,9 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { QuoteCartProvider } from "./contexts/QuoteCartContext";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
@@ -15,6 +16,26 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+declare global {
+  interface Window {
+    dataLayer: Record<string, unknown>[];
+  }
+}
+
+const GTMRouteTracker = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: "virtualPageView",
+      page: location.pathname + location.search,
+    });
+  }, [location]);
+
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -22,6 +43,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <GTMRouteTracker />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/produtos" element={<Products />} />
