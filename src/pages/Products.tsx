@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -26,25 +26,30 @@ const Products = () => {
     setSearchQuery('');
     const params: Record<string, string> = {};
     if (category !== 'Todos') params.categoria = category;
-    setSearchParams(params);
+    setSearchParams(params, { replace: true });
   };
 
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     setSelectedCategory('Todos');
     const params: Record<string, string> = {};
-    if (value.trim()) params.busca = value.trim();
-    setSearchParams(params);
+    if (searchQuery.trim()) params.busca = searchQuery.trim();
+    setSearchParams(params, { replace: true });
   };
 
-  const filteredProducts = products.filter(p => {
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setSearchParams({}, { replace: true });
+  };
+
+  const filteredProducts = useMemo(() => products.filter(p => {
     const matchesCategory = selectedCategory === 'Todos' || p.category === selectedCategory;
     const matchesSearch = !searchQuery.trim() ||
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.category.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
-  });
+  }), [selectedCategory, searchQuery]);
 
   return (
     <>
@@ -92,24 +97,33 @@ const Products = () => {
               </p>
 
               {/* Search bar */}
-              <div className="relative max-w-lg">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-foreground/40" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  placeholder="Buscar por nome, categoria..."
-                  className="w-full pl-12 pr-10 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/50 transition-colors font-body text-sm"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => handleSearchChange('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-foreground/40 hover:text-primary-foreground transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
+              <form onSubmit={handleSearchSubmit} className="relative max-w-lg flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-foreground/40 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar por nome, categoria..."
+                    className="w-full pl-12 pr-10 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/50 transition-colors font-body text-sm"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={handleClearSearch}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-foreground/40 hover:text-primary-foreground transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className="px-4 py-3 bg-cyan text-charcoal rounded-xl hover:bg-cyan/90 transition-colors"
+                >
+                  <Search className="w-4 h-4" />
+                </button>
+              </form>
             </div>
           </div>
           
@@ -194,7 +208,7 @@ const Products = () => {
                   </p>
                   {searchQuery && (
                     <button
-                      onClick={() => handleSearchChange('')}
+                      onClick={handleClearSearch}
                       className="text-sm text-primary-foreground/50 hover:text-cyan transition-colors flex items-center gap-1"
                     >
                       <X className="w-3 h-3" /> Limpar busca
