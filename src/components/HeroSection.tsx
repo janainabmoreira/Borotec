@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Sparkles, MessageCircle, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroVideo from '@/assets/hero-video.mp4';
 
@@ -8,16 +7,6 @@ const WHATSAPP_NUMBER = '5511932876195';
 const WHATSAPP_MESSAGE = 'Olá! Gostaria de mais informações sobre os produtos da BOROTEC.';
 
 const HeroSection = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/produtos?busca=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Video */}
@@ -91,27 +80,6 @@ const HeroSection = () => {
               </Link>
             </Button>
           </div>
-
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex items-center max-w-xl mt-8 md:mt-10 animate-fade-up" style={{ animationDelay: '0.35s' }}>
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-foreground/40 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar produtos, categorias..."
-                className="w-full pl-12 pr-4 py-3.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-l-xl text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/60 transition-colors font-body text-sm"
-              />
-            </div>
-            <button
-              type="submit"
-              className="px-5 py-3.5 bg-cyan text-charcoal font-semibold rounded-r-xl hover:bg-cyan/90 transition-colors flex items-center gap-2 text-sm whitespace-nowrap"
-            >
-              <Search className="w-4 h-4" />
-              Buscar
-            </button>
-          </form>
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 md:gap-8 mt-12 md:mt-20 pt-6 md:pt-8 border-t border-primary-foreground/10 animate-fade-up" style={{ animationDelay: '0.4s' }}>
