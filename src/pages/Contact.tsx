@@ -292,7 +292,7 @@ const Contact = () => {
         <section id="map" className="h-96 bg-navy-dark/50 relative">
           <div className="absolute top-0 left-0 right-0 h-px glow-line" />
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.12345678901234!2d-46.6388888!3d-23.5505556!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMzJzAyLjAiUyA0NsKwMzgnMjAuMCJX!5e0!3m2!1spt-BR!2sbr!4v1234567890"
+            src="https://maps.google.com/maps?q=Rua+Quinze+de+Novembro,+212,+S%C3%A3o+Paulo,+SP,+01013-000,+Brasil&output=embed&hl=pt-BR&z=17"
             width="100%"
             height="100%"
             style={{ border: 0, filter: 'grayscale(100%) invert(92%) contrast(83%)' }}
