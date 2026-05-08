@@ -49,6 +49,18 @@ const Index = () => {
         <title>BOROTEC | Equipamentos de Metrologia Óptica Industrial</title>
         <meta name="description" content="Líder em equipamentos de inspeção industrial. Endoscópios, videoscópios e boroscópios com +20 anos de experiência. Tecnologia nacional." />
         <link rel="canonical" href="https://borotec.com.br/" />
+        <meta property="og:title" content="BOROTEC | Equipamentos de Metrologia Óptica Industrial" />
+        <meta property="og:description" content="Líder em equipamentos de inspeção industrial. Endoscópios, videoscópios e boroscópios com +20 anos de experiência. Tecnologia nacional." />
+        <meta property="og:url" content="https://borotec.com.br/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="BOROTEC | Equipamentos de Metrologia Óptica Industrial" />
+        <meta name="twitter:description" content="Líder em equipamentos de inspeção industrial. Endoscópios, videoscópios e boroscópios com +20 anos de experiência. Tecnologia nacional." />
+        <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
         <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
       </Helmet>
       <div className="min-h-screen">

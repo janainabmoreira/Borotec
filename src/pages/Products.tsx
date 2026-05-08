@@ -53,8 +53,17 @@ const Products = () => {
         <meta name="description" content="Linha completa de boroscópios, videoscópios e endoscópios industriais. Equipamentos para inspeção de tubulações, máquinas e áreas classificadas ATEX." />
         <link rel="canonical" href="https://borotec.com.br/produtos" />
         <meta property="og:title" content="Produtos de Metrologia Óptica | BOROTEC Industrial" />
-        <meta property="og:description" content="Linha completa de boroscópios, videoscópios e endoscópios industriais." />
+        <meta property="og:description" content="Linha completa de boroscópios, videoscópios e endoscópios industriais. Equipamentos para inspeção de tubulações, máquinas e áreas classificadas ATEX." />
         <meta property="og:url" content="https://borotec.com.br/produtos" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Produtos de Metrologia Óptica | BOROTEC Industrial" />
+        <meta name="twitter:description" content="Linha completa de boroscópios, videoscópios e endoscópios industriais." />
+        <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
       </Helmet>
     <div className="min-h-screen bg-charcoal">
       <Header />

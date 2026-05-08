@@ -42,6 +42,15 @@ const About = () => {
         <meta property="og:title" content="Sobre a BOROTEC | +20 Anos em Metrologia Óptica Industrial" />
         <meta property="og:description" content="Fundada em 2003, a BOROTEC Industrial é referência nacional em metrologia óptica e equipamentos de inspeção industrial." />
         <meta property="og:url" content="https://borotec.com.br/sobre" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Sobre a BOROTEC | +20 Anos em Metrologia Óptica Industrial" />
+        <meta name="twitter:description" content="Fundada em 2003, a BOROTEC Industrial é referência nacional em metrologia óptica e equipamentos de inspeção industrial." />
+        <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
       </Helmet>
     <div className="min-h-screen bg-charcoal">
       <Header />

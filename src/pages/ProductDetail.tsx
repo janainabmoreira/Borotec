@@ -59,6 +59,7 @@ const ProductDetail = () => {
     '@type': 'Product',
     name: product.name,
     description: product.description,
+    image: productImage,
     brand: { '@type': 'Brand', name: 'BOROTEC Industrial' },
     category: product.category,
     url: productUrl,
@@ -97,6 +98,15 @@ const ProductDetail = () => {
         <meta property="og:title" content={`${product.name} | BOROTEC Industrial`} />
         <meta property="og:description" content={product.description} />
         <meta property="og:url" content={productUrl} />
+        <meta property="og:type" content="product" />
+        <meta property="og:image" content={productImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${product.name} | BOROTEC Industrial`} />
+        <meta name="twitter:description" content={product.description} />
+        <meta name="twitter:image" content={productImage} />
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
       </Helmet>

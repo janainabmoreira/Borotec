@@ -25,6 +25,15 @@ const Blog = () => {
         <meta property="og:title" content="Blog de Inspeção Industrial | BOROTEC" />
         <meta property="og:description" content="Artigos técnicos sobre boroscopia, inspeção visual remota e manutenção industrial." />
         <meta property="og:url" content="https://borotec.com.br/blog" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Blog de Inspeção Industrial | BOROTEC" />
+        <meta name="twitter:description" content="Artigos técnicos sobre boroscopia, inspeção visual remota e manutenção industrial." />
+        <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
       </Helmet>
     <div className="min-h-screen bg-charcoal">
       <Header />

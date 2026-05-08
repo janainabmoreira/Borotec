@@ -85,7 +85,7 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'Endereço',
-      info: 'Av. Industrial, 1500 - Distrito Industrial, São Paulo, SP',
+      info: 'Rua Quinze de Novembro, 212 — São Paulo/SP, CEP 01013-000',
       action: '#map'
     },
     {
@@ -105,6 +105,15 @@ const Contact = () => {
         <meta property="og:title" content="Fale Conosco | BOROTEC Industrial" />
         <meta property="og:description" content="Entre em contato com a BOROTEC Industrial para orçamentos e informações sobre equipamentos de inspeção industrial." />
         <meta property="og:url" content="https://borotec.com.br/contato" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Fale Conosco | BOROTEC Industrial" />
+        <meta name="twitter:description" content="Entre em contato com a BOROTEC Industrial para orçamentos e informações sobre equipamentos de inspeção industrial." />
+        <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
       </Helmet>
     <div className="min-h-screen bg-charcoal">
       <Header />

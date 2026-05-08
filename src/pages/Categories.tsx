@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
@@ -74,6 +75,24 @@ const Categories = () => {
   };
 
   return (
+    <>
+      <Helmet>
+        <title>Categorias de Equipamentos | BOROTEC Industrial</title>
+        <meta name="description" content="Explore as linhas de equipamentos BOROTEC: Tubulações, Máquinas, Robôs e Especiais (ATEX, 3D, Termografia, UV). Soluções para cada necessidade de inspeção industrial." />
+        <link rel="canonical" href="https://borotec.com.br/categorias" />
+        <meta property="og:title" content="Categorias de Equipamentos | BOROTEC Industrial" />
+        <meta property="og:description" content="Explore as linhas de equipamentos BOROTEC: Tubulações, Máquinas, Robôs e Especiais (ATEX, 3D, Termografia, UV)." />
+        <meta property="og:url" content="https://borotec.com.br/categorias" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Categorias de Equipamentos | BOROTEC Industrial" />
+        <meta name="twitter:description" content="Explore as linhas de equipamentos BOROTEC: Tubulações, Máquinas, Robôs e Especiais (ATEX, 3D, Termografia, UV)." />
+        <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
+      </Helmet>
     <div className="min-h-screen bg-charcoal">
       <Header />
 
@@ -189,6 +208,7 @@ const Categories = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

@@ -84,7 +84,14 @@ const BlogPost = () => {
         <meta property="og:description" content={post.excerpt} />
         <meta property="og:url" content={postUrl} />
         <meta property="og:image" content={post.image} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="pt_BR" />
         <meta property="article:published_time" content={post.date} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post.title} />
+        <meta name="twitter:description" content={post.excerpt} />
+        <meta name="twitter:image" content={post.image} />
         <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         {faqSchema && (
@@ -173,7 +180,7 @@ const BlogPost = () => {
                           const tds = row
                             .split('|')
                             .filter(Boolean)
-                            .map((c) => `<td class="px-4 py-2 text-primary-foreground/70">${c.trim()}</td>`)
+                            .map((c) => `<td class="px-4 py-2 text-primary-foreground/70">${c.trim().replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</td>`)
                             .join('');
                           return `<tr class="border-b border-primary-foreground/5">${tds}</tr>`;
                         })
@@ -181,9 +188,13 @@ const BlogPost = () => {
                       return `<div class="overflow-x-auto my-4"><table class="w-full text-sm bg-navy-dark/30 rounded-xl overflow-hidden"><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table></div>`;
                     }
                     if (block.startsWith('**') && block.includes(':**')) {
-                      return `<p class="text-primary-foreground/80">${block.replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')}</p>`;
+                      return `<p class="text-primary-foreground/80">${block
+                        .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
+                        .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
                     }
-                    return `<p class="text-primary-foreground/75 leading-relaxed">${block.replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')}</p>`;
+                    return `<p class="text-primary-foreground/75 leading-relaxed">${block
+                      .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
+                      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
                   })
                   .join('\n'),
               }}

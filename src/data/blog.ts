@@ -18,7 +18,8 @@ export const blogPosts: BlogPost[] = [
     category: 'Guia Técnico',
     date: '2026-05-07',
     readTime: '12 min',
-    image: 'https://images.unsplash.com/photo-1581092795360-fd1f3ce52ebc?w=1200&h=630&fit=crop',
+    image: '/blog/boroscopio-industrial.webp',
+    // fallback Unsplash: https://images.unsplash.com/photo-1581092795360-fd1f3ce52ebc?w=1200&h=630&fit=crop
     faqs: [
       {
         q: 'O que é um boroscópio industrial?',
@@ -107,14 +108,14 @@ O boroscópio é utilizado em qualquer setor com componentes internos que precis
 
 | Tipo | Diâmetro da sonda | Aplicação principal |
 |---|---|---|
-| Endoscópio para tubulações | 8–25 mm | Tubulações industriais e sanitárias |
-| Videoscópio portátil (Linha M) | 2–8 mm | Inspeção de máquinas e motores |
-| Videoscópio tipo split (HJ) | 0,85–8 mm | Precisão em componentes pequenos |
-| Robô de inspeção (FB20P) | Tubos 75–230 mm | Tubulações subterrâneas de grande porte |
-| Boroscópio ATEX (Série K EX) | 6 mm | Áreas classificadas com risco de explosão |
-| Boroscópio alta temperatura (Série K HT) | 6 mm | Ambientes de até 300°C |
-| Videoscópio com medição 3D (Série DZ) | 6 mm | Medição dimensional de defeitos |
-| Boroscópio termográfico (Série K Thermal) | 6 mm | Detecção de pontos quentes |
+| [Endoscópio para tubulações](/produtos/sk3208) | 8–25 mm | Tubulações industriais e sanitárias |
+| [Videoscópio portátil (Série P)](/produtos/p-series) | 2–8 mm | Inspeção de máquinas e motores |
+| [Videoscópio tipo split (Série HJ)](/produtos/hj-series) | 0,85–8 mm | Precisão em componentes pequenos |
+| [Robô de inspeção (FB20P)](/produtos/fb20p-system) | Tubos 75–230 mm | Tubulações subterrâneas de grande porte |
+| [Boroscópio ATEX (Série K EX)](/produtos/k-series-ex) | 6 mm | Áreas classificadas com risco de explosão |
+| [Boroscópio alta temperatura (Série K HT)](/produtos/k-series-ht) | 6 mm | Ambientes de até 300°C |
+| [Videoscópio com medição 3D (Série DZ)](/produtos/dz-series) | 6 mm | Medição dimensional de defeitos |
+| [Boroscópio termográfico (Série K Thermal)](/produtos/k-series-thermal) | 6 mm | Detecção de pontos quentes |
 
 ## Como escolher o boroscópio ideal
 
@@ -190,7 +191,8 @@ Boroscópios ATEX (ou IECEx) são certificados para operação segura em atmosfe
     category: 'Manutenção',
     date: '2024-01-15',
     readTime: '5 min',
-    image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=630&fit=crop',
+    image: '/blog/inspecao-tubulacoes.webp',
+    // fallback Unsplash: https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=630&fit=crop
     content: `
 A inspeção regular de tubulações é um dos pilares da manutenção industrial moderna. Sistemas de tubulação transportam fluidos críticos — vapor, óleo, gás e produtos químicos — sob pressão e temperatura elevadas, tornando qualquer falha potencialmente catastrófica.
 
@@ -221,7 +223,7 @@ A norma NR-13 (Vasos de Pressão e Tubulações) determina prazos máximos de in
 
 Empresas que adotam programas de inspeção preventiva reportam redução de até 40% nos custos de manutenção corretiva e aumento significativo da vida útil das tubulações. O retorno sobre o investimento em equipamentos de inspeção visual é tipicamente inferior a 12 meses.
 
-A BOROTEC Industrial oferece linha completa de endoscópios e videoscópios para inspeção de tubulações industriais de todos os diâmetros. Entre em contato para conhecer a solução ideal para sua planta.
+A BOROTEC Industrial oferece linha completa de [endoscópios para tubulações](/produtos/sk3208) e [videoscópios industriais](/produtos/k-series) para inspeção de todos os diâmetros. Entre em contato para conhecer a solução ideal para sua planta.
     `.trim(),
   },
   {
@@ -231,7 +233,8 @@ A BOROTEC Industrial oferece linha completa de endoscópios e videoscópios para
     category: 'Guia de Compra',
     date: '2024-01-10',
     readTime: '8 min',
-    image: 'https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=1200&h=630&fit=crop',
+    image: '/blog/como-escolher-boroscopio.webp',
+    // fallback Unsplash: https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=1200&h=630&fit=crop
     content: `
 Escolher o boroscópio certo é fundamental para garantir eficiência na inspeção e durabilidade do equipamento. Com tantas opções disponíveis no mercado, é fácil se perder nas especificações técnicas. Este guia resume os critérios mais importantes para a seleção correta.
 
@@ -260,9 +263,9 @@ Para inspeção de precisão — identificação de trincas finas, medição de 
 
 ## 5. Certificações especiais
 
-Para operação em ambientes com risco de explosão (refinarias, petroquímicas), exija certificação **ATEX** ou **IECEx**. A BOROTEC oferece a Série K EX, desenvolvida especificamente para áreas classificadas.
+Para operação em ambientes com risco de explosão (refinarias, petroquímicas), exija certificação **ATEX** ou **IECEx**. A BOROTEC oferece a [Série K EX](/produtos/k-series-ex), desenvolvida especificamente para áreas classificadas.
 
-Para ambientes de alta temperatura, verifique a faixa de operação do equipamento — a Série K HT opera de -20°C a 300°C.
+Para ambientes de alta temperatura, verifique a faixa de operação do equipamento — a [Série K HT](/produtos/k-series-ht) opera de -20°C a 300°C.
 
 ## 6. Conectividade e armazenamento
 
@@ -286,7 +289,8 @@ A equipe técnica da BOROTEC pode auxiliar na seleção do equipamento mais adeq
     category: 'Tecnologia',
     date: '2024-01-05',
     readTime: '6 min',
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=630&fit=crop',
+    image: '/blog/medicao-3d-inspecao.webp',
+    // fallback Unsplash: https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=630&fit=crop
     content: `
 A medição tridimensional em inspeção visual remota representa um salto qualitativo enorme em relação à inspeção convencional. Enquanto o videoscópio tradicional fornece imagem bidimensional, os sistemas 3D permitem quantificar defeitos com precisão — sem necessidade de desmontagem ou ferramentas adicionais.
 
@@ -317,7 +321,7 @@ Soldas com porosidade ou falta de fusão podem ser medidas em 3D para determinar
 
 ## Série DZ: medição 3D com nuvem de pontos
 
-A BOROTEC oferece a Série DZ, videoscópio com medição 3D avançada por mapa de nuvem de pontos. O sistema gera uma representação completa da superfície inspecionada, exportável para análise em software CAD.
+A BOROTEC oferece a [Série DZ](/produtos/dz-series), videoscópio com medição 3D avançada por mapa de nuvem de pontos. O sistema gera uma representação completa da superfície inspecionada, exportável para análise em software CAD.
 
 A precisão de medição da Série DZ é de ±0,1 mm em condições ideais — suficiente para a maioria das aplicações de controle de qualidade industrial.
 
@@ -335,7 +339,8 @@ Para inspeção de rotina sem necessidade de medição, videoscópios convencion
     category: 'Inovação',
     date: '2023-12-28',
     readTime: '7 min',
-    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&h=630&fit=crop',
+    image: '/blog/robos-inspecao.webp',
+    // fallback Unsplash: https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&h=630&fit=crop
     content: `
 A robótica de inspeção deixou de ser tecnologia futurista para se tornar realidade operacional em indústrias de processo, saneamento e infraestrutura. Robôs autopropelidos podem percorrer tubulações de grande diâmetro com câmeras de alta definição, sensores de distância e sistemas de gravação integrados — sem expor operadores a ambientes confinados e insalubres.
 
@@ -372,7 +377,7 @@ As rodas off-road garantem tração mesmo em superfícies irregulares e com pres
 
 Os robôs de inspeção mais modernos incorporam algoritmos de inteligência artificial para detecção automática de anomalias — corrosão, trincas, infiltrações — diretamente durante a inspeção, sem necessidade de revisão posterior das imagens.
 
-A Série Y da BOROTEC já conta com IA embarcada para detecção automática de defeitos, reduzindo o tempo de análise pós-inspeção em até 70%.
+A [Série Y](/produtos/y-series) da BOROTEC já conta com IA embarcada para detecção automática de defeitos, reduzindo o tempo de análise pós-inspeção em até 70%.
     `.trim(),
   },
   {
@@ -382,7 +387,8 @@ A Série Y da BOROTEC já conta com IA embarcada para detecção automática de 
     category: 'Segurança',
     date: '2023-12-20',
     readTime: '5 min',
-    image: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1200&h=630&fit=crop',
+    image: '/blog/certificacoes-atex-iecex.webp',
+    // fallback Unsplash: https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1200&h=630&fit=crop
     content: `
 Áreas classificadas são ambientes onde há risco de formação de atmosfera explosiva — mistura de ar com gases, vapores ou poeiras inflamáveis — em quantidade e concentração capazes de causar explosão na presença de uma fonte de ignição.
 
@@ -414,7 +420,7 @@ Além do risco à segurança, usar equipamento não certificado em área classif
 
 ## Série K EX: boroscópio certificado ATEX/IECEx
 
-A BOROTEC disponibiliza a Série K EX, videoscópio certificado para operação em áreas classificadas Zona 1 e Zona 2. O equipamento permite inspeção visual completa de componentes em refinarias, plantas petroquímicas e plataformas sem comprometer a segurança da instalação.
+A BOROTEC disponibiliza a [Série K EX](/produtos/k-series-ex), videoscópio certificado para operação em áreas classificadas Zona 1 e Zona 2. O equipamento permite inspeção visual completa de componentes em refinarias, plantas petroquímicas e plataformas sem comprometer a segurança da instalação.
 
 Ao especificar equipamentos de inspeção, sempre exija o certificado original e verifique se a categoria e o grupo de explosão são compatíveis com sua instalação.
     `.trim(),
@@ -426,7 +432,8 @@ Ao especificar equipamentos de inspeção, sempre exija o certificado original e
     category: 'Tecnologia',
     date: '2023-12-15',
     readTime: '6 min',
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=630&fit=crop',
+    image: '/blog/termografia-industrial.webp',
+    // fallback Unsplash: https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=630&fit=crop
     content: `
 A termografia industrial utiliza câmeras infravermelhas para capturar a distribuição de temperatura em equipamentos e instalações. Como praticamente toda falha mecânica ou elétrica gera calor antes de causar uma avaria visível, a termografia é uma das técnicas mais eficazes de manutenção preditiva.
 
@@ -459,7 +466,7 @@ Perda de isolamento em fornos, autoclaves e tubulações quentes é facilmente d
 
 ## Série K Termografia: inspeção visual e térmica integradas
 
-A BOROTEC oferece a Série K Termografia, que combina câmera de inspeção visual convencional com câmera infravermelha na mesma sonda. Isso permite inspecionar internamente componentes com acesso restrito — como motores fechados, caixas de engrenagens e tubulações — e obter simultaneamente a imagem visual e o mapa térmico.
+A BOROTEC oferece a [Série K Termografia](/produtos/k-series-thermal), que combina câmera de inspeção visual convencional com câmera infravermelha na mesma sonda. Isso permite inspecionar internamente componentes com acesso restrito — como motores fechados, caixas de engrenagens e tubulações — e obter simultaneamente a imagem visual e o mapa térmico.
 
 A integração de imagem visual e térmica em um único equipamento reduz o tempo de inspeção e facilita a correlação dos dados para o laudo técnico.
 
