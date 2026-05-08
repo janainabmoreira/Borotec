@@ -24,6 +24,7 @@ const ROUTES = [
   '/blog',
   '/privacidade',
   // Blog posts
+  '/blog/o-que-e-boroscopio-industrial',
   '/blog/importancia-inspecao-tubulacoes',
   '/blog/como-escolher-boroscopio',
   '/blog/tecnologia-3d-inspecao',

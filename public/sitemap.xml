@@ -40,6 +40,12 @@
 
   <!-- Blog -->
   <url>
+    <loc>https://borotec.com.br/blog/o-que-e-boroscopio-industrial</loc>
+    <lastmod>2026-05-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://borotec.com.br/blog/importancia-inspecao-tubulacoes</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>yearly</changefreq>

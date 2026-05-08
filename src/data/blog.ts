@@ -7,9 +7,182 @@ export interface BlogPost {
   readTime: string;
   image: string;
   content: string;
+  faqs?: { q: string; a: string }[];
 }
 
 export const blogPosts: BlogPost[] = [
+  {
+    id: 'o-que-e-boroscopio-industrial',
+    title: 'O que é um Boroscópio Industrial: Guia Completo + FAQ',
+    excerpt: 'Descubra o que é um boroscópio industrial, a diferença entre boroscópio, endoscópio e videoscópio, quais setores utilizam, como escolher o modelo certo e respostas para as 12 dúvidas mais frequentes do mercado.',
+    category: 'Guia Técnico',
+    date: '2026-05-07',
+    readTime: '12 min',
+    image: 'https://images.unsplash.com/photo-1581092795360-fd1f3ce52ebc?w=1200&h=630&fit=crop',
+    faqs: [
+      {
+        q: 'O que é um boroscópio industrial?',
+        a: 'Um boroscópio industrial é um equipamento de inspeção visual remota com sonda, câmera e LEDs integrados que permite visualizar o interior de máquinas, tubulações e estruturas inacessíveis sem necessidade de desmontagem. Os modelos modernos gravam em Full HD e possuem articulação 360° por joystick.',
+      },
+      {
+        q: 'Qual a diferença entre boroscópio, endoscópio e videoscópio?',
+        a: 'Os três termos são frequentemente usados como sinônimos. Boroscópio é o termo mais amplo. Endoscópio industrial refere-se a modelos com sonda flexível longa para tubulações. Videoscópio é o padrão mais avançado — câmera HD, tela integrada, articulação elétrica e gravação. Na prática, todos fazem inspeção visual interna sem desmontagem.',
+      },
+      {
+        q: 'O que é articulação 360° em boroscópios e por que ela importa?',
+        a: 'A articulação 360° permite que a câmera na ponta da sonda gire em qualquer direção por meio de um joystick elétrico. Isso é essencial para inspecionar curvas, bifurcações e toda a superfície interna de componentes — algo impossível com sondas rígidas ou de articulação limitada.',
+      },
+      {
+        q: 'Para que setores o boroscópio industrial é indicado?',
+        a: 'Petroquímica, geração de energia, siderurgia, saneamento, aeronáutico e manutenção industrial em geral. Qualquer operação que precise inspecionar turbinas, caldeiras, compressores, tubulações, soldas ou motores internamente sem desmontagem é uma aplicação para boroscópio.',
+      },
+      {
+        q: 'Boroscópio serve para inspecionar turbinas a gás?',
+        a: 'Sim. A inspeção de turbinas a gás é uma das aplicações mais críticas do boroscópio industrial. O videoscópio articulado com sonda de 6 mm e câmera Full HD permite visualizar palhetas, câmara de combustão e componentes internos sem remoção do motor. Para temperaturas extremas, existem modelos certificados para operação até 300°C.',
+      },
+      {
+        q: 'É possível inspecionar tubulações subterrâneas com boroscópio?',
+        a: 'Sim, com os equipamentos corretos. Para tubulações de pequeno diâmetro, endoscópios com cabo longo são suficientes. Para redes de esgoto e adutoras de 75 mm a 230 mm, robôs de inspeção com câmera elevável e rodas intercambiáveis são a solução ideal, operando com carretel de cabo de até 120 m.',
+      },
+      {
+        q: 'Boroscópio pode ser usado em manutenção preditiva?',
+        a: 'Sim, é uma das ferramentas fundamentais de manutenção preditiva. A inspeção visual periódica por boroscópio detecta corrosão, trincas, desgaste e obstruções antes que causem falhas. Isso reduz paradas não programadas, que custam em média 3 a 5 vezes mais que a manutenção preventiva.',
+      },
+      {
+        q: 'É difícil operar um boroscópio industrial?',
+        a: 'Os modelos modernos foram projetados para facilidade de operação. A interface é por joystick — similar a um controle — e a tela integrada exibe a imagem em tempo real. Com treinamento básico, qualquer técnico de manutenção consegue operar o equipamento em poucos minutos.',
+      },
+      {
+        q: 'O boroscópio funciona em ambientes escuros ou sem iluminação?',
+        a: 'Sim. Os boroscópios industriais possuem LEDs de alta potência na ponta da sonda, com intensidade ajustável. Isso garante imagens claras e nítidas mesmo em tubulações e câmaras totalmente sem luz externa.',
+      },
+      {
+        q: 'Como documentar e guardar as imagens da inspeção com boroscópio?',
+        a: 'Os videoscópios modernos possuem gravação integrada de vídeo e foto em cartão SD, sem depender de computador. Alguns modelos oferecem saída HDMI e WiFi para transferência imediata. As imagens são usadas para laudos técnicos, relatórios de conformidade e comparação entre inspeções periódicas.',
+      },
+      {
+        q: 'O que é boroscópio com medição 3D?',
+        a: 'Boroscópios com medição 3D utilizam estereoscopia ou luz estruturada para calcular dimensões reais de defeitos — comprimento, profundidade e área — diretamente na tela, sem software externo. São usados quando a norma exige medição quantitativa de defeitos como trincas em turbinas ou corrosão em vasos de pressão.',
+      },
+      {
+        q: 'O que é boroscópio ATEX e quando ele é obrigatório?',
+        a: 'Boroscópios ATEX (ou IECEx) são certificados para operação segura em atmosferas explosivas — ambientes com gases inflamáveis, vapores ou poeiras combustíveis. Em refinarias, plataformas offshore, terminais de GLP e outras áreas classificadas pela NR-10 e NR-20, o uso de equipamentos ATEX é obrigatório por lei.',
+      },
+    ],
+    content: `
+A inspeção visual interna de máquinas, turbinas, tubulações e estruturas metálicas é um dos pilares da manutenção preditiva moderna. O **boroscópio industrial** tornou possível ver o que está dentro — sem desmontar nenhuma peça — e hoje é equipamento indispensável em plantas petroquímicas, siderúrgicas, de energia e de saneamento em todo o Brasil.
+
+Neste guia respondemos as 12 dúvidas mais frequentes do mercado, com base nos produtos da BOROTEC Industrial e na realidade das operações industriais brasileiras.
+
+## O que é um boroscópio industrial?
+
+O **boroscópio industrial** é um equipamento de inspeção visual remota composto por sonda flexível ou rígida com câmera e iluminação LED integradas, conectada a um monitor ou controlador que exibe as imagens em tempo real.
+
+Ele permite que o inspetor ou técnico de manutenção veja o interior de tubulações, motores, turbinas, trocadores de calor, caldeiras, soldas e outros componentes inacessíveis — **sem necessidade de desmontagem**.
+
+Os modelos modernos gravam vídeo e foto em cartão SD, possuem sondas articuladas com joystick elétrico para navegação em 360°, e oferecem resolução Full HD 1080p com LEDs ajustáveis para iluminação em ambientes completamente escuros.
+
+## Qual a diferença entre boroscópio, endoscópio e videoscópio?
+
+Os três termos descrevem equipamentos de inspeção visual remota e são frequentemente usados como sinônimos no mercado brasileiro:
+
+- **Boroscópio**: termo mais amplo, abrange modelos ópticos (rígidos) e digitais com câmera integrada
+- **Endoscópio industrial**: sonda flexível longa, geralmente usada em tubulações e cavidades de difícil acesso
+- **Videoscópio**: modelo com câmera HD, tela colorida integrada, articulação elétrica da ponta por joystick e recursos de gravação — o padrão mais avançado do segmento
+
+Na prática, quando um inspetor busca "boroscópio industrial" ou "videoscópio articulado", está procurando o mesmo tipo de solução. A escolha correta depende da aplicação específica.
+
+## Para que setores o boroscópio é indicado?
+
+O boroscópio é utilizado em qualquer setor com componentes internos que precisam ser inspecionados sem desmontagem:
+
+- **Petroquímica e refino**: válvulas, trocadores de calor, vasos de pressão e linhas de processo
+- **Geração de energia**: turbinas a gás, caldeiras, compressores e geradores
+- **Siderurgia e metalurgia**: soldas, estruturas metálicas e equipamentos de laminação
+- **Saneamento básico**: redes de esgoto e adutoras inspecionadas com robôs de câmera
+- **Automotivo e aeronáutico**: diagnóstico de motores, câmaras de combustão e estruturas tubulares
+- **Manutenção predial**: dutos de ar-condicionado, instalações hidráulicas e estruturas ocultas
+
+## Tipos de boroscópio disponíveis
+
+| Tipo | Diâmetro da sonda | Aplicação principal |
+|---|---|---|
+| Endoscópio para tubulações | 8–25 mm | Tubulações industriais e sanitárias |
+| Videoscópio portátil (Linha M) | 2–8 mm | Inspeção de máquinas e motores |
+| Videoscópio tipo split (HJ) | 0,85–8 mm | Precisão em componentes pequenos |
+| Robô de inspeção (FB20P) | Tubos 75–230 mm | Tubulações subterrâneas de grande porte |
+| Boroscópio ATEX (Série K EX) | 6 mm | Áreas classificadas com risco de explosão |
+| Boroscópio alta temperatura (Série K HT) | 6 mm | Ambientes de até 300°C |
+| Videoscópio com medição 3D (Série DZ) | 6 mm | Medição dimensional de defeitos |
+| Boroscópio termográfico (Série K Thermal) | 6 mm | Detecção de pontos quentes |
+
+## Como escolher o boroscópio ideal
+
+Quatro variáveis definem a escolha correta:
+
+**1. Diâmetro da sonda**
+De 0,85 mm (injetores e componentes de precisão) a sondas de 25 mm para tubulações industriais. Robôs cobrem dutos de 75 mm a 230 mm.
+
+**2. Comprimento do cabo**
+De 1 m (máquinas próximas) até 120 m (tubulações longas). Cabos acima de 5 m geralmente requerem suporte de carretel.
+
+**3. Articulação da ponta**
+Rígidos para percursos lineares. Videoscópios com joystick 360° para curvas, bifurcações e inspeção completa de superfícies internas.
+
+**4. Ambiente de operação**
+IP67/IP68 para ambientes úmidos. Certificação ATEX/IECEx para áreas classificadas. Modelos de alta temperatura para ambientes acima de 100°C.
+
+## Perguntas Frequentes sobre Boroscópios (FAQ)
+
+### O que é um boroscópio industrial?
+
+Um boroscópio industrial é um equipamento de inspeção visual remota com sonda, câmera e LEDs integrados que permite visualizar o interior de máquinas, tubulações e estruturas inacessíveis sem necessidade de desmontagem. Os modelos modernos gravam em Full HD e possuem articulação 360° por joystick.
+
+### Qual a diferença entre boroscópio, endoscópio e videoscópio?
+
+Os três termos são frequentemente usados como sinônimos. Boroscópio é o termo mais amplo. Endoscópio industrial refere-se a modelos com sonda flexível longa para tubulações. Videoscópio é o padrão mais avançado — câmera HD, tela integrada, articulação elétrica e gravação. Na prática, todos realizam inspeção visual interna sem desmontagem.
+
+### O que é articulação 360° em boroscópios e por que ela importa?
+
+A articulação 360° permite que a câmera na ponta da sonda gire em qualquer direção por meio de um joystick elétrico. Isso é essencial para inspecionar curvas, bifurcações e toda a superfície interna de componentes — algo impossível com sondas rígidas ou de articulação limitada.
+
+### Para que setores o boroscópio industrial é indicado?
+
+Petroquímica, geração de energia, siderurgia, saneamento, aeronáutico e manutenção industrial em geral. Qualquer operação que precise inspecionar turbinas, caldeiras, compressores, tubulações, soldas ou motores internamente sem desmontagem é uma aplicação para boroscópio.
+
+### Boroscópio serve para inspecionar turbinas a gás?
+
+Sim. A inspeção de turbinas a gás é uma das aplicações mais críticas do boroscópio industrial. O videoscópio articulado com sonda de 6 mm e câmera Full HD permite visualizar palhetas, câmara de combustão e componentes internos sem remoção do motor. Para temperaturas extremas, existem modelos certificados para operação até 300°C.
+
+### É possível inspecionar tubulações subterrâneas com boroscópio?
+
+Sim, com os equipamentos corretos. Para tubulações de pequeno diâmetro, endoscópios com cabo longo são suficientes. Para redes de esgoto e adutoras de 75 mm a 230 mm de diâmetro, robôs de inspeção com câmera elevável e rodas intercambiáveis são a solução ideal, operando com carretel de cabo de até 120 m.
+
+### Boroscópio pode ser usado em manutenção preditiva?
+
+Sim, é uma das ferramentas fundamentais de manutenção preditiva. A inspeção visual periódica por boroscópio detecta corrosão, trincas, desgaste e obstruções antes que causem falhas. Isso reduz paradas não programadas, que custam em média 3 a 5 vezes mais que a manutenção preventiva.
+
+### É difícil operar um boroscópio industrial?
+
+Os modelos modernos foram projetados para facilidade de operação. A interface é por joystick — similar a um controle — e a tela integrada exibe a imagem em tempo real. Com treinamento básico, qualquer técnico de manutenção consegue operar o equipamento em poucos minutos.
+
+### O boroscópio funciona em ambientes escuros ou sem iluminação?
+
+Sim. Os boroscópios industriais possuem LEDs de alta potência na ponta da sonda, com intensidade ajustável. Isso garante imagens claras e nítidas mesmo em tubulações e câmaras totalmente sem luz externa.
+
+### Como documentar e guardar as imagens da inspeção com boroscópio?
+
+Os videoscópios modernos possuem gravação integrada de vídeo e foto em cartão SD, sem depender de computador. Alguns modelos oferecem saída HDMI e WiFi para transferência imediata. As imagens são usadas para laudos técnicos, relatórios de conformidade e comparação entre inspeções periódicas.
+
+### O que é boroscópio com medição 3D?
+
+Boroscópios com medição 3D utilizam estereoscopia ou luz estruturada para calcular dimensões reais de defeitos — comprimento, profundidade e área — diretamente na tela, sem software externo. São usados quando a norma exige medição quantitativa, como trincas em turbinas ou corrosão em vasos de pressão.
+
+### O que é boroscópio ATEX e quando ele é obrigatório?
+
+Boroscópios ATEX (ou IECEx) são certificados para operação segura em atmosferas explosivas — ambientes com gases inflamáveis, vapores ou poeiras combustíveis. Em refinarias, plataformas offshore, terminais de GLP e outras áreas classificadas pela NR-10 e NR-20, o uso de equipamentos ATEX é obrigatório por lei.
+    `.trim(),
+  },
   {
     id: 'importancia-inspecao-tubulacoes',
     title: 'A Importância da Inspeção de Tubulações na Indústria',
