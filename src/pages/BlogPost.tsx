@@ -116,7 +116,7 @@ const BlogPost = () => {
 
           {/* Hero image */}
           <div className="container mx-auto px-4 mb-10">
-            <div className="w-full h-64 md:h-96 overflow-hidden rounded-2xl">
+            <div className="w-full aspect-[19/10] overflow-hidden rounded-2xl">
               <img
                 src={post.image}
                 alt={post.title}

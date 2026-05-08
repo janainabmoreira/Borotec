@@ -65,12 +65,12 @@ const Blog = () => {
             {blogPosts.map((post) => (
               <Link key={post.id} to={`/blog/${post.id}`} className="block group">
                 <Card className="h-full bg-navy-dark/50 border-primary-foreground/10 hover:border-cyan/50 transition-all duration-300 overflow-hidden hover:shadow-lg hover:shadow-cyan/5">
-                  <div className="aspect-video overflow-hidden">
+                  <div className="aspect-[19/10] overflow-hidden">
                     <img
                       src={post.image}
                       alt={post.title}
                       loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
                     />
                   </div>
                   <CardHeader className="pb-3">
