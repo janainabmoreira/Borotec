@@ -146,7 +146,7 @@ const Search = () => {
                           to={`/produtos/${product.id}`}
                           className="group bg-navy-dark/50 backdrop-blur-sm border border-primary-foreground/10 rounded-xl overflow-hidden hover:border-cyan/40 hover:shadow-glow hover:-translate-y-1 transition-all duration-300"
                         >
-                          <div className="aspect-[4/3] overflow-hidden">
+                          <div className="aspect-square sm:aspect-[4/3] overflow-hidden">
                             <img
                               src={product.image}
                               alt={product.name}
@@ -197,7 +197,7 @@ const Search = () => {
                           to={`/blog/${post.id}`}
                           className="group bg-navy-dark/50 backdrop-blur-sm border border-primary-foreground/10 rounded-xl overflow-hidden hover:border-accent/40 hover:shadow-orange-glow hover:-translate-y-1 transition-all duration-300"
                         >
-                          <div className="aspect-video overflow-hidden">
+                          <div className="aspect-[4/3] md:aspect-video overflow-hidden">
                             <img
                               src={post.image}
                               alt={post.title}

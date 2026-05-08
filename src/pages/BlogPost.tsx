@@ -543,7 +543,7 @@ const BlogPost = () => {
                       onClick={scrollTop}
                       className="group bg-navy-dark/50 border border-primary-foreground/10 rounded-xl overflow-hidden hover:border-cyan/30 hover:-translate-y-1 transition-all duration-300"
                     >
-                      <div className="aspect-[19/10] overflow-hidden">
+                      <div className="aspect-[4/3] md:aspect-[19/10] overflow-hidden">
                         <img
                           src={related.image}
                           alt={related.title}

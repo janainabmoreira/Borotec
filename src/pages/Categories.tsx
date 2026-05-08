@@ -132,7 +132,7 @@ const Categories = () => {
                     >
                       <div className="h-full bg-navy-dark/50 backdrop-blur-sm border border-primary-foreground/10 rounded-xl overflow-hidden hover:border-cyan/40 transition-all duration-300 hover:shadow-glow hover:-translate-y-1">
                         {/* Image */}
-                        <div className="aspect-video overflow-hidden relative">
+                        <div className="aspect-[4/3] md:aspect-video overflow-hidden relative">
                           <img
                             src={category.image}
                             alt={`${category.name} — ${category.subtitle}`}
