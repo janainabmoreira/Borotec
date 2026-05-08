@@ -16,20 +16,15 @@
 <IfModule mod_headers.c>
   Header always unset Content-Security-Policy
 
-  # index.html: nunca cachear — garante que o browser sempre busque a versão mais nova
-  <FilesMatch "^index\.html$">
+  # HTML e JS/CSS: nunca cachear — garante versão mais nova sempre
+  <FilesMatch "\.(html|js|css)$">
     Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
     Header set Pragma "no-cache"
     Header set Expires "0"
   </FilesMatch>
 
-  # Assets com hash no nome (JS, CSS): cache longo — o hash muda a cada build
-  <FilesMatch "\.(js|css)$">
-    Header set Cache-Control "public, max-age=31536000, immutable"
-  </FilesMatch>
-
-  # Imagens e fontes: cache de 30 dias
-  <FilesMatch "\.(webp|png|jpg|jpeg|svg|gif|ico|woff2|woff|ttf)$">
+  # Imagens e fontes: cache de 30 dias (nomes fixos, raramente mudam)
+  <FilesMatch "\.(webp|png|jpg|jpeg|svg|gif|ico|woff2|woff|ttf|mp4)$">
     Header set Cache-Control "public, max-age=2592000"
   </FilesMatch>
 </IfModule>

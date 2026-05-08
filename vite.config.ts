@@ -84,6 +84,18 @@ export default defineConfig(({ mode }) => {
     plugins: plugins.filter(Boolean),
     build: {
       emptyOutDir: false,
+      rollupOptions: {
+        output: {
+          entryFileNames: 'assets/index.js',
+          chunkFileNames: 'assets/[name].js',
+          assetFileNames: ({ name }) => {
+            if (/\.(webp|png|jpg|jpeg|gif|svg|ico|mp4|woff2|woff|ttf)$/i.test(name ?? '')) {
+              return 'assets/[name][extname]';
+            }
+            return 'assets/[name][extname]';
+          },
+        },
+      },
     },
     resolve: {
       alias: {
