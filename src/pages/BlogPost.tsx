@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Calendar, Clock, ArrowLeft, ArrowRight, ChevronRight, ChevronDown,
-  Share2, Link2, Check, Search, Tag, Send,
+  Share2, Link2, Check, Search, Tag, Send, X,
 } from 'lucide-react';
 import { blogPosts } from '@/data/blog';
 
@@ -17,7 +17,6 @@ const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
 const BlogPost = () => {
   const { postId } = useParams();
-  const navigate = useNavigate();
   const post = blogPosts.find((p) => p.id === postId);
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -48,6 +47,17 @@ const BlogPost = () => {
 
   const recentPosts = useMemo(() =>
     post ? blogPosts.filter((p) => p.id !== post.id).slice(0, 4) : [], [post]);
+
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return blogPosts.filter((p) =>
+      p.title.toLowerCase().includes(q) ||
+      p.excerpt.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q) ||
+      p.content.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
   // Expensive HTML generation memoized — only recalculates when post changes, not on every keystroke
   const articleHtml = useMemo(() => {
@@ -111,13 +121,6 @@ const BlogPost = () => {
     navigator.clipboard.writeText(postUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/busca?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
   };
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
@@ -407,21 +410,62 @@ const BlogPost = () => {
                   <h3 className="font-heading font-bold text-sm text-primary-foreground mb-3 flex items-center gap-2">
                     <Search className="w-4 h-4 text-cyan" /> Buscar no Blog
                   </h3>
-                  <form onSubmit={handleSearch} className="flex gap-2">
+                  <div className="flex gap-2">
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Buscar artigos..."
+                      placeholder="Digite um termo ou frase..."
                       className="flex-1 px-3 py-2 bg-primary-foreground/10 border border-primary-foreground/20 rounded-lg text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/50 transition-colors font-body text-xs"
                     />
-                    <button
-                      type="submit"
-                      className="px-3 py-2 bg-cyan text-charcoal rounded-lg hover:bg-cyan/90 transition-colors"
-                    >
-                      <Search className="w-3.5 h-3.5" />
-                    </button>
-                  </form>
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="px-2 py-2 text-primary-foreground/40 hover:text-primary-foreground transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Resultados inline */}
+                  {searchQuery.trim() && (
+                    <div className="mt-3">
+                      {searchResults.length === 0 ? (
+                        <p className="text-xs text-primary-foreground/50 py-2 text-center font-body">
+                          Nenhum artigo encontrado para<br />
+                          <span className="text-primary-foreground/70 font-medium">"{searchQuery}"</span>
+                        </p>
+                      ) : (
+                        <ul className="space-y-2">
+                          <p className="text-[10px] text-primary-foreground/40 font-body mb-2 uppercase tracking-wide">
+                            {searchResults.length} {searchResults.length === 1 ? 'artigo encontrado' : 'artigos encontrados'}
+                          </p>
+                          {searchResults.map((result) => (
+                            <li key={result.id}>
+                              <Link
+                                to={`/blog/${result.id}`}
+                                onClick={() => { setSearchQuery(''); scrollTop(); }}
+                                className="flex gap-2 group p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors"
+                              >
+                                <img
+                                  src={result.image}
+                                  alt={result.title}
+                                  className="w-10 h-10 object-cover rounded flex-shrink-0"
+                                />
+                                <div className="min-w-0">
+                                  <p className="text-xs font-heading font-semibold text-primary-foreground group-hover:text-cyan transition-colors line-clamp-2 leading-snug">
+                                    {result.title}
+                                  </p>
+                                  <span className="text-[10px] text-cyan/70 font-body">{result.category}</span>
+                                </div>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Categories — links para /blog?categoria=... */}
