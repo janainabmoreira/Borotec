@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingCart, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, ShoppingCart, ChevronDown, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQuoteCart } from '@/contexts/QuoteCartContext';
 import QuoteCartSheet from './QuoteCartSheet';
@@ -23,8 +23,27 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const { itemCount } = useQuoteCart();
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/produtos?busca=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+      setIsSearchOpen(false);
+      setIsMenuOpen(false);
+    }
+  };
+
+  const openSearch = () => {
+    setIsSearchOpen(true);
+    setTimeout(() => searchInputRef.current?.focus(), 50);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -132,7 +151,44 @@ const Header = () => {
             </nav>
 
             {/* CTA & Cart */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {/* Desktop Search */}
+              <div className="hidden md:flex items-center">
+                {isSearchOpen ? (
+                  <form onSubmit={handleSearchSubmit} className="flex items-center">
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Buscar produtos..."
+                      className="w-48 px-3 py-1.5 text-sm bg-primary-foreground/10 border border-primary-foreground/20 rounded-l-lg text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/50 transition-colors"
+                    />
+                    <button
+                      type="submit"
+                      className="px-3 py-1.5 bg-cyan text-charcoal rounded-r-lg hover:bg-cyan/90 transition-colors"
+                    >
+                      <Search className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsSearchOpen(false)}
+                      className="ml-1 p-1.5 text-primary-foreground/60 hover:text-primary-foreground transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </form>
+                ) : (
+                  <button
+                    onClick={openSearch}
+                    className="p-2 text-primary-foreground/90 hover:text-cyan transition-colors"
+                    aria-label="Buscar"
+                  >
+                    <Search className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+
               <button
                 onClick={() => setIsCartOpen(true)}
                 className="relative p-2 text-primary-foreground/90 hover:text-cyan transition-colors"
@@ -217,6 +273,23 @@ const Header = () => {
                     {link.label}
                   </Link>
                 ))}
+
+                {/* Mobile Search */}
+                <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 mt-2">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar produtos..."
+                    className="flex-1 px-4 py-2.5 text-sm bg-primary-foreground/10 border border-primary-foreground/20 rounded-lg text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/50 transition-colors"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2.5 bg-cyan text-charcoal rounded-lg hover:bg-cyan/90 transition-colors"
+                  >
+                    <Search className="w-4 h-4" />
+                  </button>
+                </form>
 
                 {/* Mobile CTA */}
                 <Button variant="cta" className="mt-4" asChild>
