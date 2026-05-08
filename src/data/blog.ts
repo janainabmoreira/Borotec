@@ -18,7 +18,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Guia Técnico',
     date: '2026-05-07',
     readTime: '12 min',
-    image: '/blog/boroscopio-industrial.webp',
+    image: '/blog/boroscopio-industrial-inspecao.webp',
     // fallback Unsplash: https://images.unsplash.com/photo-1581092795360-fd1f3ce52ebc?w=1200&h=630&fit=crop
     faqs: [
       {
@@ -191,7 +191,7 @@ Boroscópios ATEX (ou IECEx) são certificados para operação segura em atmosfe
     category: 'Manutenção',
     date: '2024-01-15',
     readTime: '5 min',
-    image: '/blog/inspecao-tubulacoes.webp',
+    image: '/blog/inspecao-tubulacoes-industriais.webp',
     // fallback Unsplash: https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=630&fit=crop
     content: `
 A inspeção regular de tubulações é um dos pilares da manutenção industrial moderna. Sistemas de tubulação transportam fluidos críticos — vapor, óleo, gás e produtos químicos — sob pressão e temperatura elevadas, tornando qualquer falha potencialmente catastrófica.
@@ -233,7 +233,7 @@ A BOROTEC Industrial oferece linha completa de [endoscópios para tubulações](
     category: 'Guia de Compra',
     date: '2024-01-10',
     readTime: '8 min',
-    image: '/blog/como-escolher-boroscopio.webp',
+    image: '/blog/como-escolher-boroscopio-industrial.webp',
     // fallback Unsplash: https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=1200&h=630&fit=crop
     content: `
 Escolher o boroscópio certo é fundamental para garantir eficiência na inspeção e durabilidade do equipamento. Com tantas opções disponíveis no mercado, é fácil se perder nas especificações técnicas. Este guia resume os critérios mais importantes para a seleção correta.
@@ -289,7 +289,7 @@ A equipe técnica da BOROTEC pode auxiliar na seleção do equipamento mais adeq
     category: 'Tecnologia',
     date: '2024-01-05',
     readTime: '6 min',
-    image: '/blog/medicao-3d-inspecao.webp',
+    image: '/blog/medicao-3d-videoscopio-industrial.webp',
     // fallback Unsplash: https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=630&fit=crop
     content: `
 A medição tridimensional em inspeção visual remota representa um salto qualitativo enorme em relação à inspeção convencional. Enquanto o videoscópio tradicional fornece imagem bidimensional, os sistemas 3D permitem quantificar defeitos com precisão — sem necessidade de desmontagem ou ferramentas adicionais.
@@ -339,7 +339,7 @@ Para inspeção de rotina sem necessidade de medição, videoscópios convencion
     category: 'Inovação',
     date: '2023-12-28',
     readTime: '7 min',
-    image: '/blog/robos-inspecao.webp',
+    image: '/blog/robo-inspecao-tubulacoes.webp',
     // fallback Unsplash: https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&h=630&fit=crop
     content: `
 A robótica de inspeção deixou de ser tecnologia futurista para se tornar realidade operacional em indústrias de processo, saneamento e infraestrutura. Robôs autopropelidos podem percorrer tubulações de grande diâmetro com câmeras de alta definição, sensores de distância e sistemas de gravação integrados — sem expor operadores a ambientes confinados e insalubres.
@@ -387,7 +387,7 @@ A [Série Y](/produtos/y-series) da BOROTEC já conta com IA embarcada para dete
     category: 'Segurança',
     date: '2023-12-20',
     readTime: '5 min',
-    image: '/blog/certificacoes-atex-iecex.webp',
+    image: '/blog/boroscopio-atex-iecex-area-classificada.webp',
     // fallback Unsplash: https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1200&h=630&fit=crop
     content: `
 Áreas classificadas são ambientes onde há risco de formação de atmosfera explosiva — mistura de ar com gases, vapores ou poeiras inflamáveis — em quantidade e concentração capazes de causar explosão na presença de uma fonte de ignição.
@@ -432,7 +432,7 @@ Ao especificar equipamentos de inspeção, sempre exija o certificado original e
     category: 'Tecnologia',
     date: '2023-12-15',
     readTime: '6 min',
-    image: '/blog/termografia-industrial.webp',
+    image: '/blog/termografia-industrial-manutencao-preditiva.webp',
     // fallback Unsplash: https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=630&fit=crop
     content: `
 A termografia industrial utiliza câmeras infravermelhas para capturar a distribuição de temperatura em equipamentos e instalações. Como praticamente toda falha mecânica ou elétrica gera calor antes de causar uma avaria visível, a termografia é uma das técnicas mais eficazes de manutenção preditiva.
