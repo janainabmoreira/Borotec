@@ -19,7 +19,7 @@ const categoryInfo = [
     subtitle: 'Tubulações',
     description: 'Boroscópios e endoscópios especializados para inspeção de tubulações industriais de diversos diâmetros.',
     icon: Pipette,
-    color: 'from-cyan to-blue-500',
+    color: 'from-cyan to-navy',
     image: categoryTubulacoes
   },
   {
@@ -28,7 +28,7 @@ const categoryInfo = [
     subtitle: 'Robôs',
     description: 'Robôs de inspeção autônomos para tubulações de grande porte e ambientes de difícil acesso.',
     icon: Bot,
-    color: 'from-purple-500 to-pink-500',
+    color: 'from-navy to-navy-dark',
     image: categoryRobos
   },
   {
@@ -37,7 +37,7 @@ const categoryInfo = [
     subtitle: 'Máquinas',
     description: 'Endoscópios industriais para inspeção de máquinas, motores e equipamentos mecânicos.',
     icon: Cpu,
-    color: 'from-orange-500 to-red-500',
+    color: 'from-accent to-orange-dark',
     image: categoryMaquinas
   },
   {
@@ -46,7 +46,7 @@ const categoryInfo = [
     subtitle: 'Especiais',
     description: 'Equipamentos com funções especiais: medição 3D, termografia, UV, área classificada e alta temperatura.',
     icon: Sparkles,
-    color: 'from-yellow-500 to-orange-500',
+    color: 'from-cyan to-accent',
     image: categoryEspeciais
   },
   {
@@ -55,7 +55,7 @@ const categoryInfo = [
     subtitle: 'Poços',
     description: 'Sistemas de inspeção para poços artesianos, poços de petróleo e aplicações subaquáticas.',
     icon: Drill,
-    color: 'from-teal-500 to-cyan',
+    color: 'from-navy-dark to-charcoal',
     image: categoryPocos
   },
   {
@@ -64,7 +64,7 @@ const categoryInfo = [
     subtitle: 'Telescópicos',
     description: 'Câmeras telescópicas para inspeção em altura e locais de difícil alcance.',
     icon: Telescope,
-    color: 'from-indigo-500 to-purple-500',
+    color: 'from-orange to-cyan',
     image: categoryTelescopicos
   }
 ];

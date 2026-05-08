@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ShoppingCart, ChevronDown, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,9 +23,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { itemCount } = useQuoteCart();
@@ -35,14 +33,8 @@ const Header = () => {
     if (searchQuery.trim()) {
       navigate(`/produtos?busca=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
-      setIsSearchOpen(false);
       setIsMenuOpen(false);
     }
-  };
-
-  const openSearch = () => {
-    setIsSearchOpen(true);
-    setTimeout(() => searchInputRef.current?.focus(), 50);
   };
 
   useEffect(() => {
@@ -154,39 +146,21 @@ const Header = () => {
             <div className="flex items-center gap-2">
               {/* Desktop Search */}
               <div className="hidden md:flex items-center">
-                {isSearchOpen ? (
-                  <form onSubmit={handleSearchSubmit} className="flex items-center">
-                    <input
-                      ref={searchInputRef}
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Buscar produtos..."
-                      className="w-48 px-3 py-1.5 text-sm bg-primary-foreground/10 border border-primary-foreground/20 rounded-l-lg text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/50 transition-colors"
-                    />
-                    <button
-                      type="submit"
-                      className="px-3 py-1.5 bg-cyan text-charcoal rounded-r-lg hover:bg-cyan/90 transition-colors"
-                    >
-                      <Search className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsSearchOpen(false)}
-                      className="ml-1 p-1.5 text-primary-foreground/60 hover:text-primary-foreground transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </form>
-                ) : (
+                <form onSubmit={handleSearchSubmit} className="flex items-center">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar produtos..."
+                    className="w-44 focus:w-56 px-3 py-1.5 text-sm bg-primary-foreground/10 border border-primary-foreground/20 rounded-l-lg text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/50 transition-all duration-300"
+                  />
                   <button
-                    onClick={openSearch}
-                    className="p-2 text-primary-foreground/90 hover:text-cyan transition-colors"
-                    aria-label="Buscar"
+                    type="submit"
+                    className="px-3 py-1.5 bg-cyan text-charcoal rounded-r-lg hover:bg-cyan/90 transition-colors"
                   >
-                    <Search className="w-5 h-5" />
+                    <Search className="w-4 h-4" />
                   </button>
-                )}
+                </form>
               </div>
 
               <button
