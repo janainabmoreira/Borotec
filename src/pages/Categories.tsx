@@ -4,6 +4,12 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Pipette, Bot, Cpu, Sparkles, Telescope, Drill } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { products } from '@/data/products';
+import categoryTubulacoes from '@/assets/category-tubulacoes.webp';
+import categoryRobos from '@/assets/category-robos.webp';
+import categoryMaquinas from '@/assets/category-maquinas.webp';
+import categoryEspeciais from '@/assets/category-especiais.webp';
+import categoryPocos from '@/assets/category-pocos.webp';
+import categoryTelescopicos from '@/assets/category-telescopicos.webp';
 
 const categoryInfo = [
   {
@@ -13,7 +19,7 @@ const categoryInfo = [
     description: 'Boroscópios e endoscópios especializados para inspeção de tubulações industriais de diversos diâmetros.',
     icon: Pipette,
     color: 'from-cyan to-blue-500',
-    image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&h=400&fit=crop'
+    image: categoryTubulacoes
   },
   {
     id: 'Linha R - Robôs',
@@ -22,7 +28,7 @@ const categoryInfo = [
     description: 'Robôs de inspeção autônomos para tubulações de grande porte e ambientes de difícil acesso.',
     icon: Bot,
     color: 'from-purple-500 to-pink-500',
-    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop'
+    image: categoryRobos
   },
   {
     id: 'Linha M - Máquinas',
@@ -31,7 +37,7 @@ const categoryInfo = [
     description: 'Endoscópios industriais para inspeção de máquinas, motores e equipamentos mecânicos.',
     icon: Cpu,
     color: 'from-orange-500 to-red-500',
-    image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a2aa?w=600&h=400&fit=crop'
+    image: categoryMaquinas
   },
   {
     id: 'Linha E - Especiais',
@@ -40,7 +46,7 @@ const categoryInfo = [
     description: 'Equipamentos com funções especiais: medição 3D, termografia, UV, área classificada e alta temperatura.',
     icon: Sparkles,
     color: 'from-yellow-500 to-orange-500',
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop'
+    image: categoryEspeciais
   },
   {
     id: 'Linha P - Poços',
@@ -49,7 +55,7 @@ const categoryInfo = [
     description: 'Sistemas de inspeção para poços artesianos, poços de petróleo e aplicações subaquáticas.',
     icon: Drill,
     color: 'from-teal-500 to-cyan',
-    image: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&h=400&fit=crop'
+    image: categoryPocos
   },
   {
     id: 'Linha TC - Telescópicos',
@@ -58,7 +64,7 @@ const categoryInfo = [
     description: 'Câmeras telescópicas para inspeção em altura e locais de difícil alcance.',
     icon: Telescope,
     color: 'from-indigo-500 to-purple-500',
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=400&fit=crop'
+    image: categoryTelescopicos
   }
 ];
 
