@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -13,6 +13,8 @@ import { blogPosts } from '@/data/blog';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
 
+const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
 const BlogPost = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
@@ -24,6 +26,71 @@ const BlogPost = () => {
   const [comment, setComment] = useState({ name: '', text: '' });
   const [commentSent, setCommentSent] = useState(false);
   const [sendingComment, setSendingComment] = useState(false);
+
+  // All useMemo before early return (Rules of Hooks)
+  const postUrl = useMemo(() =>
+    post ? `https://borotec.com.br/blog/${post.id}` : '', [post]);
+
+  const currentIndex = useMemo(() =>
+    blogPosts.findIndex((p) => p.id === postId), [postId]);
+
+  const prevPost = useMemo(() =>
+    currentIndex > 0 ? blogPosts[currentIndex - 1] : null, [currentIndex]);
+
+  const nextPost = useMemo(() =>
+    currentIndex < blogPosts.length - 1 ? blogPosts[currentIndex + 1] : null, [currentIndex]);
+
+  const relatedPosts = useMemo(() =>
+    post ? blogPosts.filter((p) => p.id !== post.id).slice(0, 3) : [], [post]);
+
+  const categories = useMemo(() =>
+    Array.from(new Set(blogPosts.map((p) => p.category))), []);
+
+  const recentPosts = useMemo(() =>
+    post ? blogPosts.filter((p) => p.id !== post.id).slice(0, 4) : [], [post]);
+
+  // Expensive HTML generation memoized — only recalculates when post changes, not on every keystroke
+  const articleHtml = useMemo(() => {
+    if (!post) return '';
+    return post.content
+      .split('\n\n')
+      .map((block) => {
+        if (block.startsWith('## ')) {
+          return `<h2 class="text-2xl font-bold text-primary-foreground mt-10 mb-4">${block.slice(3)}</h2>`;
+        }
+        if (block.startsWith('### ')) {
+          return `<h3 class="text-xl font-semibold text-primary-foreground mt-8 mb-3">${block.slice(4)}</h3>`;
+        }
+        if (block.startsWith('- ') || block.includes('\n- ')) {
+          const items = block.split('\n').filter((l) => l.startsWith('- '))
+            .map((l) => `<li>${l.slice(2)}</li>`).join('');
+          return `<ul class="list-disc pl-6 space-y-1">${items}</ul>`;
+        }
+        if (block.includes('|')) {
+          const rows = block.trim().split('\n').filter((r) => !r.match(/^\|[-| ]+\|$/));
+          const [header, ...body] = rows;
+          const th = header.split('|').filter(Boolean)
+            .map((c) => `<th class="px-4 py-2 text-left font-semibold text-primary-foreground border-b border-primary-foreground/10">${c.trim()}</th>`)
+            .join('');
+          const trs = body.map((row) => {
+            const tds = row.split('|').filter(Boolean)
+              .map((c) => `<td class="px-4 py-2 text-primary-foreground/70">${c.trim().replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</td>`)
+              .join('');
+            return `<tr class="border-b border-primary-foreground/5">${tds}</tr>`;
+          }).join('');
+          return `<div class="overflow-x-auto my-4"><table class="w-full text-sm bg-navy-dark/30 rounded-xl overflow-hidden"><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table></div>`;
+        }
+        if (block.startsWith('**') && block.includes(':**')) {
+          return `<p class="text-primary-foreground/80">${block
+            .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
+            .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
+        }
+        return `<p class="text-primary-foreground/75 leading-relaxed">${block
+          .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
+          .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
+      })
+      .join('\n');
+  }, [post]);
 
   if (!post) {
     return (
@@ -39,20 +106,6 @@ const BlogPost = () => {
       </div>
     );
   }
-
-  const postUrl = `https://borotec.com.br/blog/${post.id}`;
-  const currentIndex = blogPosts.findIndex((p) => p.id === postId);
-  const prevPost = currentIndex > 0 ? blogPosts[currentIndex - 1] : null;
-  const nextPost = currentIndex < blogPosts.length - 1 ? blogPosts[currentIndex + 1] : null;
-  const relatedPosts = blogPosts.filter((p) => p.id !== post.id).slice(0, 3);
-
-  const categories = Array.from(new Set(blogPosts.map((p) => p.category)));
-  const recentPosts = blogPosts.filter((p) => p.id !== post.id).slice(0, 4);
-
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit', month: 'long', year: 'numeric',
-    });
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(postUrl);
@@ -166,7 +219,7 @@ const BlogPost = () => {
             </nav>
           </div>
 
-          {/* Hero image — reduzida */}
+          {/* Hero image */}
           <div className="container mx-auto px-4 mb-8">
             <div className="w-full aspect-[3/1] overflow-hidden rounded-2xl max-h-64">
               <img
@@ -186,7 +239,7 @@ const BlogPost = () => {
                 <div className="flex items-center gap-3 mb-4 flex-wrap">
                   <Badge variant="secondary">{post.category}</Badge>
                   <span className="flex items-center gap-1 text-sm text-primary-foreground/50">
-                    <Calendar className="w-4 h-4" /> {formatDate(post.date)}
+                    <Calendar className="w-4 h-4" /> {new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
                   </span>
                   <span className="flex items-center gap-1 text-sm text-primary-foreground/50">
                     <Clock className="w-4 h-4" /> {post.readTime} de leitura
@@ -231,49 +284,10 @@ const BlogPost = () => {
                   </button>
                 </div>
 
-                {/* Article body */}
+                {/* Article body — pre-computed, no recompute on search typing */}
                 <div
                   className="prose prose-invert prose-cyan max-w-none text-primary-foreground/80 leading-relaxed space-y-4"
-                  dangerouslySetInnerHTML={{
-                    __html: post.content
-                      .split('\n\n')
-                      .map((block) => {
-                        if (block.startsWith('## ')) {
-                          return `<h2 class="text-2xl font-bold text-primary-foreground mt-10 mb-4">${block.slice(3)}</h2>`;
-                        }
-                        if (block.startsWith('### ')) {
-                          return `<h3 class="text-xl font-semibold text-primary-foreground mt-8 mb-3">${block.slice(4)}</h3>`;
-                        }
-                        if (block.startsWith('- ') || block.includes('\n- ')) {
-                          const items = block.split('\n').filter((l) => l.startsWith('- '))
-                            .map((l) => `<li>${l.slice(2)}</li>`).join('');
-                          return `<ul class="list-disc pl-6 space-y-1">${items}</ul>`;
-                        }
-                        if (block.includes('|')) {
-                          const rows = block.trim().split('\n').filter((r) => !r.match(/^\|[-| ]+\|$/));
-                          const [header, ...body] = rows;
-                          const th = header.split('|').filter(Boolean)
-                            .map((c) => `<th class="px-4 py-2 text-left font-semibold text-primary-foreground border-b border-primary-foreground/10">${c.trim()}</th>`)
-                            .join('');
-                          const trs = body.map((row) => {
-                            const tds = row.split('|').filter(Boolean)
-                              .map((c) => `<td class="px-4 py-2 text-primary-foreground/70">${c.trim().replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</td>`)
-                              .join('');
-                            return `<tr class="border-b border-primary-foreground/5">${tds}</tr>`;
-                          }).join('');
-                          return `<div class="overflow-x-auto my-4"><table class="w-full text-sm bg-navy-dark/30 rounded-xl overflow-hidden"><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table></div>`;
-                        }
-                        if (block.startsWith('**') && block.includes(':**')) {
-                          return `<p class="text-primary-foreground/80">${block
-                            .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
-                            .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
-                        }
-                        return `<p class="text-primary-foreground/75 leading-relaxed">${block
-                          .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
-                          .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
-                      })
-                      .join('\n'),
-                  }}
+                  dangerouslySetInnerHTML={{ __html: articleHtml }}
                 />
 
                 {/* FAQ Accordion */}
@@ -362,6 +376,7 @@ const BlogPost = () => {
                   {prevPost ? (
                     <Link
                       to={`/blog/${prevPost.id}`}
+                      onClick={scrollTop}
                       className="group flex flex-col gap-1 p-4 bg-navy-dark/30 border border-primary-foreground/10 rounded-xl hover:border-cyan/30 transition-colors"
                     >
                       <span className="flex items-center gap-1 text-xs text-primary-foreground/40 font-body">
@@ -375,6 +390,7 @@ const BlogPost = () => {
                   {nextPost && (
                     <Link
                       to={`/blog/${nextPost.id}`}
+                      onClick={scrollTop}
                       className="group flex flex-col gap-1 p-4 bg-navy-dark/30 border border-primary-foreground/10 rounded-xl hover:border-cyan/30 transition-colors sm:text-right"
                     >
                       <span className="flex items-center gap-1 text-xs text-primary-foreground/40 font-body sm:justify-end">
@@ -419,7 +435,7 @@ const BlogPost = () => {
                   </form>
                 </div>
 
-                {/* Categories */}
+                {/* Categories — links para /blog?categoria=... */}
                 <div className="bg-navy-dark/50 border border-primary-foreground/10 rounded-xl p-5">
                   <h3 className="font-heading font-bold text-sm text-primary-foreground mb-3 flex items-center gap-2">
                     <Tag className="w-4 h-4 text-cyan" /> Categorias
@@ -430,7 +446,7 @@ const BlogPost = () => {
                       return (
                         <li key={cat}>
                           <Link
-                            to={`/busca?q=${encodeURIComponent(cat)}`}
+                            to={`/blog?categoria=${encodeURIComponent(cat)}`}
                             className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-body transition-colors ${
                               post.category === cat
                                 ? 'bg-cyan/10 text-cyan border border-cyan/20'
@@ -456,6 +472,7 @@ const BlogPost = () => {
                       <li key={recent.id}>
                         <Link
                           to={`/blog/${recent.id}`}
+                          onClick={scrollTop}
                           className="flex gap-3 group"
                         >
                           <img
@@ -490,6 +507,7 @@ const BlogPost = () => {
                     <Link
                       key={related.id}
                       to={`/blog/${related.id}`}
+                      onClick={scrollTop}
                       className="group bg-navy-dark/50 border border-primary-foreground/10 rounded-xl overflow-hidden hover:border-cyan/30 hover:-translate-y-1 transition-all duration-300"
                     >
                       <div className="aspect-[19/10] overflow-hidden">
