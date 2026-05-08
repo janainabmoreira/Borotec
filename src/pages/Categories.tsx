@@ -136,7 +136,7 @@ const Categories = () => {
                     to={`/produtos?categoria=${encodeURIComponent(category.id)}`}
                     className="group"
                   >
-                    <div className="h-full bg-navy-dark/50 border border-primary-foreground/10 rounded-xl overflow-hidden hover:border-cyan/40 transition-all duration-300 hover:shadow-glow hover:-translate-y-1">
+                    <div className="h-full bg-card border border-border rounded-xl overflow-hidden hover:border-cyan/40 transition-all duration-300 hover:shadow-glow hover:-translate-y-1">
                       {/* Image */}
                       <div className="aspect-video overflow-hidden relative">
                         <img
@@ -144,7 +144,7 @@ const Categories = () => {
                           alt={category.name}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
-                        <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-60`} />
+                        <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-30`} />
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="bg-black/30 backdrop-blur-sm rounded-full p-4 border border-white/20">
                             <IconComponent className="w-12 h-12 text-white" />
@@ -160,14 +160,14 @@ const Categories = () => {
                           </Badge>
                         </div>
 
-                        <h3 className="font-heading text-xl font-bold text-primary-foreground group-hover:text-cyan transition-colors mb-1">
+                        <h3 className="font-heading text-xl font-bold text-card-foreground group-hover:text-cyan transition-colors mb-1">
                           {category.name}
-                          <span className="text-base text-primary-foreground/50 font-normal ml-2">
+                          <span className="text-base text-muted-foreground font-normal ml-2">
                             {category.subtitle}
                           </span>
                         </h3>
 
-                        <p className="font-body text-sm text-primary-foreground/60 mb-4 leading-relaxed">
+                        <p className="font-body text-sm text-muted-foreground mb-4 leading-relaxed">
                           {category.description}
                         </p>
 
