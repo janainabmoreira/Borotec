@@ -9,6 +9,21 @@ import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import WhatsAppFloatingButton from '@/components/WhatsAppFloatingButton';
 
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'BOROTEC Industrial',
+  url: 'https://borotec.com.br',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://borotec.com.br/busca?q={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
@@ -61,6 +76,7 @@ const Index = () => {
         <meta name="twitter:title" content="BOROTEC | Equipamentos de Metrologia Óptica Industrial" />
         <meta name="twitter:description" content="Líder em equipamentos de inspeção industrial. Endoscópios, videoscópios e boroscópios com +20 anos de experiência. Tecnologia nacional." />
         <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
+        <script type="application/ld+json">{JSON.stringify(websiteSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
       </Helmet>
       <div className="min-h-screen">
