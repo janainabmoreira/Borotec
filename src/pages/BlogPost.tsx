@@ -219,17 +219,6 @@ const BlogPost = () => {
             </nav>
           </div>
 
-          {/* Hero image */}
-          <div className="container mx-auto px-4 mb-8">
-            <div className="w-full aspect-[3/1] overflow-hidden rounded-2xl max-h-64">
-              <img
-                src={post.image}
-                alt={post.title}
-                className="w-full h-full object-cover object-center"
-              />
-            </div>
-          </div>
-
           {/* Two-column layout */}
           <div className="container mx-auto px-4">
             <div className="flex flex-col lg:flex-row gap-10 items-start">
