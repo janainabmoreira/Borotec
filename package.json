@@ -66,7 +66,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
+    "@prerenderer/prerenderer": "^1.2.5",
     "@prerenderer/renderer-jsdom": "^1.1.9",
+    "@prerenderer/renderer-puppeteer": "^1.2.4",
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22.16.5",
     "@types/react": "^18.3.23",
