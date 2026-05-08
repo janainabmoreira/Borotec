@@ -1,18 +1,29 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, ArrowLeft, ArrowRight, ChevronRight, ChevronDown, Share2, Link2, Check } from 'lucide-react';
+import {
+  Calendar, Clock, ArrowLeft, ArrowRight, ChevronRight, ChevronDown,
+  Share2, Link2, Check, Search, Tag, Send,
+} from 'lucide-react';
 import { blogPosts } from '@/data/blog';
+
+const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
 
 const BlogPost = () => {
   const { postId } = useParams();
+  const navigate = useNavigate();
   const post = blogPosts.find((p) => p.id === postId);
+
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [comment, setComment] = useState({ name: '', text: '' });
+  const [commentSent, setCommentSent] = useState(false);
+  const [sendingComment, setSendingComment] = useState(false);
 
   if (!post) {
     return (
@@ -33,21 +44,50 @@ const BlogPost = () => {
   const currentIndex = blogPosts.findIndex((p) => p.id === postId);
   const prevPost = currentIndex > 0 ? blogPosts[currentIndex - 1] : null;
   const nextPost = currentIndex < blogPosts.length - 1 ? blogPosts[currentIndex + 1] : null;
-  const relatedPosts = blogPosts
-    .filter((p) => p.id !== post.id)
-    .slice(0, 3);
+  const relatedPosts = blogPosts.filter((p) => p.id !== post.id).slice(0, 3);
+
+  const categories = Array.from(new Set(blogPosts.map((p) => p.category)));
+  const recentPosts = blogPosts.filter((p) => p.id !== post.id).slice(0, 4);
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
+      day: '2-digit', month: 'long', year: 'numeric',
     });
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(postUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/busca?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const handleCommentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!comment.name.trim() || !comment.text.trim()) return;
+    setSendingComment(true);
+    try {
+      await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: `[Blog] Comentário em: ${post.title}`,
+          from_name: comment.name,
+          message: comment.text,
+          post_url: postUrl,
+        }),
+      });
+      setCommentSent(true);
+      setComment({ name: '', text: '' });
+    } finally {
+      setSendingComment(false);
+    }
   };
 
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${post.title} — ${postUrl}`)}`;
@@ -61,11 +101,7 @@ const BlogPost = () => {
     image: post.image,
     datePublished: post.date,
     author: { '@type': 'Organization', name: 'BOROTEC Industrial' },
-    publisher: {
-      '@type': 'Organization',
-      name: 'BOROTEC Industrial',
-      url: 'https://borotec.com.br',
-    },
+    publisher: { '@type': 'Organization', name: 'BOROTEC Industrial', url: 'https://borotec.com.br' },
     url: postUrl,
   };
 
@@ -112,9 +148,7 @@ const BlogPost = () => {
         <meta name="twitter:image" content={post.image} />
         <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
-        {faqSchema && (
-          <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-        )}
+        {faqSchema && <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>}
       </Helmet>
 
       <div className="min-h-screen bg-charcoal">
@@ -122,7 +156,7 @@ const BlogPost = () => {
 
         <main className="pt-24 pb-16">
           {/* Breadcrumb */}
-          <div className="container mx-auto px-4 mb-8">
+          <div className="container mx-auto px-4 mb-6">
             <nav className="flex items-center gap-2 text-sm text-primary-foreground/50">
               <Link to="/" className="hover:text-cyan transition-colors">Início</Link>
               <ChevronRight className="w-4 h-4" />
@@ -132,9 +166,9 @@ const BlogPost = () => {
             </nav>
           </div>
 
-          {/* Hero image */}
-          <div className="container mx-auto px-4 mb-10">
-            <div className="w-full aspect-[19/10] overflow-hidden rounded-2xl">
+          {/* Hero image — reduzida */}
+          <div className="container mx-auto px-4 mb-8">
+            <div className="w-full aspect-[3/1] overflow-hidden rounded-2xl max-h-64">
               <img
                 src={post.image}
                 alt={post.title}
@@ -143,205 +177,311 @@ const BlogPost = () => {
             </div>
           </div>
 
-          {/* Article content */}
-          <article className="container mx-auto px-4 max-w-3xl">
-            <div className="flex items-center gap-3 mb-6 flex-wrap">
-              <Badge variant="secondary">{post.category}</Badge>
-              <span className="flex items-center gap-1 text-sm text-primary-foreground/50">
-                <Calendar className="w-4 h-4" />
-                {formatDate(post.date)}
-              </span>
-              <span className="flex items-center gap-1 text-sm text-primary-foreground/50">
-                <Clock className="w-4 h-4" />
-                {post.readTime} de leitura
-              </span>
-            </div>
+          {/* Two-column layout */}
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col lg:flex-row gap-10 items-start">
 
-            <h1 className="font-heading text-3xl md:text-4xl font-black text-primary-foreground mb-6 leading-tight">
-              {post.title}
-            </h1>
-
-            <p className="text-lg text-primary-foreground/60 mb-8 leading-relaxed border-l-4 border-cyan pl-4">
-              {post.excerpt}
-            </p>
-
-            {/* Share bar */}
-            <div className="flex items-center gap-3 mb-10 pb-8 border-b border-primary-foreground/10">
-              <span className="flex items-center gap-1.5 text-sm text-primary-foreground/40 font-body">
-                <Share2 className="w-4 h-4" /> Compartilhar:
-              </span>
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-green-600/20 text-green-400 border border-green-600/30 rounded-lg text-xs font-medium hover:bg-green-600/30 transition-colors"
-              >
-                WhatsApp
-              </a>
-              <a
-                href={linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-lg text-xs font-medium hover:bg-blue-600/30 transition-colors"
-              >
-                LinkedIn
-              </a>
-              <button
-                onClick={handleCopyLink}
-                className="px-3 py-1.5 bg-primary-foreground/10 text-primary-foreground/60 border border-primary-foreground/20 rounded-lg text-xs font-medium hover:bg-primary-foreground/20 transition-colors flex items-center gap-1.5"
-              >
-                {copied ? <Check className="w-3 h-3 text-cyan" /> : <Link2 className="w-3 h-3" />}
-                {copied ? 'Copiado!' : 'Copiar link'}
-              </button>
-            </div>
-
-            {/* Article body */}
-            <div
-              className="prose prose-invert prose-cyan max-w-none text-primary-foreground/80 leading-relaxed space-y-4"
-              dangerouslySetInnerHTML={{
-                __html: post.content
-                  .split('\n\n')
-                  .map((block) => {
-                    if (block.startsWith('## ')) {
-                      return `<h2 class="text-2xl font-bold text-primary-foreground mt-10 mb-4">${block.slice(3)}</h2>`;
-                    }
-                    if (block.startsWith('### ')) {
-                      return `<h3 class="text-xl font-semibold text-primary-foreground mt-8 mb-3">${block.slice(4)}</h3>`;
-                    }
-                    if (block.startsWith('- ') || block.includes('\n- ')) {
-                      const items = block
-                        .split('\n')
-                        .filter((l) => l.startsWith('- '))
-                        .map((l) => `<li>${l.slice(2)}</li>`)
-                        .join('');
-                      return `<ul class="list-disc pl-6 space-y-1">${items}</ul>`;
-                    }
-                    if (block.includes('|')) {
-                      const rows = block.trim().split('\n').filter((r) => !r.match(/^\|[-| ]+\|$/));
-                      const [header, ...body] = rows;
-                      const th = header
-                        .split('|')
-                        .filter(Boolean)
-                        .map((c) => `<th class="px-4 py-2 text-left font-semibold text-primary-foreground border-b border-primary-foreground/10">${c.trim()}</th>`)
-                        .join('');
-                      const trs = body
-                        .map((row) => {
-                          const tds = row
-                            .split('|')
-                            .filter(Boolean)
-                            .map((c) => `<td class="px-4 py-2 text-primary-foreground/70">${c.trim().replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</td>`)
-                            .join('');
-                          return `<tr class="border-b border-primary-foreground/5">${tds}</tr>`;
-                        })
-                        .join('');
-                      return `<div class="overflow-x-auto my-4"><table class="w-full text-sm bg-navy-dark/30 rounded-xl overflow-hidden"><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table></div>`;
-                    }
-                    if (block.startsWith('**') && block.includes(':**')) {
-                      return `<p class="text-primary-foreground/80">${block
-                        .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
-                        .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
-                    }
-                    return `<p class="text-primary-foreground/75 leading-relaxed">${block
-                      .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
-                      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
-                  })
-                  .join('\n'),
-              }}
-            />
-
-            {/* FAQ Accordion */}
-            {post.faqs && post.faqs.length > 0 && (
-              <div className="mt-12">
-                <h2 className="font-heading text-2xl font-bold text-primary-foreground mb-6">
-                  Perguntas Frequentes
-                </h2>
-                <div className="space-y-3">
-                  {post.faqs.map((faq, i) => (
-                    <div
-                      key={i}
-                      className="bg-navy-dark/50 border border-primary-foreground/10 rounded-xl overflow-hidden"
-                    >
-                      <button
-                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                        className="w-full flex items-center justify-between px-5 py-4 text-left gap-4"
-                      >
-                        <span className="font-heading font-semibold text-sm md:text-base text-primary-foreground">
-                          {faq.q}
-                        </span>
-                        <ChevronDown
-                          className={`w-5 h-5 text-cyan flex-shrink-0 transition-transform duration-200 ${openFaq === i ? 'rotate-180' : ''}`}
-                        />
-                      </button>
-                      {openFaq === i && (
-                        <div className="px-5 pb-5 text-sm text-primary-foreground/70 leading-relaxed border-t border-primary-foreground/10 pt-4 font-body">
-                          {faq.a}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+              {/* ── ARTICLE ── */}
+              <article className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-4 flex-wrap">
+                  <Badge variant="secondary">{post.category}</Badge>
+                  <span className="flex items-center gap-1 text-sm text-primary-foreground/50">
+                    <Calendar className="w-4 h-4" /> {formatDate(post.date)}
+                  </span>
+                  <span className="flex items-center gap-1 text-sm text-primary-foreground/50">
+                    <Clock className="w-4 h-4" /> {post.readTime} de leitura
+                  </span>
                 </div>
-              </div>
-            )}
 
-            {/* CTA */}
-            <div className="mt-12 p-6 bg-navy-dark/50 border border-cyan/20 rounded-2xl text-center">
-              <p className="font-heading font-bold text-lg text-primary-foreground mb-2">
-                Precisa de um boroscópio para sua operação?
-              </p>
-              <p className="text-sm text-primary-foreground/60 mb-4 font-body">
-                Nossa equipe técnica indica o equipamento ideal para cada aplicação.
-              </p>
-              <Button variant="cta" asChild>
-                <Link to="/contato">Falar com um Especialista</Link>
-              </Button>
+                <h1 className="font-heading text-3xl md:text-4xl font-black text-primary-foreground mb-5 leading-tight">
+                  {post.title}
+                </h1>
+
+                <p className="text-lg text-primary-foreground/60 mb-7 leading-relaxed border-l-4 border-cyan pl-4">
+                  {post.excerpt}
+                </p>
+
+                {/* Share bar */}
+                <div className="flex items-center gap-3 mb-8 pb-7 border-b border-primary-foreground/10 flex-wrap">
+                  <span className="flex items-center gap-1.5 text-sm text-primary-foreground/40 font-body">
+                    <Share2 className="w-4 h-4" /> Compartilhar:
+                  </span>
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 bg-green-600/20 text-green-400 border border-green-600/30 rounded-lg text-xs font-medium hover:bg-green-600/30 transition-colors"
+                  >
+                    WhatsApp
+                  </a>
+                  <a
+                    href={linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-lg text-xs font-medium hover:bg-blue-600/30 transition-colors"
+                  >
+                    LinkedIn
+                  </a>
+                  <button
+                    onClick={handleCopyLink}
+                    className="px-3 py-1.5 bg-primary-foreground/10 text-primary-foreground/60 border border-primary-foreground/20 rounded-lg text-xs font-medium hover:bg-primary-foreground/20 transition-colors flex items-center gap-1.5"
+                  >
+                    {copied ? <Check className="w-3 h-3 text-cyan" /> : <Link2 className="w-3 h-3" />}
+                    {copied ? 'Copiado!' : 'Copiar link'}
+                  </button>
+                </div>
+
+                {/* Article body */}
+                <div
+                  className="prose prose-invert prose-cyan max-w-none text-primary-foreground/80 leading-relaxed space-y-4"
+                  dangerouslySetInnerHTML={{
+                    __html: post.content
+                      .split('\n\n')
+                      .map((block) => {
+                        if (block.startsWith('## ')) {
+                          return `<h2 class="text-2xl font-bold text-primary-foreground mt-10 mb-4">${block.slice(3)}</h2>`;
+                        }
+                        if (block.startsWith('### ')) {
+                          return `<h3 class="text-xl font-semibold text-primary-foreground mt-8 mb-3">${block.slice(4)}</h3>`;
+                        }
+                        if (block.startsWith('- ') || block.includes('\n- ')) {
+                          const items = block.split('\n').filter((l) => l.startsWith('- '))
+                            .map((l) => `<li>${l.slice(2)}</li>`).join('');
+                          return `<ul class="list-disc pl-6 space-y-1">${items}</ul>`;
+                        }
+                        if (block.includes('|')) {
+                          const rows = block.trim().split('\n').filter((r) => !r.match(/^\|[-| ]+\|$/));
+                          const [header, ...body] = rows;
+                          const th = header.split('|').filter(Boolean)
+                            .map((c) => `<th class="px-4 py-2 text-left font-semibold text-primary-foreground border-b border-primary-foreground/10">${c.trim()}</th>`)
+                            .join('');
+                          const trs = body.map((row) => {
+                            const tds = row.split('|').filter(Boolean)
+                              .map((c) => `<td class="px-4 py-2 text-primary-foreground/70">${c.trim().replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</td>`)
+                              .join('');
+                            return `<tr class="border-b border-primary-foreground/5">${tds}</tr>`;
+                          }).join('');
+                          return `<div class="overflow-x-auto my-4"><table class="w-full text-sm bg-navy-dark/30 rounded-xl overflow-hidden"><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table></div>`;
+                        }
+                        if (block.startsWith('**') && block.includes(':**')) {
+                          return `<p class="text-primary-foreground/80">${block
+                            .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
+                            .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
+                        }
+                        return `<p class="text-primary-foreground/75 leading-relaxed">${block
+                          .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
+                          .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
+                      })
+                      .join('\n'),
+                  }}
+                />
+
+                {/* FAQ Accordion */}
+                {post.faqs && post.faqs.length > 0 && (
+                  <div className="mt-12">
+                    <h2 className="font-heading text-2xl font-bold text-primary-foreground mb-6">
+                      Perguntas Frequentes
+                    </h2>
+                    <div className="space-y-3">
+                      {post.faqs.map((faq, i) => (
+                        <div key={i} className="bg-navy-dark/50 border border-primary-foreground/10 rounded-xl overflow-hidden">
+                          <button
+                            onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                            className="w-full flex items-center justify-between px-5 py-4 text-left gap-4"
+                          >
+                            <span className="font-heading font-semibold text-sm md:text-base text-primary-foreground">
+                              {faq.q}
+                            </span>
+                            <ChevronDown className={`w-5 h-5 text-cyan flex-shrink-0 transition-transform duration-200 ${openFaq === i ? 'rotate-180' : ''}`} />
+                          </button>
+                          {openFaq === i && (
+                            <div className="px-5 pb-5 text-sm text-primary-foreground/70 leading-relaxed border-t border-primary-foreground/10 pt-4 font-body">
+                              {faq.a}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* CTA */}
+                <div className="mt-12 p-6 bg-navy-dark/50 border border-cyan/20 rounded-2xl text-center">
+                  <p className="font-heading font-bold text-lg text-primary-foreground mb-2">
+                    Precisa de um boroscópio para sua operação?
+                  </p>
+                  <p className="text-sm text-primary-foreground/60 mb-4 font-body">
+                    Nossa equipe técnica indica o equipamento ideal para cada aplicação.
+                  </p>
+                  <Button variant="cta" asChild>
+                    <Link to="/contato">Falar com um Especialista</Link>
+                  </Button>
+                </div>
+
+                {/* Comments */}
+                <div className="mt-12">
+                  <h2 className="font-heading text-xl font-bold text-primary-foreground mb-6">
+                    Deixe sua dúvida ou comentário
+                  </h2>
+                  {commentSent ? (
+                    <div className="p-5 bg-cyan/10 border border-cyan/30 rounded-xl text-cyan font-body text-sm">
+                      Mensagem enviada! Nossa equipe responde em breve.
+                    </div>
+                  ) : (
+                    <form onSubmit={handleCommentSubmit} className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="Seu nome"
+                        value={comment.name}
+                        onChange={(e) => setComment({ ...comment, name: e.target.value })}
+                        required
+                        className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/50 transition-colors font-body text-sm"
+                      />
+                      <textarea
+                        placeholder="Escreva seu comentário ou dúvida..."
+                        value={comment.text}
+                        onChange={(e) => setComment({ ...comment, text: e.target.value })}
+                        required
+                        rows={4}
+                        className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/50 transition-colors font-body text-sm resize-none"
+                      />
+                      <button
+                        type="submit"
+                        disabled={sendingComment}
+                        className="flex items-center gap-2 px-6 py-3 bg-cyan text-charcoal font-semibold rounded-xl hover:bg-cyan/90 transition-colors text-sm disabled:opacity-50"
+                      >
+                        <Send className="w-4 h-4" />
+                        {sendingComment ? 'Enviando...' : 'Enviar comentário'}
+                      </button>
+                    </form>
+                  )}
+                </div>
+
+                {/* Prev / Next */}
+                <div className="mt-10 pt-8 border-t border-primary-foreground/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {prevPost ? (
+                    <Link
+                      to={`/blog/${prevPost.id}`}
+                      className="group flex flex-col gap-1 p-4 bg-navy-dark/30 border border-primary-foreground/10 rounded-xl hover:border-cyan/30 transition-colors"
+                    >
+                      <span className="flex items-center gap-1 text-xs text-primary-foreground/40 font-body">
+                        <ArrowLeft className="w-3 h-3" /> Anterior
+                      </span>
+                      <span className="text-sm font-heading font-semibold text-primary-foreground group-hover:text-cyan transition-colors line-clamp-2">
+                        {prevPost.title}
+                      </span>
+                    </Link>
+                  ) : <div />}
+                  {nextPost && (
+                    <Link
+                      to={`/blog/${nextPost.id}`}
+                      className="group flex flex-col gap-1 p-4 bg-navy-dark/30 border border-primary-foreground/10 rounded-xl hover:border-cyan/30 transition-colors sm:text-right"
+                    >
+                      <span className="flex items-center gap-1 text-xs text-primary-foreground/40 font-body sm:justify-end">
+                        Próximo <ArrowRight className="w-3 h-3" />
+                      </span>
+                      <span className="text-sm font-heading font-semibold text-primary-foreground group-hover:text-cyan transition-colors line-clamp-2">
+                        {nextPost.title}
+                      </span>
+                    </Link>
+                  )}
+                </div>
+
+                <div className="mt-6">
+                  <Link to="/blog" className="flex items-center gap-2 text-cyan hover:gap-3 transition-all font-medium text-sm">
+                    <ArrowLeft className="w-4 h-4" /> Ver todos os artigos
+                  </Link>
+                </div>
+              </article>
+
+              {/* ── SIDEBAR ── */}
+              <aside className="w-full lg:w-72 flex-shrink-0 space-y-6 lg:sticky lg:top-24">
+
+                {/* Search */}
+                <div className="bg-navy-dark/50 border border-primary-foreground/10 rounded-xl p-5">
+                  <h3 className="font-heading font-bold text-sm text-primary-foreground mb-3 flex items-center gap-2">
+                    <Search className="w-4 h-4 text-cyan" /> Buscar no Blog
+                  </h3>
+                  <form onSubmit={handleSearch} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Buscar artigos..."
+                      className="flex-1 px-3 py-2 bg-primary-foreground/10 border border-primary-foreground/20 rounded-lg text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:border-cyan/50 transition-colors font-body text-xs"
+                    />
+                    <button
+                      type="submit"
+                      className="px-3 py-2 bg-cyan text-charcoal rounded-lg hover:bg-cyan/90 transition-colors"
+                    >
+                      <Search className="w-3.5 h-3.5" />
+                    </button>
+                  </form>
+                </div>
+
+                {/* Categories */}
+                <div className="bg-navy-dark/50 border border-primary-foreground/10 rounded-xl p-5">
+                  <h3 className="font-heading font-bold text-sm text-primary-foreground mb-3 flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-cyan" /> Categorias
+                  </h3>
+                  <ul className="space-y-1">
+                    {categories.map((cat) => {
+                      const count = blogPosts.filter((p) => p.category === cat).length;
+                      return (
+                        <li key={cat}>
+                          <Link
+                            to={`/busca?q=${encodeURIComponent(cat)}`}
+                            className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-body transition-colors ${
+                              post.category === cat
+                                ? 'bg-cyan/10 text-cyan border border-cyan/20'
+                                : 'text-primary-foreground/60 hover:bg-primary-foreground/10 hover:text-primary-foreground'
+                            }`}
+                          >
+                            {cat}
+                            <span className="text-primary-foreground/30">{count}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+
+                {/* Recent posts */}
+                <div className="bg-navy-dark/50 border border-primary-foreground/10 rounded-xl p-5">
+                  <h3 className="font-heading font-bold text-sm text-primary-foreground mb-4">
+                    Artigos Recentes
+                  </h3>
+                  <ul className="space-y-4">
+                    {recentPosts.map((recent) => (
+                      <li key={recent.id}>
+                        <Link
+                          to={`/blog/${recent.id}`}
+                          className="flex gap-3 group"
+                        >
+                          <img
+                            src={recent.image}
+                            alt={recent.title}
+                            className="w-14 h-14 object-cover rounded-lg flex-shrink-0 group-hover:opacity-80 transition-opacity"
+                          />
+                          <div className="min-w-0">
+                            <p className="text-xs font-heading font-semibold text-primary-foreground group-hover:text-cyan transition-colors line-clamp-2 leading-snug">
+                              {recent.title}
+                            </p>
+                            <span className="text-[10px] text-primary-foreground/40 font-body mt-0.5 block">
+                              {recent.readTime}
+                            </span>
+                          </div>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </aside>
             </div>
 
-            {/* Prev / Next navigation */}
-            <div className="mt-10 pt-8 border-t border-primary-foreground/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {prevPost ? (
-                <Link
-                  to={`/blog/${prevPost.id}`}
-                  className="group flex flex-col gap-1 p-4 bg-navy-dark/30 border border-primary-foreground/10 rounded-xl hover:border-cyan/30 transition-colors"
-                >
-                  <span className="flex items-center gap-1 text-xs text-primary-foreground/40 font-body">
-                    <ArrowLeft className="w-3 h-3" /> Anterior
-                  </span>
-                  <span className="text-sm font-heading font-semibold text-primary-foreground group-hover:text-cyan transition-colors line-clamp-2">
-                    {prevPost.title}
-                  </span>
-                </Link>
-              ) : <div />}
-
-              {nextPost && (
-                <Link
-                  to={`/blog/${nextPost.id}`}
-                  className="group flex flex-col gap-1 p-4 bg-navy-dark/30 border border-primary-foreground/10 rounded-xl hover:border-cyan/30 transition-colors sm:text-right"
-                >
-                  <span className="flex items-center gap-1 text-xs text-primary-foreground/40 font-body sm:justify-end">
-                    Próximo <ArrowRight className="w-3 h-3" />
-                  </span>
-                  <span className="text-sm font-heading font-semibold text-primary-foreground group-hover:text-cyan transition-colors line-clamp-2">
-                    {nextPost.title}
-                  </span>
-                </Link>
-              )}
-            </div>
-
-            <div className="mt-6">
-              <Link
-                to="/blog"
-                className="flex items-center gap-2 text-cyan hover:gap-3 transition-all font-medium text-sm"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Ver todos os artigos
-              </Link>
-            </div>
-          </article>
-
-          {/* Related posts */}
-          {relatedPosts.length > 0 && (
-            <section className="container mx-auto px-4 mt-16 max-w-5xl">
-              <div className="border-t border-primary-foreground/10 pt-12">
+            {/* Related posts */}
+            {relatedPosts.length > 0 && (
+              <div className="mt-16 pt-12 border-t border-primary-foreground/10">
                 <h2 className="font-heading text-2xl font-bold text-primary-foreground mb-8">
                   Leia também
                 </h2>
@@ -375,8 +515,8 @@ const BlogPost = () => {
                   ))}
                 </div>
               </div>
-            </section>
-          )}
+            )}
+          </div>
         </main>
 
         <Footer />
