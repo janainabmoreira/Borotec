@@ -24,22 +24,34 @@ const Products = () => {
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     setSearchQuery('');
-    const params: Record<string, string> = {};
-    if (category !== 'Todos') params.categoria = category;
+    const params = new URLSearchParams(searchParams);
+    if (category !== 'Todos') {
+      params.set('categoria', category);
+    } else {
+      params.delete('categoria');
+    }
+    params.delete('busca');
     setSearchParams(params, { replace: true });
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSelectedCategory('Todos');
-    const params: Record<string, string> = {};
-    if (searchQuery.trim()) params.busca = searchQuery.trim();
+    const params = new URLSearchParams(searchParams);
+    params.delete('categoria');
+    if (searchQuery.trim()) {
+      params.set('busca', searchQuery.trim());
+    } else {
+      params.delete('busca');
+    }
     setSearchParams(params, { replace: true });
   };
 
   const handleClearSearch = () => {
     setSearchQuery('');
-    setSearchParams({}, { replace: true });
+    const params = new URLSearchParams(searchParams);
+    params.delete('busca');
+    setSearchParams(params, { replace: true });
   };
 
   const filteredProducts = useMemo(() => products.filter(p => {
