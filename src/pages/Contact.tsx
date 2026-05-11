@@ -28,6 +28,8 @@ const Contact = () => {
     (window as any).dataLayer = (window as any).dataLayer || [];
     (window as any).dataLayer.push({ event: 'Formulario_contato' });
 
+    const gclid = (document.getElementById('gclid') as HTMLInputElement)?.value || '';
+
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -40,6 +42,7 @@ const Contact = () => {
           phone: formData.phone || 'Não informado',
           company: formData.company || 'Não informada',
           message: formData.message,
+          ...(gclid && { gclid }),
         }),
       });
 
@@ -195,6 +198,7 @@ const Contact = () => {
                   </h2>
                   
                   <form onSubmit={handleSubmit} className="space-y-6">
+                    <input type="hidden" name="gclid" id="gclid" value="" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block font-body text-sm font-medium text-primary-foreground mb-2">

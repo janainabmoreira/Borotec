@@ -127,6 +127,8 @@ const BlogPost = () => {
     e.preventDefault();
     if (!comment.name.trim() || !comment.text.trim()) return;
     setSendingComment(true);
+    const gclid = (document.getElementById('gclid') as HTMLInputElement)?.value || '';
+
     try {
       await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -137,6 +139,7 @@ const BlogPost = () => {
           from_name: comment.name,
           message: comment.text,
           post_url: postUrl,
+          ...(gclid && { gclid }),
         }),
       });
       setCommentSent(true);
@@ -335,6 +338,7 @@ const BlogPost = () => {
                     </div>
                   ) : (
                     <form onSubmit={handleCommentSubmit} className="space-y-4">
+                      <input type="hidden" name="gclid" id="gclid" value="" />
                       <input
                         type="text"
                         placeholder="Seu nome"
