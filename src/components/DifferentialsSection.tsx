@@ -5,7 +5,7 @@ const differentials = [
   {
     icon: Cpu,
     title: 'Especialistas em Inspeção Industrial',
-    description: 'Empresa brasileira especializada em boroscópios de alta tecnologia, com suporte técnico local e atendimento em todo o Brasil.',
+    description: 'Empresa brasileira especializada em boroscópios de alta tecnologia, com suporte técnico e atendimento em todo o Brasil.',
   },
   {
     icon: Package,
