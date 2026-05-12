@@ -4,8 +4,8 @@ import { AnimateOnScroll } from '@/hooks/useScrollAnimation';
 const differentials = [
   {
     icon: Cpu,
-    title: 'Alta Tecnologia 100% Nacional',
-    description: 'Desenvolvemos e fabricamos equipamentos de ponta no Brasil, garantindo qualidade e suporte local.',
+    title: 'Especialistas em Inspeção Industrial',
+    description: 'Empresa brasileira especializada em boroscópios de alta tecnologia, com suporte técnico local e atendimento em todo o Brasil.',
   },
   {
     icon: Package,

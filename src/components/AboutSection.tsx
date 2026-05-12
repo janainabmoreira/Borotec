@@ -6,7 +6,7 @@ import aboutImage from '@/assets/about-company.webp';
 
 const AboutSection = () => {
   const highlights = [
-    'Fabricação e desenvolvimento nacional',
+    'Suporte técnico em todo o Brasil',
     'Equipe técnica altamente especializada',
     'Atendimento personalizado para cada cliente',
     'Parcerias com as maiores indústrias do Brasil',
@@ -50,7 +50,7 @@ const AboutSection = () => {
               </span>
               
               <h2 className="font-heading text-3xl md:text-4xl font-black text-foreground mb-6">
-                Líder em Soluções de <span className="text-gradient">Metrologia Óptica</span> Industrial
+                Referência em Soluções de <span className="text-gradient">Inspeção Visual</span> Industrial
               </h2>
               
               <p className="font-body text-lg text-muted-foreground leading-relaxed mb-6">
@@ -60,8 +60,8 @@ const AboutSection = () => {
               </p>
               
               <p className="font-body text-muted-foreground leading-relaxed mb-8">
-                Nossos endoscópios, videoscópios e boroscópios são desenvolvidos com a mais alta 
-                tecnologia, garantindo durabilidade, precisão e resultados confiáveis para 
+                Nossos endoscópios, videoscópios e boroscópios são selecionados com os mais altos
+                padrões de tecnologia, garantindo durabilidade, precisão e resultados confiáveis para
                 manutenção preventiva e controle de qualidade.
               </p>
 

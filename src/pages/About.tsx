@@ -16,7 +16,7 @@ const About = () => {
     {
       icon: Eye,
       title: 'Visão',
-      description: 'Ser reconhecida como a empresa líder em equipamentos de inspeção industrial no Brasil, referência em tecnologia e atendimento.'
+      description: 'Ser reconhecida como referência em equipamentos de inspeção industrial no Brasil, destacando-se pela tecnologia e qualidade no atendimento.'
     },
     {
       icon: Award,
@@ -29,18 +29,18 @@ const About = () => {
     { year: '2003', title: 'Fundação', description: 'Início das atividades com foco em equipamentos ópticos.' },
     { year: '2008', title: 'Expansão', description: 'Ampliação da linha de produtos e abertura de filiais.' },
     { year: '2013', title: 'Certificação', description: 'Conquista de certificações ISO 9001 e ISO 14001.' },
-    { year: '2018', title: 'Inovação', description: 'Lançamento de linha própria de videoscópios.' },
-    { year: '2023', title: 'Liderança', description: 'Consolidação como líder nacional em metrologia óptica.' },
+    { year: '2018', title: 'Inovação', description: 'Ampliação do portfólio com videoscópios de alta tecnologia.' },
+    { year: '2023', title: 'Consolidação', description: 'Consolidação como referência nacional em inspeção visual remota.' },
   ];
 
   return (
     <>
       <Helmet>
         <title>Sobre a BOROTEC | +20 Anos em Metrologia Óptica Industrial</title>
-        <meta name="description" content="Conheça a BOROTEC Industrial: fundada em 2003, líder nacional em equipamentos de inspeção industrial. Endoscópios, videoscópios e boroscópios com tecnologia nacional." />
+        <meta name="description" content="Conheça a BOROTEC: empresa brasileira especializada em boroscópios e videoscópios industriais. Mais de 20 anos atendendo a indústria nacional com suporte técnico e soluções em inspeção visual remota." />
         <link rel="canonical" href="https://borotec.com.br/sobre" />
-        <meta property="og:title" content="Sobre a BOROTEC | +20 Anos em Metrologia Óptica Industrial" />
-        <meta property="og:description" content="Fundada em 2003, a BOROTEC Industrial é referência nacional em metrologia óptica e equipamentos de inspeção industrial." />
+        <meta property="og:title" content="Sobre a BOROTEC | +20 Anos em Inspeção Visual Industrial" />
+        <meta property="og:description" content="Empresa brasileira especializada em boroscópios e videoscópios industriais para inspeção visual remota. Fundada em 2003, com atendimento em todo o Brasil." />
         <meta property="og:url" content="https://borotec.com.br/sobre" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
@@ -48,8 +48,8 @@ const About = () => {
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="pt_BR" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Sobre a BOROTEC | +20 Anos em Metrologia Óptica Industrial" />
-        <meta name="twitter:description" content="Fundada em 2003, a BOROTEC Industrial é referência nacional em metrologia óptica e equipamentos de inspeção industrial." />
+        <meta name="twitter:title" content="Sobre a BOROTEC | +20 Anos em Inspeção Visual Industrial" />
+        <meta name="twitter:description" content="Empresa brasileira especializada em boroscópios e videoscópios industriais para inspeção visual remota." />
         <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
       </Helmet>
     <div className="min-h-screen bg-charcoal">
@@ -101,12 +101,12 @@ const About = () => {
                   nos tornamos referência no setor.
                 </p>
                 <p className="font-body text-primary-foreground/50 leading-relaxed mb-6">
-                  Nossa trajetória é marcada pela busca constante por inovação, pelo desenvolvimento 
-                  de tecnologia nacional e pelo compromisso inabalável com a satisfação dos nossos clientes.
+                  Nossa trajetória é marcada pela busca constante por inovação, pela entrega de
+                  soluções de alta performance e pelo compromisso inabalável com a satisfação dos nossos clientes.
                 </p>
                 
                 <ul className="space-y-3">
-                  {['Tecnologia 100% nacional', 'Equipe técnica especializada', 'Suporte e assistência em todo Brasil', 'Compromisso com qualidade'].map((item) => (
+                  {['Especialização em inspeção visual remota', 'Equipe técnica especializada', 'Suporte e assistência em todo Brasil', 'Compromisso com qualidade'].map((item) => (
                     <li key={item} className="flex items-center gap-3">
                       <div className="w-6 h-6 bg-cyan/10 rounded-full flex items-center justify-center">
                         <CheckCircle className="w-4 h-4 text-cyan" />
