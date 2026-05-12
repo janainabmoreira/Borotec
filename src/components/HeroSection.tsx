@@ -47,7 +47,7 @@ const HeroSection = () => {
             </span>
           </div>
 
-          <h1 className="font-heading text-3xl md:text-5xl lg:text-7xl font-black text-primary-foreground leading-tight mb-4 md:mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+          <h1 className="font-heading text-2xl md:text-4xl lg:text-5xl font-black text-primary-foreground leading-tight mb-4 md:mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
             Boroscópios e Videoscópios Industriais{' '}
             <span className="text-gradient">para Inspeção sem Desmontagem</span>
           </h1>
