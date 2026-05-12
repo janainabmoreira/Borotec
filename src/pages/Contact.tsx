@@ -76,8 +76,8 @@ const Contact = () => {
     {
       icon: Phone,
       title: 'Telefone',
-      info: '(11) 4002-8922',
-      action: 'tel:+551140028922'
+      info: '(11) 93287-6195',
+      action: 'tel:+5511932876195'
     },
     {
       icon: Mail,
