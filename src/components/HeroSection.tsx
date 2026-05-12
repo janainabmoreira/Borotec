@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroVideo from '@/assets/hero-video.mp4';
+import heroBg from '@/assets/hero-bg.webp';
 
 const WHATSAPP_NUMBER = '5511932876195';
 const WHATSAPP_MESSAGE = 'Olá! Gostaria de mais informações sobre os produtos da BOROTEC.';
@@ -17,6 +18,7 @@ const HeroSection = () => {
           muted
           playsInline
           preload="none"
+          poster={heroBg}
           className="w-full h-full object-cover"
         >
           <source src={heroVideo} type="video/mp4" />
