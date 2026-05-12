@@ -97,6 +97,20 @@ export default defineConfig(({ mode }) => {
             }
             return 'assets/[name][extname]';
           },
+          manualChunks(id) {
+            if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router-dom/')) {
+              return 'vendor';
+            }
+            if (id.includes('node_modules/@radix-ui/')) {
+              return 'radix';
+            }
+            if (id.includes('node_modules/recharts/') || id.includes('node_modules/d3-')) {
+              return 'charts';
+            }
+            if (id.includes('node_modules/@fontsource/')) {
+              return 'fonts';
+            }
+          },
         },
       },
     },
