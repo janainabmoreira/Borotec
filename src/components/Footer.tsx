@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Linkedin, Instagram, Youtube } from 'lucide-react';
 import logo from '@/assets/logo-borotec.webp';
-
-const WHATSAPP_NUMBER = '5511932876195';
+import { getWhatsAppUrl } from '@/config/whatsapp';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -97,10 +96,11 @@ const Footer = () => {
                 <div className="w-10 h-10 bg-cyan/10 rounded-lg flex items-center justify-center flex-shrink-0">
                   <Phone className="w-5 h-5 text-cyan" />
                 </div>
-                <a 
-                  href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                <a
+                  href={getWhatsAppUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Contato pelo WhatsApp"
                   className="font-body text-sm text-primary-foreground/60 hover:text-cyan transition-colors"
                 >
                   (11) 93287-6195

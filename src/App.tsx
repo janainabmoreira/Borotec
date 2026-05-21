@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { QuoteCartProvider } from "./contexts/QuoteCartContext";
+import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/busca" element={<Search />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <WhatsAppFloatingButton />
         </BrowserRouter>
       </QuoteCartProvider>
     </TooltipProvider>

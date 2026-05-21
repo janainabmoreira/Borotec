@@ -76,6 +76,10 @@ export default {
           light: "hsl(var(--steel-light))",
         },
         charcoal: "hsl(var(--charcoal))",
+        whatsapp: {
+          DEFAULT: '#25D366',
+          dark: '#1ebe5d',
+        },
       },
       fontFamily: {
         heading: ["Montserrat", "sans-serif"],

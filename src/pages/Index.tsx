@@ -7,7 +7,6 @@ import AboutSection from '@/components/AboutSection';
 import ClientsSection from '@/components/ClientsSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
-import WhatsAppFloatingButton from '@/components/WhatsAppFloatingButton';
 
 const websiteSchema = {
   '@context': 'https://schema.org',
@@ -92,7 +91,6 @@ const Index = () => {
           <CTASection />
         </main>
         <Footer />
-        <WhatsAppFloatingButton />
       </div>
     </>
   );

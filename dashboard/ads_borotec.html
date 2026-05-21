@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Borotec - Análise de Campanha</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --borotec-blue: #003D7A;
+            --borotec-light-blue: #0056A3;
+            --borotec-accent: #00A8E8;
+            --success-green: #10b981;
+            --warning-yellow: #f59e0b;
+            --danger-red: #ef4444;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--borotec-blue) 0%, var(--borotec-light-blue) 100%);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            margin-bottom: 30px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex: 1;
+        }
+
+        .logo-space {
+            width: 150px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            padding: 10px;
+        }
+
+        .header-info h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header-info p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 10px;
+        }
+
+        .period-info {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* ALERT BOX */
+        .alert-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-left: 5px solid var(--danger-red);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .alert-box h3 {
+            color: var(--danger-red);
+            font-size: 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-box p {
+            color: #991b1b;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* HEALTH SCORE */
+        .health-score {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .score-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        .score-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-gray);
+        }
+
+        /* MAIN CARDS */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--borotec-blue), var(--borotec-accent));
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .metric-icon {
+            font-size: 32px;
+        }
+
+        .metric-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .metric-status.good {
+            background: var(--success-green);
+        }
+
+        .metric-status.warning {
+            background: var(--warning-yellow);
+        }
+
+        .metric-status.bad {
+            background: var(--danger-red);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .metric-description {
+            font-size: 13px;
+            color: var(--text-gray);
+            line-height: 1.5;
+        }
+
+        /* TOP KEYWORDS */
+        .keywords-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+        }
+
+        .keywords-section h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .keyword-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .keyword-item:hover {
+            background: #e0f2fe;
+            transform: translateX(5px);
+        }
+
+        .keyword-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .keyword-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .keyword-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* CHARTS */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .chart-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .chart-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--bg-light);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* FUNNEL */
+        .funnel-stages {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .funnel-stage {
+            position: relative;
+            padding: 20px;
+            background: linear-gradient(90deg, var(--bg-light) 0%, white 100%);
+            border-radius: 10px;
+            border-left: 4px solid var(--borotec-blue);
+            transition: all 0.3s ease;
+        }
+
+        .funnel-stage:hover {
+            transform: translateX(10px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .funnel-stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .funnel-stage-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text-dark);
+        }
+
+        .funnel-stage-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--borotec-blue);
+        }
+
+        .funnel-stage-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .funnel-stage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--borotec-blue), var(--borotec-accent));
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .funnel-stage-conversion {
+            margin-top: 8px;
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
+        /* DEMOGRAPHICS */
+        .demographics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* INSIGHTS */
+        .insights-section {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 30px;
+        }
+
+        .insights-section h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .insights-section h2::before {
+            content: '🧠';
+            font-size: 36px;
+        }
+
+        .insights-section > p {
+            color: var(--text-gray);
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .insight-card {
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid;
+            background: var(--bg-light);
+            transition: all 0.3s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .insight-card.positive {
+            border-color: var(--success-green);
+            background: #ecfdf5;
+        }
+
+        .insight-card.negative {
+            border-color: var(--danger-red);
+            background: #fef2f2;
+        }
+
+        .insight-card.warning {
+            border-color: var(--warning-yellow);
+            background: #fffbeb;
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .insight-icon {
+            font-size: 28px;
+        }
+
+        .insight-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .insight-description {
+            color: var(--text-gray);
+            line-height: 1.7;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        .insight-reason {
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .insight-reason strong {
+            color: var(--text-dark);
+        }
+
+        /* RECOMMENDATIONS */
+        .recommendations-section {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 30px;
+            border-left: 5px solid var(--success-green);
+        }
+
+        .recommendations-section h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .recommendation-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .recommendation-item h4 {
+            color: var(--success-green);
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .recommendation-item p {
+            color: var(--text-gray);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-gray);
+            font-size: 14px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .logo-space {
+                width: 100px;
+                height: 50px;
+            }
+
+            .header-info h1 {
+                font-size: 20px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .demographics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* DEVICE STATS */
+        .device-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .device-item {
+            flex: 1;
+            padding: 15px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .device-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .device-percentage {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--borotec-blue);
+        }
+
+        .device-label {
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo-space">
+                INSERIR<br>LOGO<br>BOROTEC
+            </div>
+            <div class="header-info">
+                <h1>Campanha Boroscópio Industrial - Maio 2026</h1>
+                <p>BRTC_Search_Leads_Validacao_BoroscopioIndustrial_Mai2026</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="platform-badge">🔍 Google Ads</div>
+            <div class="period-info">Período: 12 a 17 de Maio de 2026 (5 dias ativos)</div>
+        </div>
+    </div>
+
+    <!-- ALERT CRÍTICO -->
+    <div class="alert-box">
+        <h3>🚨 Alerta Crítico de Conversão</h3>
+        <p><strong>Sua campanha não gerou NENHUMA conversão ainda!</strong> Isso significa que, apesar das pessoas clicarem nos anúncios, ninguém está preenchendo formulários ou realizando a ação desejada. Isso é um problema sério que precisa ser resolvido urgentemente para não desperdiçar seu investimento.</p>
+    </div>
+
+    <!-- HEALTH SCORE -->
+    <div class="health-score">
+        <h2>Saúde Geral da Campanha</h2>
+        <div class="score-circle">
+            <canvas id="scoreChart"></canvas>
+            <div class="score-value" style="color: #f59e0b;">52</div>
+        </div>
+        <div class="score-label">Precisa melhorar ⚠️</div>
+        <p style="margin-top: 15px; color: var(--text-gray); font-size: 14px;">
+            Seu CTR é excelente, mas zero conversões puxa o score para baixo
+        </p>
+    </div>
+
+    <!-- MAIN METRICS -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon">💰</div>
+                <div class="metric-status good"></div>
+            </div>
+            <div class="metric-label">Investimento Total</div>
+            <div class="metric-value">R$ 68,23</div>
+            <div class="metric-description">Valor total investido em anúncios durante o período analisado</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon">👁️</div>
+                <div class="metric-status warning"></div>
+            </div>
+            <div class="metric-label">Impressões</div>
+            <div class="metric-value">398</div>
+            <div class="metric-description">Quantas vezes seu anúncio foi exibido para as pessoas no Google</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon">🖱️</div>
+                <div class="metric-status warning"></div>
+            </div>
+            <div class="metric-label">Cliques</div>
+            <div class="metric-value">21</div>
+            <div class="metric-description">Número de pessoas que clicaram no seu anúncio</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon">📊</div>
+                <div class="metric-status good"></div>
+            </div>
+            <div class="metric-label">CTR</div>
+            <div class="metric-value">5,28%</div>
+            <div class="metric-description">Excelente! Seu anúncio é muito atrativo - de cada 100 visualizações, 5 pessoas clicam</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon">💸</div>
+                <div class="metric-status good"></div>
+            </div>
+            <div class="metric-label">CPC Médio</div>
+            <div class="metric-value">R$ 3,25</div>
+            <div class="metric-description">Custo médio que você paga por cada clique no anúncio - está bom!</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon">🎯</div>
+                <div class="metric-status bad"></div>
+            </div>
+            <div class="metric-label">Conversões</div>
+            <div class="metric-value" style="color: var(--danger-red);">0</div>
+            <div class="metric-description">CRÍTICO: Nenhuma pessoa realizou a ação desejada (preencher formulário, comprar, etc)</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon">📉</div>
+                <div class="metric-status warning"></div>
+            </div>
+            <div class="metric-label">Taxa de Conversão</div>
+            <div class="metric-value">0%</div>
+            <div class="metric-description">Percentual de cliques que viraram conversões - precisa urgentemente melhorar</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon">📱</div>
+                <div class="metric-status good"></div>
+            </div>
+            <div class="metric-label">Dispositivo Principal</div>
+            <div class="metric-value">Mobile</div>
+            <div class="metric-description">59% dos cliques vieram de celulares - sua landing PRECISA ser mobile-friendly</div>
+        </div>
+    </div>
+
+    <!-- TOP KEYWORDS -->
+    <div class="keywords-section">
+        <h3>🔑 Palavras-Chave Principais</h3>
+        <div class="keyword-item">
+            <div class="keyword-name">🥇 boroscópio industrial</div>
+            <div class="keyword-stats">
+                <div class="keyword-stat">
+                    <span>💰</span> R$ 17,03
+                </div>
+                <div class="keyword-stat">
+                    <span>🖱️</span> 3 cliques
+                </div>
+                <div class="keyword-stat">
+                    <span>📊</span> CTR: 14,29%
+                </div>
+            </div>
+        </div>
+        <div class="keyword-item">
+            <div class="keyword-name">🥈 boroscópio</div>
+            <div class="keyword-stats">
+                <div class="keyword-stat">
+                    <span>💰</span> R$ 12,11
+                </div>
+                <div class="keyword-stat">
+                    <span>🖱️</span> 3 cliques
+                </div>
+                <div class="keyword-stat">
+                    <span>📊</span> CTR: 2,78%
+                </div>
+            </div>
+        </div>
+        <div class="keyword-item">
+            <div class="keyword-name">🥉 endoscópio industrial</div>
+            <div class="keyword-stats">
+                <div class="keyword-stat">
+                    <span>💰</span> R$ 6,20
+                </div>
+                <div class="keyword-stat">
+                    <span>🖱️</span> 1 clique
+                </div>
+                <div class="keyword-stat">
+                    <span>📊</span> CTR: 14,29%
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FUNNEL + DEVICES -->
+    <div class="charts-section">
+        <div class="chart-card">
+            <h3>🎯 Funil de Conversão</h3>
+            <div class="funnel-stages">
+                <div class="funnel-stage">
+                    <div class="funnel-stage-header">
+                        <div class="funnel-stage-name">👁️ Impressões</div>
+                        <div class="funnel-stage-value">398</div>
+                    </div>
+                    <div class="funnel-stage-bar">
+                        <div class="funnel-stage-fill" style="width: 100%"></div>
+                    </div>
+                    <div class="funnel-stage-conversion">Base: 100% do público alcançado</div>
+                </div>
+
+                <div class="funnel-stage">
+                    <div class="funnel-stage-header">
+                        <div class="funnel-stage-name">🖱️ Cliques</div>
+                        <div class="funnel-stage-value">21</div>
+                    </div>
+                    <div class="funnel-stage-bar">
+                        <div class="funnel-stage-fill" style="width: 5.28%"></div>
+                    </div>
+                    <div class="funnel-stage-conversion">Taxa de conversão: 5,28% (EXCELENTE!)</div>
+                </div>
+
+                <div class="funnel-stage">
+                    <div class="funnel-stage-header">
+                        <div class="funnel-stage-name">🎯 Conversões</div>
+                        <div class="funnel-stage-value" style="color: var(--danger-red);">0</div>
+                    </div>
+                    <div class="funnel-stage-bar">
+                        <div class="funnel-stage-fill" style="width: 0%; background: var(--danger-red);"></div>
+                    </div>
+                    <div class="funnel-stage-conversion" style="color: var(--danger-red);">Taxa de conversão: 0% (PROBLEMA CRÍTICO!)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>📱 Distribuição por Dispositivo</h3>
+            <div class="chart-container">
+                <canvas id="deviceChart"></canvas>
+            </div>
+            <div class="device-stats">
+                <div class="device-item">
+                    <div class="device-icon">📱</div>
+                    <div class="device-percentage">71%</div>
+                    <div class="device-label">Smartphones</div>
+                </div>
+                <div class="device-item">
+                    <div class="device-icon">💻</div>
+                    <div class="device-percentage">29%</div>
+                    <div class="device-label">Computadores</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-section">
+        <div class="chart-card full-width">
+            <h3>📈 Evolução Diária da Campanha</h3>
+            <div class="chart-container">
+                <canvas id="timeSeriesChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>👥 Distribuição por Sexo</h3>
+            <div class="chart-container">
+                <canvas id="genderChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>🎂 Distribuição por Idade</h3>
+            <div class="chart-container">
+                <canvas id="ageChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="insights-section">
+        <h2>Análise Inteligente da Campanha</h2>
+        <p>Nossa inteligência analisou seus dados e identificou os seguintes pontos:</p>
+        <div class="insights-grid">
+            <div class="insight-card positive">
+                <div class="insight-header">
+                    <div class="insight-icon">✅</div>
+                    <div class="insight-title">CTR Excepcional - 5,28%!</div>
+                </div>
+                <div class="insight-description">
+                    Seu CTR está MUITO acima da média! A média do Google Ads é 1,91%, e você está com 5,28%. Isso significa que seu anúncio é extremamente atrativo e relevante para quem busca.
+                </div>
+                <div class="insight-reason">
+                    <strong>💬 O que isso significa:</strong> Seu título, descrição e extensões de anúncio estão funcionando perfeitamente. As pessoas querem clicar! Continue com essa estratégia de anúncio.
+                </div>
+            </div>
+
+            <div class="insight-card positive">
+                <div class="insight-header">
+                    <div class="insight-icon">💰</div>
+                    <div class="insight-title">CPC Controlado - R$ 3,25</div>
+                </div>
+                <div class="insight-description">
+                    Seu custo por clique está em um patamar muito bom para o mercado B2B industrial. Você não está pagando caro demais para trazer visitantes.
+                </div>
+                <div class="insight-reason">
+                    <strong>💬 Por que isso é bom:</strong> Significa que seu índice de qualidade está alto e você está competindo bem nos leilões do Google. Com esse CPC, dá para escalar.
+                </div>
+            </div>
+
+            <div class="insight-card negative">
+                <div class="insight-header">
+                    <div class="insight-icon">🚨</div>
+                    <div class="insight-title">ZERO Conversões - Problema Urgente!</div>
+                </div>
+                <div class="insight-description">
+                    Este é o problema mais crítico: 21 pessoas clicaram no anúncio e NENHUMA realizou a ação desejada (preencher formulário, solicitar orçamento, etc). Seu investimento está sendo desperdiçado.
+                </div>
+                <div class="insight-reason">
+                    <strong>💬 Causas identificadas:</strong>
+                    <br>• <strong>Páginas de produtos sem informações técnicas:</strong> As páginas mostram apenas uma foto do produto, sem especificações técnicas detalhadas que o cliente B2B precisa para tomar decisão
+                    <br>• <strong>Nomes de produtos genéricos:</strong> Títulos como "Código + endoscópio para tubulações" não deixam claro o que diferencia cada modelo. Cliente não consegue entender qual é o ideal para ele
+                    <br>• <strong>Falta de diferenciação:</strong> Vários produtos parecem iguais. O que muda entre eles? Qual a aplicação de cada um? Isso não está claro
+                    <br>• <strong>Landing page não otimizada para mobile:</strong> 71% dos cliques são de celular - a página precisa funcionar perfeitamente no mobile
+                    <br>• <strong>Botões de redes sociais quebrados:</strong> Links das redes sociais estão visíveis mas não funcionam (não levam a nenhuma página). Isso prejudica MUITO a credibilidade quando o cliente quer ver referências e cases
+                    <br>• <strong>Falta de prova social:</strong> Sem depoimentos, certificações ou cases de sucesso visíveis
+                </div>
+            </div>
+
+            <div class="insight-card warning">
+                <div class="insight-header">
+                    <div class="insight-icon">📉</div>
+                    <div class="insight-title">Volume Baixo de Impressões</div>
+                </div>
+                <div class="insight-description">
+                    Com apenas 398 impressões em 14 dias, você está alcançando poucas pessoas. Isso limita seu potencial de conversão, mesmo que você resolva o problema da landing page.
+                </div>
+                <div class="insight-reason">
+                    <strong>💬 Como resolver:</strong> Considere aumentar o orçamento diário, ampliar as palavras-chave (incluir termos relacionados) ou expandir a segmentação geográfica.
+                </div>
+            </div>
+
+            <div class="insight-card warning">
+                <div class="insight-header">
+                    <div class="insight-icon">📱</div>
+                    <div class="insight-title">71% dos Cliques vêm de Mobile</div>
+                </div>
+                <div class="insight-description">
+                    A maioria absoluta do seu tráfego vem de celulares. Se sua landing page não estiver otimizada para mobile, você está perdendo quase todas as conversões.
+                </div>
+                <div class="insight-reason">
+                    <strong>💬 Ação imediata:</strong> Abra sua landing page no celular AGORA e teste: as informações técnicas são legíveis? As fotos ampliam bem? O formulário funciona? Os botões são fáceis de clicar? Se qualquer resposta for "não", você encontrou o problema!
+                </div>
+            </div>
+
+            <div class="insight-card negative">
+                <div class="insight-header">
+                    <div class="insight-icon">📄</div>
+                    <div class="insight-title">Páginas de Produtos Sem Informações Suficientes</div>
+                </div>
+                <div class="insight-description">
+                    Este é um problema CRÍTICO para vendas B2B: as páginas de produtos mostram apenas uma foto, sem especificações técnicas. Profissionais de manutenção industrial PRECISAM de dados técnicos para decidir.
+                </div>
+                <div class="insight-reason">
+                    <strong>💬 O que está faltando:</strong>
+                    <br>• Especificações técnicas completas (diâmetro, alcance, resolução, compatibilidade)
+                    <br>• Múltiplas fotos mostrando detalhes e produto em uso
+                    <br>• Nomes descritivos ao invés de genéricos ("Endoscópio 5.5mm p/ Tubulações 50m" vs "Código + endoscópio")
+                    <br>• Diferencial claro entre cada modelo
+                    <br>• Aplicações práticas e casos de uso
+                    <br>• Tabela comparativa entre modelos
+                    <br><br><strong>🎯 RESULTADO:</strong> Cliente não consegue identificar qual produto resolve o problema dele, então desiste e não converte.
+                </div>
+            </div>
+
+            <div class="insight-card negative">
+                <div class="insight-header">
+                    <div class="insight-icon">🔗</div>
+                    <div class="insight-title">Links de Redes Sociais Não Funcionam</div>
+                </div>
+                <div class="insight-description">
+                    Os botões de redes sociais estão visíveis no site, mas não levam a lugar nenhum. Quando um cliente B2B quer ver referências da empresa antes de pedir orçamento e clica em uma rede social que não funciona, isso DESTRÓI a credibilidade.
+                </div>
+                <div class="insight-reason">
+                    <strong>💬 Impacto na conversão:</strong> Cliente pensa "se nem as redes sociais funcionam, será que essa empresa é séria?". Melhor não ter os botões do que ter e não funcionarem. Corrija os links OU remova os botões imediatamente.
+                </div>
+            </div>
+
+            <div class="insight-card positive">
+                <div class="insight-header">
+                    <div class="insight-icon">🎯</div>
+                    <div class="insight-title">Público Bem Segmentado</div>
+                </div>
+                <div class="insight-description">
+                    Seu público está certinho: 80% homens, faixa de 25-54 anos. Esse é exatamente o perfil de profissionais de manutenção industrial que buscam boroscópios.
+                </div>
+                <div class="insight-reason">
+                    <strong>💬 Mantenha:</strong> Não mexa na segmentação demográfica. Ela está perfeita para o mercado B2B industrial.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECOMMENDATIONS -->
+    <div class="recommendations-section">
+        <h2>✨ Plano de Ação - O Que Fazer Agora</h2>
+        
+        <div class="recommendation-item">
+            <h4>🚨 PRIORIDADE 1 - Melhorar Páginas de Produtos (URGENTE!)</h4>
+            <p>
+                <strong>AÇÃO IMEDIATA:</strong> Adicionar informações técnicas completas em cada produto:
+                <br>• Especificações técnicas detalhadas (diâmetro, comprimento, resolução, aplicações)
+                <br>• Melhorar os nomes dos produtos: ao invés de "Código + endoscópio para tubulações", usar nomes descritivos como "Endoscópio Industrial 5.5mm - Tubulações até 50m - Alta Resolução"
+                <br>• Deixar claro O QUE DIFERENCIA cada modelo (diâmetro, alcance, flexibilidade, aplicação específica)
+                <br>• Adicionar múltiplas fotos: produto em uso, detalhes, acessórios inclusos
+                <br>• Incluir tabela comparativa entre modelos
+                <br>• Adicionar vídeos demonstrativos (mesmo que curtos)
+            </p>
+        </div>
+
+        <div class="recommendation-item">
+            <h4>🔗 PRIORIDADE 2 - Corrigir Links de Redes Sociais</h4>
+            <p>
+                <strong>PROBLEMA IDENTIFICADO:</strong> Botões de redes sociais visíveis mas não funcionam! Isso é PÉSSIMO para credibilidade.
+                <br><br><strong>AÇÃO:</strong> 
+                <br>• Se as redes sociais da Borotec existem: conectar os links corretamente no site
+                <br>• Se NÃO existem ainda: REMOVER os botões temporariamente (melhor não ter do que ter e não funcionar)
+                <br>• Criar perfis profissionais no LinkedIn e Instagram com cases de aplicação dos produtos
+                <br>• Publicar conteúdo mostrando os boroscópios em uso real
+            </p>
+        </div>
+
+        <div class="recommendation-item">
+            <h4>📱 PRIORIDADE 3 - Otimizar para Mobile (71% dos cliques!)</h4>
+            <p>
+                <strong>TESTE AGORA:</strong> Entre no site pelo celular e tente:
+                <br>• Visualizar as informações técnicas (estão legíveis?)
+                <br>• Ampliar as fotos dos produtos (funciona bem?)
+                <br>• Preencher o formulário de contato (é fácil?)
+                <br>• Clicar nos botões de WhatsApp/telefone (funcionam?)
+                <br><br>Se qualquer coisa estiver difícil no mobile = você encontrou o problema!
+            </p>
+        </div>
+
+        <div class="recommendation-item">
+            <h4>⭐ PRIORIDADE 4 - Adicionar Prova Social</h4>
+            <p>
+                <strong>Clientes B2B precisam de credibilidade antes de pedir orçamento!</strong>
+                <br>• Adicionar logos de empresas clientes (se permitido)
+                <br>• Incluir depoimentos de quem já comprou
+                <br>• Mostrar certificações técnicas dos produtos
+                <br>• Cases de aplicação: "Empresa X usou o Boroscópio Y para resolver problema Z"
+                <br>• Fotos/vídeos de clientes usando os produtos
+            </p>
+        </div>
+
+        <div class="recommendation-item">
+            <h4>📝 PRIORIDADE 5 - Simplificar Processo de Contato</h4>
+            <p>
+                <strong>Formulário atual:</strong> Está muito longo? Pede informações demais?
+                <br>• Reduzir para: Nome, Email, Telefone, Produto de Interesse, Mensagem
+                <br>• Adicionar botão direto de WhatsApp (maioria prefere conversar direto)
+                <br>• Oferecer download de catálogo técnico em PDF
+                <br>• Mostrar tempo de resposta esperado ("Respondemos em até 2 horas úteis")
+            </p>
+        </div>
+
+        <div class="recommendation-item">
+            <h4>💰 PRIORIDADE 6 - Aumentar orçamento (DEPOIS de corrigir conversão)</h4>
+            <p>
+                <strong>NÃO aumente o orçamento agora!</strong> Primeiro corrija as páginas de produtos.
+                <br>Depois que tiver pelo menos 3 conversões:
+                <br>• Aumente de R$ 5/dia para R$ 15-20/dia
+                <br>• Com seu CTR de 5,28% e CPC de R$ 3,25, você tem margem para crescer
+                <br>• Mas só invista mais DEPOIS de resolver o problema de conversão!
+            </p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Dashboard Borotec</strong> - Análise Profissional de Campanhas | Desenvolvido com 💙</p>
+        <p style="margin-top: 10px; font-weight: 600; color: var(--borotec-blue);">Janaina Moreira | Marketing Digital & Analytics</p>
+        <p style="margin-top: 5px; font-size: 12px;">Dados atualizados em 17/05/2026</p>
+    </div>
+
+    <script>
+        // ======================
+        // HEALTH SCORE CHART
+        // ======================
+        const scoreCtx = document.getElementById('scoreChart');
+        new Chart(scoreCtx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [52, 48],
+                    backgroundColor: ['#f59e0b', '#f3f4f6'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '75%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            }
+        });
+
+        // ======================
+        // TIME SERIES CHART
+        // ======================
+        const timeSeriesCtx = document.getElementById('timeSeriesChart');
+        new Chart(timeSeriesCtx, {
+            type: 'line',
+            data: {
+                labels: ['12 Mai', '13 Mai', '14 Mai', '15 Mai'],
+                datasets: [
+                    {
+                        label: 'Cliques',
+                        data: [4, 4, 4, 9],
+                        borderColor: '#003D7A',
+                        backgroundColor: 'rgba(0, 61, 122, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Impressões',
+                        data: [98, 43, 154, 103],
+                        borderColor: '#00A8E8',
+                        backgroundColor: 'rgba(0, 168, 232, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // ======================
+        // DEVICE CHART
+        // ======================
+        const deviceCtx = document.getElementById('deviceChart');
+        new Chart(deviceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Smartphones (71%)', 'Computadores (29%)'],
+                datasets: [{
+                    data: [15, 6],
+                    backgroundColor: ['#00A8E8', '#003D7A'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // ======================
+        // GENDER CHART
+        // ======================
+        const genderCtx = document.getElementById('genderChart');
+        new Chart(genderCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Masculino (80%)', 'Feminino (20%)'],
+                datasets: [{
+                    data: [229, 55],
+                    backgroundColor: ['#003D7A', '#00A8E8'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // ======================
+        // AGE CHART
+        // ======================
+        const ageCtx = document.getElementById('ageChart');
+        new Chart(ageCtx, {
+            type: 'bar',
+            data: {
+                labels: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
+                datasets: [{
+                    label: 'Impressões por Idade',
+                    data: [25, 90, 71, 58, 28, 12],
+                    backgroundColor: 'rgba(0, 61, 122, 0.8)',
+                    borderColor: '#003D7A',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

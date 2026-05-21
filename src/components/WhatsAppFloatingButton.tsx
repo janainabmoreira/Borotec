@@ -1,26 +1,25 @@
+import { WHATSAPP_MESSAGES, getWhatsAppUrl } from '@/config/whatsapp';
 import whatsappIcon from '@/assets/whatsapp-icon.webp';
-
-const WHATSAPP_NUMBER = '5511932876195';
-const WHATSAPP_MESSAGE = 'Olá! Gostaria de mais informações sobre os produtos da BOROTEC.';
 
 const WhatsAppFloatingButton = () => {
   const handleClick = () => {
-    (window as any).dataLayer = (window as any).dataLayer || [];
-    (window as any).dataLayer.push({ event: 'Botao_Whatsapp_flutuante' });
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
-    window.open(url, '_blank');
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'Botao_Whatsapp_flutuante' });
+    window.open(getWhatsAppUrl(WHATSAPP_MESSAGES.hero), '_blank', 'noopener,noreferrer');
   };
 
   return (
     <button
       onClick={handleClick}
-      className="fixed bottom-6 right-6 z-50 w-16 h-16 md:w-20 md:h-20 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 animate-whatsapp-pulse"
+      className="fixed bottom-5 right-5 z-50 w-14 h-14 md:w-16 md:h-16 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 animate-whatsapp-pulse focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2"
       aria-label="Falar no WhatsApp"
+      title="Falar no WhatsApp"
     >
-      <img 
-        src={whatsappIcon} 
-        alt="WhatsApp" 
+      <img
+        src={whatsappIcon}
+        alt="WhatsApp"
         className="w-full h-full object-contain"
+        loading="lazy"
       />
     </button>
   );

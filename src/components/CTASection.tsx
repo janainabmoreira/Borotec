@@ -2,9 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AnimateOnScroll } from '@/hooks/useScrollAnimation';
-
-const WHATSAPP_NUMBER = '5511932876195';
-const WHATSAPP_MESSAGE = 'Olá! Gostaria de solicitar um orçamento para equipamentos BOROTEC.';
+import { WHATSAPP_MESSAGES, getWhatsAppUrl } from '@/config/whatsapp';
 
 const CTASection = () => {
   return (
@@ -40,11 +38,12 @@ const CTASection = () => {
 
         <AnimateOnScroll animation="fade-up" delay={200}>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="cta" size="xl" className="btn-glow group" asChild>
-              <a 
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
+            <Button variant="whatsapp" size="xl" className="group" asChild>
+              <a
+                href={getWhatsAppUrl(WHATSAPP_MESSAGES.cta)}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Solicitar orçamento pelo WhatsApp"
               >
                 <MessageCircle className="w-5 h-5" />
                 Solicite um Orçamento Agora

@@ -3,9 +3,7 @@ import { ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroVideo from '@/assets/hero-video.mp4';
 import heroBg from '@/assets/hero-bg.webp';
-
-const WHATSAPP_NUMBER = '5511932876195';
-const WHATSAPP_MESSAGE = 'Olá! Gostaria de mais informações sobre os produtos da BOROTEC.';
+import { WHATSAPP_MESSAGES, getWhatsAppUrl } from '@/config/whatsapp';
 
 const HeroSection = () => {
   return (
@@ -60,11 +58,12 @@ const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <Button variant="cta" size="lg" className="btn-glow group" asChild>
+            <Button variant="whatsapp" size="lg" className="group" asChild>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
+                href={getWhatsAppUrl(WHATSAPP_MESSAGES.hero)}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Fale no WhatsApp"
                 onClick={() => {
                   window.dataLayer = window.dataLayer || [];
                   window.dataLayer.push({ event: 'whatsapp_hero_click' });

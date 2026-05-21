@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { getWhatsAppUrl } from '@/config/whatsapp';
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="mb-10">
@@ -156,7 +157,7 @@ const PrivacyPolicy = () => {
                     <strong className="text-primary-foreground">E-mail:</strong>{' '}
                     <a href="mailto:contato@borotec.com.br" className="text-cyan hover:underline">contato@borotec.com.br</a><br />
                     <strong className="text-primary-foreground">WhatsApp:</strong>{' '}
-                    <a href="https://wa.me/5511932876195" target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline">(11) 93287-6195</a>
+                    <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" aria-label="Contato pelo WhatsApp" className="text-cyan hover:underline">(11) 93287-6195</a>
                   </p>
                 </Section>
 

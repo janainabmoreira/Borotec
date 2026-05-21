@@ -10,6 +10,7 @@ import {
   Share2, Link2, Check, Search, Tag, Send, X,
 } from 'lucide-react';
 import { blogPosts } from '@/data/blog';
+import { WHATSAPP_NUMBER } from '@/config/whatsapp';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
 
@@ -149,7 +150,7 @@ const BlogPost = () => {
     }
   };
 
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${post.title} — ${postUrl}`)}`;
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`${post.title} — ${postUrl}`)}`;
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`;
 
   const articleSchema = {
@@ -258,7 +259,8 @@ const BlogPost = () => {
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 bg-green-600/20 text-green-400 border border-green-600/30 rounded-lg text-xs font-medium hover:bg-green-600/30 transition-colors"
+                    aria-label="Compartilhar no WhatsApp"
+                    className="px-3 py-1.5 bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 rounded-lg text-xs font-medium hover:bg-[#25D366]/30 transition-colors"
                   >
                     WhatsApp
                   </a>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { products } from '@/data/products';
 import { useQuoteCart } from '@/contexts/QuoteCartContext';
 import { ArrowLeft, Plus, Check, MessageCircle, FileText, ChevronRight } from 'lucide-react';
+import { getWhatsAppProductUrl } from '@/config/whatsapp';
 
 import productEndoscope from '@/assets/product-endoscope.webp';
 import productVideoscope from '@/assets/product-videoscope.webp';
@@ -80,13 +81,9 @@ const ProductDetail = () => {
   };
 
   const handleWhatsAppDirect = () => {
-    (window as any).dataLayer = (window as any).dataLayer || [];
-    (window as any).dataLayer.push({ event: 'Botao_Whatsapp_produto' });
-    const message = encodeURIComponent(
-      `Olá, BOROTEC Industrial! Gostaria de solicitar informações sobre o produto: ${product.name}.`
-    );
-    const whatsappNumber = '5511932876195';
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'Botao_Whatsapp_produto' });
+    window.open(getWhatsAppProductUrl(product.name), '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -239,11 +236,11 @@ const ProductDetail = () => {
                   </Button>
                   
                   <Button
-                    variant="heroOutline"
+                    variant="whatsapp"
                     size="lg"
                     className="w-full"
                     onClick={handleWhatsAppDirect}
-                    aria-label="Solicitar WhatsApp Produto"
+                    aria-label="Solicitar informações via WhatsApp"
                   >
                     <MessageCircle className="w-5 h-5 mr-2" />
                     Solicitar Informações via WhatsApp

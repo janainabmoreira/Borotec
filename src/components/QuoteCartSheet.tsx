@@ -2,6 +2,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Button } from '@/components/ui/button';
 import { X, MessageCircle, Trash2 } from 'lucide-react';
 import { useQuoteCart } from '@/contexts/QuoteCartContext';
+import { getWhatsAppCartUrl } from '@/config/whatsapp';
 
 interface QuoteCartSheetProps {
   open: boolean;
@@ -12,14 +13,10 @@ const QuoteCartSheet = ({ open, onOpenChange }: QuoteCartSheetProps) => {
   const { items, removeItem, clearCart } = useQuoteCart();
 
   const handleWhatsAppQuote = () => {
-    (window as any).dataLayer = (window as any).dataLayer || [];
-    (window as any).dataLayer.push({ event: 'Botao_whatsapp_carrinho' });
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'Botao_whatsapp_carrinho' });
     const productList = items.map(item => item.name).join(', ');
-    const message = encodeURIComponent(
-      `Olá, BOROTEC Industrial! Gostaria de solicitar um orçamento para os seguintes itens: ${productList}.`
-    );
-    const whatsappNumber = '5511932876195';
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    window.open(getWhatsAppCartUrl(productList), '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -90,11 +87,11 @@ const QuoteCartSheet = ({ open, onOpenChange }: QuoteCartSheetProps) => {
                 </div>
 
                 <Button
-                  variant="cta"
+                  variant="whatsapp"
                   size="lg"
                   className="w-full"
                   onClick={handleWhatsAppQuote}
-                  aria-label="Solicitar WhatsApp Carrinho"
+                  aria-label="Solicitar cotação via WhatsApp"
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />
                   Solicitar Cotação via WhatsApp

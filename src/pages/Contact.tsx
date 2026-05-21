@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { WHATSAPP_MESSAGES, getWhatsAppUrl } from '@/config/whatsapp';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
 
@@ -67,9 +68,9 @@ const Contact = () => {
   };
 
   const handleWhatsApp = () => {
-    const message = encodeURIComponent('Olá, BOROTEC Industrial! Gostaria de mais informações sobre seus produtos.');
-    const url = `https://wa.me/5511932876195?text=${message}`;
-    window.open(url, '_blank');
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'Botao_Whatsapp_contato' });
+    window.open(getWhatsAppUrl(WHATSAPP_MESSAGES.contact), '_blank', 'noopener,noreferrer');
   };
 
   const contactInfo = [
@@ -181,10 +182,11 @@ const Contact = () => {
                 </div>
 
                 <Button
-                  variant="cta"
+                  variant="whatsapp"
                   size="lg"
-                  className="w-full btn-glow"
+                  className="w-full"
                   onClick={handleWhatsApp}
+                  aria-label="Falar via WhatsApp"
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />
                   Falar via WhatsApp
