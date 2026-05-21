@@ -184,7 +184,7 @@ const Contact = () => {
                 <Button
                   variant="whatsapp"
                   size="lg"
-                  className="w-full"
+                  className="w-full whatsapp-btn whatsapp-contato"
                   onClick={handleWhatsApp}
                   aria-label="Falar via WhatsApp"
                 >

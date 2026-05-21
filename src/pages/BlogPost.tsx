@@ -260,7 +260,7 @@ const BlogPost = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Compartilhar no WhatsApp"
-                    className="px-3 py-1.5 bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 rounded-lg text-xs font-medium hover:bg-[#25D366]/30 transition-colors"
+                    className="whatsapp-btn whatsapp-geral px-3 py-1.5 bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 rounded-lg text-xs font-medium hover:bg-[#25D366]/30 transition-colors"
                   >
                     WhatsApp
                   </a>

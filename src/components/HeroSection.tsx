@@ -64,6 +64,7 @@ const HeroSection = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Fale no WhatsApp"
+                className="whatsapp-btn whatsapp-hero"
                 onClick={() => {
                   window.dataLayer = window.dataLayer || [];
                   window.dataLayer.push({ event: 'whatsapp_hero_click' });

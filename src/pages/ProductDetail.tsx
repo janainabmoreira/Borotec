@@ -238,7 +238,7 @@ const ProductDetail = () => {
                   <Button
                     variant="whatsapp"
                     size="lg"
-                    className="w-full"
+                    className="w-full whatsapp-btn whatsapp-produto"
                     onClick={handleWhatsAppDirect}
                     aria-label="Solicitar informações via WhatsApp"
                   >

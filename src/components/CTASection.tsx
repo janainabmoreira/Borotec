@@ -44,6 +44,7 @@ const CTASection = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Solicitar orçamento pelo WhatsApp"
+                className="whatsapp-btn whatsapp-geral"
               >
                 <MessageCircle className="w-5 h-5" />
                 Solicite um Orçamento Agora

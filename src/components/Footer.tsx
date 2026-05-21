@@ -101,7 +101,7 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Contato pelo WhatsApp"
-                  className="font-body text-sm text-primary-foreground/60 hover:text-cyan transition-colors"
+                  className="whatsapp-btn whatsapp-contato font-body text-sm text-primary-foreground/60 hover:text-cyan transition-colors"
                 >
                   (11) 93287-6195
                 </a>
