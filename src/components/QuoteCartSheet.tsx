@@ -2,6 +2,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Button } from '@/components/ui/button';
 import { X, MessageCircle, Trash2 } from 'lucide-react';
 import { useQuoteCart } from '@/contexts/QuoteCartContext';
+import { getWhatsAppCartUrl } from '@/config/whatsapp';
 
 interface QuoteCartSheetProps {
   open: boolean;
@@ -83,15 +84,18 @@ const QuoteCartSheet = ({ open, onOpenChange }: QuoteCartSheetProps) => {
                   </button>
                 </div>
 
-                <Button
-                  variant="whatsapp"
-                  size="lg"
-                  className="w-full whatsapp-btn whatsapp-carrinho"
-                  onClick={handleWhatsAppQuote}
-                  aria-label="Solicitar cotação via WhatsApp"
-                >
-                  <MessageCircle className="w-5 h-5 mr-2" />
-                  Solicitar Cotação via WhatsApp
+                <Button variant="whatsapp" size="lg" asChild>
+                  <a
+                    href={getWhatsAppCartUrl(items.map(i => i.name).join(', '))}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full whatsapp-btn whatsapp-carrinho"
+                    onClick={handleWhatsAppQuote}
+                    aria-label="Solicitar cotação via WhatsApp"
+                  >
+                    <MessageCircle className="w-5 h-5 mr-2" />
+                    Solicitar Cotação via WhatsApp
+                  </a>
                 </Button>
               </div>
             </>

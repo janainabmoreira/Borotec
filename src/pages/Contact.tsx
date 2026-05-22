@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useUTMCapture } from '@/hooks/useUTMCapture';
+import { WHATSAPP_MESSAGES, getWhatsAppUrl } from '@/config/whatsapp';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
 
@@ -186,15 +187,18 @@ const Contact = () => {
                   ))}
                 </div>
 
-                <Button
-                  variant="whatsapp"
-                  size="lg"
-                  className="w-full whatsapp-btn whatsapp-contato"
-                  onClick={handleWhatsApp}
-                  aria-label="Falar via WhatsApp"
-                >
-                  <MessageCircle className="w-5 h-5 mr-2" />
-                  Falar via WhatsApp
+                <Button variant="whatsapp" size="lg" asChild>
+                  <a
+                    href={getWhatsAppUrl(WHATSAPP_MESSAGES.contact)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full whatsapp-btn whatsapp-contato"
+                    onClick={handleWhatsApp}
+                    aria-label="Falar via WhatsApp"
+                  >
+                    <MessageCircle className="w-5 h-5 mr-2" />
+                    Falar via WhatsApp
+                  </a>
                 </Button>
               </div>
 

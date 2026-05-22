@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { products } from '@/data/products';
 import { useQuoteCart } from '@/contexts/QuoteCartContext';
 import { ArrowLeft, Plus, Check, MessageCircle, FileText, ChevronRight } from 'lucide-react';
+import { getWhatsAppProductUrl } from '@/config/whatsapp';
 
 import productEndoscope from '@/assets/product-endoscope.webp';
 import productVideoscope from '@/assets/product-videoscope.webp';
@@ -233,15 +234,18 @@ const ProductDetail = () => {
                     )}
                   </Button>
                   
-                  <Button
-                    variant="whatsapp"
-                    size="lg"
-                    className="w-full whatsapp-btn whatsapp-produto"
-                    onClick={handleWhatsAppDirect}
-                    aria-label="Solicitar informações via WhatsApp"
-                  >
-                    <MessageCircle className="w-5 h-5 mr-2" />
-                    Solicitar Informações via WhatsApp
+                  <Button variant="whatsapp" size="lg" asChild>
+                    <a
+                      href={getWhatsAppProductUrl(product.name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full whatsapp-btn whatsapp-produto"
+                      onClick={handleWhatsAppDirect}
+                      aria-label="Solicitar informações via WhatsApp"
+                    >
+                      <MessageCircle className="w-5 h-5 mr-2" />
+                      Solicitar Informações via WhatsApp
+                    </a>
                   </Button>
                 </div>
               </div>
