@@ -197,7 +197,7 @@ const Contact = () => {
                     aria-label="Falar via WhatsApp"
                   >
                     <MessageCircle className="w-5 h-5 mr-2" />
-                    Falar via WhatsApp
+                    Fale com Especialista
                   </a>
                 </Button>
               </div>

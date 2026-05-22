@@ -69,7 +69,7 @@ const HeroSection = () => {
                 }}
               >
                 <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-                Fale no WhatsApp
+                Fale com Especialista
               </a>
             </Button>
             

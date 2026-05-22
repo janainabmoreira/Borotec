@@ -94,7 +94,7 @@ const QuoteCartSheet = ({ open, onOpenChange }: QuoteCartSheetProps) => {
                     aria-label="Solicitar cotação via WhatsApp"
                   >
                     <MessageCircle className="w-5 h-5 mr-2" />
-                    Solicitar Cotação via WhatsApp
+                    Fale com Especialista
                   </a>
                 </Button>
               </div>
