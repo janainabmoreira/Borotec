@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useUTMCapture } from '@/hooks/useUTMCapture';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
 
@@ -20,6 +21,7 @@ const Contact = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const utms = useUTMCapture();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +45,11 @@ const Contact = () => {
           company: formData.company || 'Não informada',
           message: formData.message,
           ...(gclid && { gclid }),
+          ...(utms.utm_source && { 'Origem (utm_source)': utms.utm_source }),
+          ...(utms.utm_medium && { 'Mídia (utm_medium)': utms.utm_medium }),
+          ...(utms.utm_campaign && { 'Campanha (utm_campaign)': utms.utm_campaign }),
+          ...(utms.utm_term && { 'Termo (utm_term)': utms.utm_term }),
+          ...(utms.utm_content && { 'Conteúdo (utm_content)': utms.utm_content }),
         }),
       });
 
@@ -199,6 +206,11 @@ const Contact = () => {
                   
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <input type="hidden" name="gclid" id="gclid" value="" />
+                    <input type="hidden" name="utm_source" value={utms.utm_source} />
+                    <input type="hidden" name="utm_medium" value={utms.utm_medium} />
+                    <input type="hidden" name="utm_campaign" value={utms.utm_campaign} />
+                    <input type="hidden" name="utm_term" value={utms.utm_term} />
+                    <input type="hidden" name="utm_content" value={utms.utm_content} />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block font-body text-sm font-medium text-primary-foreground mb-2">
