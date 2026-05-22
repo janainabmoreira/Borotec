@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroVideo from '@/assets/hero-video.mp4';
-import heroBg from '@/assets/hero-bg.webp';
 import { WHATSAPP_MESSAGES, getWhatsAppUrl } from '@/config/whatsapp';
 
 const HeroSection = () => {
@@ -16,7 +15,6 @@ const HeroSection = () => {
           muted
           playsInline
           preload="none"
-          poster={heroBg}
           className="w-full h-full object-cover"
         >
           <source src={heroVideo} type="video/mp4" />
