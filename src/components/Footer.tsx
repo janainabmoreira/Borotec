@@ -22,7 +22,7 @@ const Footer = () => {
               <img
                 src="/assets/logo_borotec_b.png"
                 alt="BOROTEC Industrial"
-                className="h-24 w-auto object-contain"
+                className="h-32 w-auto object-contain"
               />
             </Link>
             <p className="font-body text-sm text-primary-foreground/60 leading-relaxed mb-6">
