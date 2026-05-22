@@ -14,8 +14,7 @@
 </IfModule>
 
 <IfModule mod_headers.c>
-  Header unset Content-Security-Policy
-  Header always set Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://ssl.google-analytics.com; img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com; frame-src https://www.googletagmanager.com;"
+  Header always unset Content-Security-Policy
 
   # HTML: sem cache — garante versão mais nova sempre
   <FilesMatch "\.html$">
