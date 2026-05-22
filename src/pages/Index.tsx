@@ -62,11 +62,11 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>BOROTEC | Boroscópios e Videoscópios Industriais no Brasil</title>
-        <meta name="description" content="Boroscópios e videoscópios industriais para inspeção de tubulações sem desmontagem. Sondas até 50m, câmera HD e atendimento em todo o Brasil." />
+        <title>BOROTEC | Boroscópios, Videoscópios e Robôs de Inspeção Industrial</title>
+        <meta name="description" content="Boroscópios, videoscópios e robôs para inspeção industrial sem desmontagem. Sondas até 130m, câmera HD, gravação em vídeo, tela LCD, IP68 à prova d'água. Inspeção de tubulações, dutos, motores e poços. +20 anos. Todo o Brasil." />
         <link rel="canonical" href="https://borotec.com.br/" />
-        <meta property="og:title" content="BOROTEC | Boroscópios e Videoscópios Industriais" />
-        <meta property="og:description" content="Empresa brasileira especializada em boroscópios e videoscópios industriais para inspeção visual remota." />
+        <meta property="og:title" content="BOROTEC | Boroscópios, Videoscópios e Robôs de Inspeção Industrial" />
+        <meta property="og:description" content="Boroscópios, videoscópios e robôs para inspeção industrial sem desmontagem. Sondas até 130m, câmera HD, gravação em vídeo, tela LCD, IP68 à prova d'água. Inspeção de tubulações, dutos, motores e poços. +20 anos. Todo o Brasil." />
         <meta property="og:url" content="https://borotec.com.br/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
@@ -74,8 +74,8 @@ const Index = () => {
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="pt_BR" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="BOROTEC | Boroscópios Industriais" />
-        <meta name="twitter:description" content="Boroscópios industriais para inspeção visual remota no Brasil." />
+        <meta name="twitter:title" content="BOROTEC | Boroscópios, Videoscópios e Robôs de Inspeção Industrial" />
+        <meta name="twitter:description" content="Boroscópios, videoscópios e robôs para inspeção industrial sem desmontagem. Sondas até 130m, câmera HD, gravação em vídeo, tela LCD, IP68 à prova d'água. Inspeção de tubulações, dutos, motores e poços. +20 anos. Todo o Brasil." />
         <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
         <script type="application/ld+json">{JSON.stringify(websiteSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
