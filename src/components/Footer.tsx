@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Linkedin, Instagram, Youtube } from 'lucide-react';
+import { Phone, Mail, MapPin, Linkedin, Instagram, Youtube, ShieldCheck } from 'lucide-react';
 import logo from '@/assets/logo-borotec.webp';
 import { getWhatsAppUrl } from '@/config/whatsapp';
 
@@ -120,11 +120,20 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-primary-foreground/10">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="font-body text-sm text-primary-foreground/40">
-              © {currentYear} BOROTEC Industrial. Todos os direitos reservados.
-            </p>
-            <div className="flex gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="font-body text-sm text-primary-foreground/40">
+                © {currentYear} BOROTEC Industrial. Todos os direitos reservados.
+              </p>
+              <p className="font-body text-xs text-primary-foreground/25">
+                BOROTEC COMERCIO DE EQUIPAMENTOS LTDA - ME &nbsp;·&nbsp; CNPJ 64.768.532/0001-56
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-4 md:gap-6">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10" title="Conexão segura HTTPS">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="font-body text-xs text-emerald-400 font-medium">Site Seguro</span>
+              </div>
               <Link to="/privacidade" className="font-body text-sm text-primary-foreground/40 hover:text-cyan transition-colors">
                 Política de Privacidade
               </Link>
