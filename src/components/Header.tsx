@@ -85,7 +85,7 @@ const Header = () => {
 
   const navLinks = [
     { label: 'Início', path: '/' },
-    { label: 'Loja', path: '/produtos' },
+    { label: 'Produtos', path: '/produtos' },
     { label: 'Blog', path: '/blog' },
     { label: 'Sobre', path: '/sobre' },
     { label: 'Contato', path: '/contato' },
