@@ -1,11 +1,9 @@
-import { WHATSAPP_MESSAGES, getWhatsAppUrl } from '@/config/whatsapp';
 import whatsappIcon from '@/assets/whatsapp-icon.webp';
 
 const WhatsAppFloatingButton = () => {
   const handleClick = () => {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'Botao_Whatsapp_flutuante' });
-    window.open(getWhatsAppUrl(WHATSAPP_MESSAGES.hero), '_blank', 'noopener,noreferrer');
   };
 
   return (

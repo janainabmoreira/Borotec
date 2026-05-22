@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { products } from '@/data/products';
 import { useQuoteCart } from '@/contexts/QuoteCartContext';
 import { ArrowLeft, Plus, Check, MessageCircle, FileText, ChevronRight } from 'lucide-react';
-import { getWhatsAppProductUrl } from '@/config/whatsapp';
 
 import productEndoscope from '@/assets/product-endoscope.webp';
 import productVideoscope from '@/assets/product-videoscope.webp';
@@ -83,7 +82,6 @@ const ProductDetail = () => {
   const handleWhatsAppDirect = () => {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'Botao_Whatsapp_produto' });
-    window.open(getWhatsAppProductUrl(product.name), '_blank', 'noopener,noreferrer');
   };
 
   return (

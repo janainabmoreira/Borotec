@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { WHATSAPP_MESSAGES, getWhatsAppUrl } from '@/config/whatsapp';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
 
@@ -70,7 +69,6 @@ const Contact = () => {
   const handleWhatsApp = () => {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'Botao_Whatsapp_contato' });
-    window.open(getWhatsAppUrl(WHATSAPP_MESSAGES.contact), '_blank', 'noopener,noreferrer');
   };
 
   const contactInfo = [
