@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="44" viewBox="0 0 140 44">
+  <rect width="140" height="44" rx="6" fill="#1a1a2e" stroke="#25d366" stroke-width="1"/>
+  <!-- Shield icon -->
+  <path d="M14 10 L22 10 L22 14 C22 19 18 22 18 22 C18 22 14 19 14 14 Z" fill="none" stroke="#25d366" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M16 15.5 L17.5 17 L20 13.5" stroke="#25d366" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Google colors bar -->
+  <rect x="30" y="10" width="5" height="5" rx="1" fill="#4285F4"/>
+  <rect x="36" y="10" width="5" height="5" rx="1" fill="#EA4335"/>
+  <rect x="30" y="16" width="5" height="5" rx="1" fill="#FBBC05"/>
+  <rect x="36" y="16" width="5" height="5" rx="1" fill="#34A853"/>
+  <!-- Text -->
+  <text x="48" y="20" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#ffffff" letter-spacing="0.5">SITE SEGURO</text>
+  <text x="48" y="31" font-family="Arial, sans-serif" font-size="7.5" fill="#25d366" letter-spacing="0.3">Google Safe Browsing</text>
+</svg>

@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Linkedin, Instagram, Youtube, ShieldCheck } from 'lucide-react';
-import logo from '@/assets/logo-borotec.webp';
+import { Phone, Mail, MapPin, Linkedin, Youtube } from 'lucide-react';
 import { getWhatsAppUrl } from '@/config/whatsapp';
 
 const Footer = () => {
@@ -20,22 +19,19 @@ const Footer = () => {
           {/* Logo & Description */}
           <div className="lg:col-span-1">
             <Link to="/" className="inline-block mb-6">
-              <img 
-                src={logo} 
-                alt="BOROTEC Industrial" 
-                className="h-16 w-auto object-contain"
+              <img
+                src="/assets/logo_borotec_b.png"
+                alt="BOROTEC Industrial"
+                className="h-24 w-auto object-contain"
               />
             </Link>
             <p className="font-body text-sm text-primary-foreground/60 leading-relaxed mb-6">
-              Soluções completas em metrologia óptica industrial. Mais de 20 anos de experiência 
+              Soluções completas em metrologia óptica industrial. Mais de 20 anos de experiência
               fornecendo equipamentos de alta tecnologia para inspeção industrial.
             </p>
             <div className="flex gap-4">
               <a href="#" className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/60 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
                 <Linkedin className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/60 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
-                <Instagram className="w-5 h-5" />
               </a>
               <a href="#" className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/60 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
                 <Youtube className="w-5 h-5" />
@@ -65,14 +61,19 @@ const Footer = () => {
           <div>
             <h4 className="font-heading font-bold text-lg mb-6 text-accent">Produtos</h4>
             <ul className="space-y-3">
-              {['Endoscópios Rígidos', 'Videoscópios', 'Boroscópios', 'Fontes de Luz'].map((item) => (
-                <li key={item}>
-                  <Link 
-                    to="/produtos" 
+              {[
+                { label: 'Linha T — Tubulações', path: '/categorias?linha=T' },
+                { label: 'Linha M — Máquinas',  path: '/categorias?linha=M' },
+                { label: 'Linha R — Robôs',     path: '/categorias?linha=R' },
+                { label: 'Linha E — Especiais', path: '/categorias?linha=E' },
+              ].map((item) => (
+                <li key={item.label}>
+                  <Link
+                    to={item.path}
                     className="font-body text-sm text-primary-foreground/60 hover:text-cyan transition-colors inline-flex items-center gap-2 group"
                   >
                     <span className="w-1.5 h-1.5 bg-cyan/50 rounded-full group-hover:bg-cyan transition-colors" />
-                    {item}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -130,10 +131,20 @@ const Footer = () => {
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-4 md:gap-6">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10" title="Conexão segura HTTPS">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="font-body text-xs text-emerald-400 font-medium">Site Seguro</span>
-              </div>
+              <a
+                href="https://transparencyreport.google.com/safe-browsing/search?url=borotec.com.br"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Verificar status de segurança no Google Safe Browsing"
+                aria-label="Selo Site Seguro — Google Safe Browsing"
+              >
+                <img
+                  src="/assets/site-seguro.svg"
+                  alt="Site Seguro — Google Safe Browsing"
+                  className="h-11 w-auto opacity-80 hover:opacity-100 transition-opacity"
+                  loading="lazy"
+                />
+              </a>
               <Link to="/privacidade" className="font-body text-sm text-primary-foreground/40 hover:text-cyan transition-colors">
                 Política de Privacidade
               </Link>
