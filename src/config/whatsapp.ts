@@ -8,14 +8,14 @@ export const WHATSAPP_MESSAGES = {
 };
 
 export const getWhatsAppUrl = (message = WHATSAPP_MESSAGES.default) =>
-  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(message)}`;
 
 export const getWhatsAppProductUrl = (productName: string) =>
-  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(
     `Olá, BOROTEC Industrial! Gostaria de solicitar informações sobre o produto: ${productName}.`
   )}`;
 
 export const getWhatsAppCartUrl = (itemNames: string) =>
-  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(
     `Olá, BOROTEC Industrial! Gostaria de solicitar um orçamento para os seguintes itens: ${itemNames}.`
   )}`;
