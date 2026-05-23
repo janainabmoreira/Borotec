@@ -150,7 +150,7 @@ const BlogPost = () => {
     }
   };
 
-  const whatsappUrl = `whatsapp://send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(`${post.title} — ${postUrl}`)}`;
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`${post.title} — ${postUrl}`)}`;
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`;
 
   const articleSchema = {
