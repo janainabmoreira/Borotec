@@ -52,15 +52,15 @@ const Footer = () => {
       </div>
 
       <div className="relative container-wide mx-auto px-4 md:px-8 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
 
-          {/* Col 1 — Logo à esquerda, texto + ícones à direita */}
-          <div className="lg:col-span-1 flex gap-4">
+          {/* Col 1 — ocupa 2 colunas: logo + texto/ícones lado a lado */}
+          <div className="lg:col-span-2 flex gap-6">
             <Link to="/" className="shrink-0 self-center">
               <img
                 src="/assets/logo_borotec_b.png"
                 alt="BOROTEC Industrial"
-                className="h-24 w-auto object-contain"
+                className="h-28 w-auto object-contain"
               />
             </Link>
             <div className="flex flex-col justify-between py-1">
@@ -68,7 +68,7 @@ const Footer = () => {
                 Especialistas em boroscópios e videoscópios industriais há mais de 20 anos.
                 Atendimento personalizado para inspeção de tubulações, motores e dutos em todo o Brasil.
               </p>
-              <div className="flex gap-2 mt-3">
+              <div className="flex gap-2 mt-4">
                 <a href="#" aria-label="LinkedIn BOROTEC"
                   className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
                   <Linkedin className="w-3.5 h-3.5" />
