@@ -140,6 +140,8 @@ const Footer = () => {
               <li className="flex items-center gap-2.5">
                 <IconBadge><Phone className="w-3.5 h-3.5 text-cyan" /></IconBadge>
                 <a href={getWhatsAppUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Contato pelo WhatsApp"
                   className="font-body text-xs text-primary-foreground/60 hover:text-cyan transition-colors">
                   (11) 93287-6195

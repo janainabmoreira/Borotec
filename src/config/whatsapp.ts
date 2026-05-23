@@ -7,11 +7,15 @@ export const WHATSAPP_MESSAGES = {
   contact: 'Olá, BOROTEC Industrial! Gostaria de mais informações sobre seus produtos.',
 };
 
-export const getWhatsAppUrl = (_message?: string) =>
-  `https://wa.me/${WHATSAPP_NUMBER}`;
+export const getWhatsAppUrl = (message = WHATSAPP_MESSAGES.default) =>
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
-export const getWhatsAppProductUrl = (_productName: string) =>
-  `https://wa.me/${WHATSAPP_NUMBER}`;
+export const getWhatsAppProductUrl = (productName: string) =>
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    `Olá, BOROTEC Industrial! Gostaria de solicitar informações sobre o produto: ${productName}.`
+  )}`;
 
-export const getWhatsAppCartUrl = (_itemNames: string) =>
-  `https://wa.me/${WHATSAPP_NUMBER}`;
+export const getWhatsAppCartUrl = (itemNames: string) =>
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    `Olá, BOROTEC Industrial! Gostaria de solicitar um orçamento para os seguintes itens: ${itemNames}.`
+  )}`;

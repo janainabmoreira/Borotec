@@ -150,7 +150,7 @@ const BlogPost = () => {
     }
   };
 
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}`;
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`${post.title} — ${postUrl}`)}`;
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`;
 
   const articleSchema = {
@@ -257,6 +257,8 @@ const BlogPost = () => {
                   </span>
                   <a
                     href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     aria-label="Compartilhar no WhatsApp"
                     className="whatsapp-btn whatsapp-geral px-3 py-1.5 bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 rounded-lg text-xs font-medium hover:bg-[#25D366]/30 transition-colors"
                   >

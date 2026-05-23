@@ -190,6 +190,8 @@ const Contact = () => {
                 <Button variant="whatsapp" size="lg" asChild>
                   <a
                     href={getWhatsAppUrl(WHATSAPP_MESSAGES.contact)}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-full whatsapp-btn whatsapp-contato"
                     onClick={handleWhatsApp}
                     aria-label="Falar via WhatsApp"

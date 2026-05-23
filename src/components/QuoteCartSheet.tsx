@@ -87,6 +87,8 @@ const QuoteCartSheet = ({ open, onOpenChange }: QuoteCartSheetProps) => {
                 <Button variant="whatsapp" size="lg" asChild>
                   <a
                     href={getWhatsAppCartUrl(items.map(i => i.name).join(', '))}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-full whatsapp-btn whatsapp-carrinho"
                     onClick={handleWhatsAppQuote}
                     aria-label="Solicitar cotação via WhatsApp"

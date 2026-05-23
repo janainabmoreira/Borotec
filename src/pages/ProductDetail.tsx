@@ -237,6 +237,8 @@ const ProductDetail = () => {
                   <Button variant="whatsapp" size="lg" asChild>
                     <a
                       href={getWhatsAppProductUrl(product.name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="w-full whatsapp-btn whatsapp-produto"
                       onClick={handleWhatsAppDirect}
                       aria-label="Solicitar informações via WhatsApp"
