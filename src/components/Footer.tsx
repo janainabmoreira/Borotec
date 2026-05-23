@@ -46,21 +46,21 @@ const Footer = () => {
       </div>
 
       <div className="relative container-wide mx-auto px-4 md:px-8 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
 
-          {/* Col 1 — Logo + Texto lado a lado + redes abaixo */}
-          <div className="lg:col-span-1 flex flex-col gap-4">
-            <div className="flex items-start gap-4">
+          {/* Col 1 — Logo centralizado + Texto + Redes abaixo do texto */}
+          <div className="lg:col-span-1 flex flex-col gap-3">
+            <div className="flex items-center gap-3">
               <Link to="/" className="shrink-0">
                 <img
                   src="/assets/logo_borotec_b.png"
                   alt="BOROTEC Industrial"
-                  className="h-20 w-auto object-contain"
+                  className="h-16 w-auto object-contain"
                 />
               </Link>
-              <p className="font-body text-xs text-primary-foreground/50 leading-relaxed pt-1">
-                Boroscópios, videoscópios e robôs para inspeção industrial de tubulações,
-                dutos, motores e poços. Câmera HD · IP68 · Sondas até 130m · +20 anos · Todo o Brasil.
+              <p className="font-body text-xs text-primary-foreground/50 leading-relaxed">
+                Especialistas em boroscópios e videoscópios industriais há mais de 20 anos.
+                Atendimento personalizado para inspeção de tubulações, motores e dutos em todo o Brasil.
               </p>
             </div>
             <div className="flex gap-2">
