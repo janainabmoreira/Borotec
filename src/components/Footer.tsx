@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Linkedin, Youtube } from 'lucide-react';
+import { Linkedin, Youtube } from 'lucide-react';
 import { getWhatsAppUrl } from '@/config/whatsapp';
 
 const quickLinks = [
   { label: 'Início',    to: '/' },
-  { label: 'Produtos',  to: '/produtos' },
   { label: 'Sobre Nós', to: '/sobre' },
   { label: 'Blog',      to: '/blog' },
-  { label: 'Contato',   to: '/contato' },
+  { label: 'Produtos',  to: '/produtos' },
 ];
 
 const productLines = [
@@ -32,12 +31,15 @@ const StarIcon = () => (
   </svg>
 );
 
+const navLink = "font-body text-xs text-primary-foreground/55 hover:text-cyan transition-colors inline-flex items-center gap-1.5 group";
+const dot = <span className="w-1 h-1 bg-cyan/40 rounded-full group-hover:bg-cyan transition-colors shrink-0" />;
+
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="bg-charcoal text-primary-foreground relative overflow-hidden">
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute inset-0" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2306D6E1' fill-opacity='1'%3E%3Cpath d='M20 20h-4v-4h4v4zm0-8h-4V8h4v4zm8 8h-4v-4h4v4z'/%3E%3C/g%3E%3C/svg%3E")`,
         }} />
@@ -46,19 +48,21 @@ const Footer = () => {
       <div className="relative container-wide mx-auto px-4 md:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 
-          {/* Logo & Description */}
-          <div className="lg:col-span-1">
-            <Link to="/" className="inline-block mb-4">
-              <img
-                src="/assets/logo_borotec_b.png"
-                alt="BOROTEC Industrial"
-                className="h-28 w-auto object-contain"
-              />
-            </Link>
-            <p className="font-body text-xs text-primary-foreground/50 leading-relaxed mb-4">
-              Boroscópios, videoscópios e robôs para inspeção industrial de tubulações,
-              dutos, motores e poços. Câmera HD · IP68 · Sondas até 130m · +20 anos · Todo o Brasil.
-            </p>
+          {/* Col 1 — Logo + Texto lado a lado + redes abaixo */}
+          <div className="lg:col-span-1 flex flex-col gap-4">
+            <div className="flex items-start gap-4">
+              <Link to="/" className="shrink-0">
+                <img
+                  src="/assets/logo_borotec_b.png"
+                  alt="BOROTEC Industrial"
+                  className="h-20 w-auto object-contain"
+                />
+              </Link>
+              <p className="font-body text-xs text-primary-foreground/50 leading-relaxed pt-1">
+                Boroscópios, videoscópios e robôs para inspeção industrial de tubulações,
+                dutos, motores e poços. Câmera HD · IP68 · Sondas até 130m · +20 anos · Todo o Brasil.
+              </p>
+            </div>
             <div className="flex gap-2">
               <a href="#" aria-label="LinkedIn BOROTEC"
                 className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
@@ -71,7 +75,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Col 2 — Links Rápidos */}
           <div>
             <h4 className="font-heading font-bold text-xs uppercase tracking-widest mb-4 text-accent">
               Links Rápidos
@@ -79,17 +83,13 @@ const Footer = () => {
             <ul className="space-y-2">
               {quickLinks.map(({ label, to }) => (
                 <li key={label}>
-                  <Link to={to}
-                    className="font-body text-xs text-primary-foreground/55 hover:text-cyan transition-colors inline-flex items-center gap-1.5 group">
-                    <span className="w-1 h-1 bg-cyan/40 rounded-full group-hover:bg-cyan transition-colors shrink-0" />
-                    {label}
-                  </Link>
+                  <Link to={to} className={navLink}>{dot}{label}</Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Products */}
+          {/* Col 3 — Produtos */}
           <div>
             <h4 className="font-heading font-bold text-xs uppercase tracking-widest mb-4 text-accent">
               Produtos
@@ -97,38 +97,31 @@ const Footer = () => {
             <ul className="space-y-2">
               {productLines.map(({ label, to }) => (
                 <li key={label}>
-                  <Link to={to}
-                    className="font-body text-xs text-primary-foreground/55 hover:text-cyan transition-colors inline-flex items-center gap-1.5 group">
-                    <span className="w-1 h-1 bg-cyan/40 rounded-full group-hover:bg-cyan transition-colors shrink-0" />
-                    {label}
-                  </Link>
+                  <Link to={to} className={navLink}>{dot}{label}</Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Col 4 — Atendimento */}
           <div>
             <h4 className="font-heading font-bold text-xs uppercase tracking-widest mb-4 text-accent">
-              Contato
+              Atendimento
             </h4>
-            <ul className="space-y-2.5">
-              <li className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-cyan mt-0.5 shrink-0" />
-                <span className="font-body text-xs text-primary-foreground/55 leading-relaxed">
-                  Rua Quinze de Novembro, 212<br />São Paulo/SP — 01013-000
-                </span>
+            <ul className="space-y-2">
+              <li className="font-body text-xs text-primary-foreground/55">Segunda a Quinta: 8h às 18h</li>
+              <li className="font-body text-xs text-primary-foreground/55">Sexta: 8h às 17h</li>
+              <li className="pt-2 font-body text-xs text-primary-foreground/55 leading-relaxed">
+                Rua Quinze de Novembro, 212<br />São Paulo/SP — 01013-000
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-cyan shrink-0" />
+              <li>
                 <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer"
                   aria-label="Contato pelo WhatsApp"
                   className="font-body text-xs text-primary-foreground/55 hover:text-cyan transition-colors">
                   (11) 93287-6195
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-cyan shrink-0" />
+              <li>
                 <a href="mailto:vendas@borotec.com.br"
                   className="font-body text-xs text-primary-foreground/55 hover:text-cyan transition-colors">
                   vendas@borotec.com.br
@@ -154,7 +147,6 @@ const Footer = () => {
 
             {/* Center — selos */}
             <div className="flex items-center gap-3">
-              {/* Google rating */}
               <a href="https://www.google.com/search?q=BOROTEC+Industrial"
                 target="_blank" rel="noopener noreferrer" aria-label="Avaliações no Google"
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-primary-foreground/10 bg-primary-foreground/5 hover:border-primary-foreground/20 transition-colors">
@@ -166,15 +158,12 @@ const Footer = () => {
                   </div>
                 </div>
               </a>
-
-              {/* Site Seguro */}
               <a href="https://transparencyreport.google.com/safe-browsing/search?url=borotec.com.br"
                 target="_blank" rel="noopener noreferrer"
                 aria-label="Verificar segurança no Google Safe Browsing"
                 title="Site verificado pelo Google Safe Browsing">
                 <img src="/assets/site-seguro.svg" alt="Site Seguro — Google Safe Browsing"
-                  className="h-9 w-auto opacity-75 hover:opacity-100 transition-opacity"
-                  loading="lazy" />
+                  className="h-9 w-auto opacity-75 hover:opacity-100 transition-opacity" loading="lazy" />
               </a>
             </div>
 
