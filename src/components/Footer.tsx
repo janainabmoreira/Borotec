@@ -60,33 +60,29 @@ const Footer = () => {
       <div className="relative container-wide mx-auto px-4 md:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
-          {/* Col 1 — logo+ícones à esquerda, texto à direita */}
-          <div className="flex gap-5">
-            {/* Esquerda: logo em cima, ícones sociais em baixo */}
-            <div className="flex flex-col justify-between shrink-0">
-              <Link to="/">
-                <img
-                  src="/assets/logo_borotec_b.png"
-                  alt="BOROTEC Industrial"
-                  className="h-20 w-auto object-contain"
-                />
-              </Link>
-              <div className="flex gap-2 mt-4">
-                <a href="#" aria-label="LinkedIn BOROTEC"
-                  className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
-                  <Linkedin className="w-3.5 h-3.5" />
-                </a>
-                <a href="#" aria-label="YouTube BOROTEC"
-                  className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
-                  <Youtube className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-            {/* Direita: só o texto */}
-            <p className="font-body text-xs text-primary-foreground/55 leading-relaxed pt-1">
+          {/* Col 1 — logo, texto e ícones sociais empilhados */}
+          <div className="flex flex-col gap-4">
+            <Link to="/">
+              <img
+                src="/assets/logo_borotec_b.png"
+                alt="BOROTEC Industrial"
+                className="h-20 w-auto object-contain"
+              />
+            </Link>
+            <p className="font-body text-xs text-primary-foreground/55 leading-relaxed">
               Especialistas em boroscópios e videoscópios industriais há mais de 20 anos.
               Atendimento personalizado para inspeção de tubulações, motores e dutos em todo o Brasil.
             </p>
+            <div className="flex gap-2">
+              <a href="#" aria-label="LinkedIn BOROTEC"
+                className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
+                <Linkedin className="w-3.5 h-3.5" />
+              </a>
+              <a href="#" aria-label="YouTube BOROTEC"
+                className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
+                <Youtube className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
 
           {/* Col 2 — Links Rápidos */}
@@ -143,7 +139,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2.5">
                 <IconBadge><Phone className="w-3.5 h-3.5 text-cyan" /></IconBadge>
-                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer"
+                <a href={getWhatsAppUrl()}
                   aria-label="Contato pelo WhatsApp"
                   className="font-body text-xs text-primary-foreground/60 hover:text-cyan transition-colors">
                   (11) 93287-6195

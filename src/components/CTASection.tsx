@@ -41,8 +41,6 @@ const CTASection = () => {
             <Button variant="whatsapp" size="xl" className="group" asChild>
               <a
                 href={getWhatsAppUrl(WHATSAPP_MESSAGES.cta)}
-                target="_blank"
-                rel="noopener noreferrer"
                 aria-label="Solicitar orçamento pelo WhatsApp"
                 className="whatsapp-btn whatsapp-geral"
               >

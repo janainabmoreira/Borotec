@@ -59,8 +59,6 @@ const HeroSection = () => {
             <Button variant="whatsapp" size="lg" className="group" asChild>
               <a
                 href={getWhatsAppUrl(WHATSAPP_MESSAGES.hero)}
-                target="_blank"
-                rel="noopener noreferrer"
                 aria-label="Fale no WhatsApp"
                 className="whatsapp-btn whatsapp-hero"
                 onClick={() => {
