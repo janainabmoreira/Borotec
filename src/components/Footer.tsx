@@ -52,31 +52,30 @@ const Footer = () => {
       </div>
 
       <div className="relative container-wide mx-auto px-4 md:px-8 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
-          {/* Col 1 — logo esquerda, texto + ícones à direita */}
-          <div className="flex gap-4 items-start">
-            <Link to="/" className="shrink-0">
+          {/* Col 1 — logo, texto e ícones empilhados */}
+          <div className="flex flex-col gap-4">
+            <Link to="/">
               <img
                 src="/assets/logo_borotec_b.png"
                 alt="BOROTEC Industrial"
                 className="h-20 w-auto object-contain"
               />
             </Link>
-            <div className="flex flex-col gap-3">
-              <p className="font-body text-xs text-primary-foreground/55 leading-relaxed">
-                Especialistas em boroscópios e videoscópios industriais com mais de 20 anos de mercado e atendimento personalizado em todo o Brasil.
-              </p>
-              <div className="flex gap-2">
-                <a href="#" aria-label="LinkedIn BOROTEC"
-                  className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
-                  <Linkedin className="w-3.5 h-3.5" />
-                </a>
-                <a href="#" aria-label="YouTube BOROTEC"
-                  className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
-                  <Youtube className="w-3.5 h-3.5" />
-                </a>
-              </div>
+            <p className="font-body text-xs text-primary-foreground/55 leading-relaxed">
+              Especialistas em boroscópios e videoscópios industriais há mais de 20 anos.
+              Atendimento personalizado para inspeção de tubulações, motores e dutos em todo o Brasil.
+            </p>
+            <div className="flex gap-2">
+              <a href="#" aria-label="LinkedIn BOROTEC"
+                className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
+                <Linkedin className="w-3.5 h-3.5" />
+              </a>
+              <a href="#" aria-label="YouTube BOROTEC"
+                className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
+                <Youtube className="w-3.5 h-3.5" />
+              </a>
             </div>
           </div>
 
