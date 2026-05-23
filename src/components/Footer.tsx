@@ -10,10 +10,10 @@ const quickLinks = [
 ];
 
 const productLines = [
-  { label: 'Linha T — Tubulações', to: '/categorias?linha=T' },
-  { label: 'Linha M — Máquinas',   to: '/categorias?linha=M' },
-  { label: 'Linha R — Robôs',      to: '/categorias?linha=R' },
-  { label: 'Linha E — Especiais',  to: '/categorias?linha=E' },
+  { label: 'Linha T — Tubulações', to: '/produtos?categoria=Linha%20T%20-%20Tubula%C3%A7%C3%B5es' },
+  { label: 'Linha M — Máquinas',   to: '/produtos?categoria=Linha%20M%20-%20M%C3%A1quinas' },
+  { label: 'Linha R — Robôs',      to: '/produtos?categoria=Linha%20R%20-%20Rob%C3%B4s' },
+  { label: 'Linha E — Especiais',  to: '/produtos?categoria=Linha%20E%20-%20Especiais' },
 ];
 
 const navLink = "font-body text-xs text-primary-foreground/60 hover:text-cyan transition-colors inline-flex items-center gap-1.5 group";
