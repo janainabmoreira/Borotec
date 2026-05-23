@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Linkedin, Youtube } from 'lucide-react';
+import { Linkedin, Youtube, Clock, MapPin, Phone, Mail } from 'lucide-react';
 import { getWhatsAppUrl } from '@/config/whatsapp';
 
 const quickLinks = [
@@ -34,10 +34,16 @@ const StarIcon = () => (
 );
 
 const ShieldIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6l-8-4z" fill="#25D366" opacity="0.2" stroke="#25D366" strokeWidth="1.5" strokeLinejoin="round"/>
     <path d="M9 12l2 2 4-4" stroke="#25D366" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
+);
+
+const IconBadge = ({ children }: { children: React.ReactNode }) => (
+  <div className="w-7 h-7 rounded-full bg-cyan/10 flex items-center justify-center shrink-0 mt-0.5">
+    {children}
+  </div>
 );
 
 const Footer = () => {
@@ -54,29 +60,33 @@ const Footer = () => {
       <div className="relative container-wide mx-auto px-4 md:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
-          {/* Col 1 — logo, texto e ícones empilhados */}
-          <div className="flex flex-col gap-4">
-            <Link to="/">
-              <img
-                src="/assets/logo_borotec_b.png"
-                alt="BOROTEC Industrial"
-                className="h-20 w-auto object-contain"
-              />
-            </Link>
-            <p className="font-body text-xs text-primary-foreground/55 leading-relaxed">
+          {/* Col 1 — logo+ícones à esquerda, texto à direita */}
+          <div className="flex gap-5">
+            {/* Esquerda: logo em cima, ícones sociais em baixo */}
+            <div className="flex flex-col justify-between shrink-0">
+              <Link to="/">
+                <img
+                  src="/assets/logo_borotec_b.png"
+                  alt="BOROTEC Industrial"
+                  className="h-20 w-auto object-contain"
+                />
+              </Link>
+              <div className="flex gap-2 mt-4">
+                <a href="#" aria-label="LinkedIn BOROTEC"
+                  className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
+                  <Linkedin className="w-3.5 h-3.5" />
+                </a>
+                <a href="#" aria-label="YouTube BOROTEC"
+                  className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
+                  <Youtube className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+            {/* Direita: só o texto */}
+            <p className="font-body text-xs text-primary-foreground/55 leading-relaxed pt-1">
               Especialistas em boroscópios e videoscópios industriais há mais de 20 anos.
               Atendimento personalizado para inspeção de tubulações, motores e dutos em todo o Brasil.
             </p>
-            <div className="flex gap-2">
-              <a href="#" aria-label="LinkedIn BOROTEC"
-                className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
-                <Linkedin className="w-3.5 h-3.5" />
-              </a>
-              <a href="#" aria-label="YouTube BOROTEC"
-                className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
-                <Youtube className="w-3.5 h-3.5" />
-              </a>
-            </div>
           </div>
 
           {/* Col 2 — Links Rápidos */}
@@ -84,7 +94,7 @@ const Footer = () => {
             <h4 className="font-heading font-bold text-xs uppercase tracking-widest mb-4 text-accent">
               Links Rápidos
             </h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               {quickLinks.map(({ label, to }) => (
                 <li key={label}>
                   <Link to={to} className={navLink}>
@@ -101,7 +111,7 @@ const Footer = () => {
             <h4 className="font-heading font-bold text-xs uppercase tracking-widest mb-4 text-accent">
               Produtos
             </h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               {productLines.map(({ label, to }) => (
                 <li key={label}>
                   <Link to={to} className={navLink}>
@@ -113,25 +123,34 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Col 4 — Atendimento */}
+          {/* Col 4 — Atendimento com ícones em círculo */}
           <div>
             <h4 className="font-heading font-bold text-xs uppercase tracking-widest mb-4 text-accent">
               Atendimento
             </h4>
-            <ul className="space-y-1.5">
-              <li className="font-body text-xs text-primary-foreground/60">Segunda a Quinta: 8h às 18h</li>
-              <li className="font-body text-xs text-primary-foreground/60">Sexta: 8h às 17h</li>
-              <li className="pt-2 font-body text-xs text-primary-foreground/60 leading-relaxed">
-                Rua Quinze de Novembro, 212<br />São Paulo/SP — 01013-000
+            <ul className="space-y-3">
+              <li className="flex items-start gap-2.5">
+                <IconBadge><Clock className="w-3.5 h-3.5 text-cyan" /></IconBadge>
+                <span className="font-body text-xs text-primary-foreground/60 leading-relaxed">
+                  Segunda a Quinta: 8h às 18h<br />Sexta: 8h às 17h
+                </span>
               </li>
-              <li className="pt-1">
+              <li className="flex items-start gap-2.5">
+                <IconBadge><MapPin className="w-3.5 h-3.5 text-cyan" /></IconBadge>
+                <span className="font-body text-xs text-primary-foreground/60 leading-relaxed">
+                  Rua Quinze de Novembro, 212<br />São Paulo/SP — 01013-000
+                </span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <IconBadge><Phone className="w-3.5 h-3.5 text-cyan" /></IconBadge>
                 <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer"
                   aria-label="Contato pelo WhatsApp"
                   className="font-body text-xs text-primary-foreground/60 hover:text-cyan transition-colors">
                   (11) 93287-6195
                 </a>
               </li>
-              <li>
+              <li className="flex items-center gap-2.5">
+                <IconBadge><Mail className="w-3.5 h-3.5 text-cyan" /></IconBadge>
                 <a href="mailto:vendas@borotec.com.br"
                   className="font-body text-xs text-primary-foreground/60 hover:text-cyan transition-colors">
                   vendas@borotec.com.br
@@ -157,20 +176,15 @@ const Footer = () => {
 
             {/* Center — selos */}
             <div className="flex items-center gap-3">
-              {/* Google rating badge */}
               <a href="https://www.google.com/search?q=BOROTEC+Industrial"
                 target="_blank" rel="noopener noreferrer" aria-label="Avaliações no Google"
                 className="flex items-center gap-2 px-3 py-2 rounded-lg border border-primary-foreground/15 bg-primary-foreground/5 hover:border-primary-foreground/25 transition-colors">
                 <GoogleIcon />
                 <div className="flex flex-col leading-none gap-1">
                   <span className="font-body text-[10px] text-primary-foreground/50">Avaliado no Google</span>
-                  <div className="flex gap-0.5">
-                    {[1,2,3,4,5].map(s => <StarIcon key={s} />)}
-                  </div>
+                  <div className="flex gap-0.5">{[1,2,3,4,5].map(s => <StarIcon key={s} />)}</div>
                 </div>
               </a>
-
-              {/* Site Seguro badge */}
               <a href="https://transparencyreport.google.com/safe-browsing/search?url=borotec.com.br"
                 target="_blank" rel="noopener noreferrer"
                 aria-label="Verificar segurança no Google Safe Browsing"
