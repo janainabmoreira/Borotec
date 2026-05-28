@@ -89,14 +89,9 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: false,
       rollupOptions: {
         output: {
-          entryFileNames: 'assets/index.js',
-          chunkFileNames: 'assets/[name].js',
-          assetFileNames: ({ name }) => {
-            if (/\.(webp|png|jpg|jpeg|gif|svg|ico|mp4|woff2|woff|ttf)$/i.test(name ?? '')) {
-              return 'assets/[name][extname]';
-            }
-            return 'assets/[name][extname]';
-          },
+          entryFileNames: 'assets/[name]-[hash].js',
+          chunkFileNames: 'assets/[name]-[hash].js',
+          assetFileNames: 'assets/[name]-[hash].[ext]',
           manualChunks(id) {
             if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router-dom/')) {
               return 'vendor';
