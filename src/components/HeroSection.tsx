@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroVideo from '@/assets/hero-video.mp4';
-import { WHATSAPP_MESSAGES, getWhatsAppUrl } from '@/config/whatsapp';
 
 const HeroSection = () => {
   return (
@@ -56,21 +55,18 @@ const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <Button variant="whatsapp" size="lg" className="group" asChild>
-              <a
-                href={getWhatsAppUrl(WHATSAPP_MESSAGES.hero)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Fale no WhatsApp"
-                className="whatsapp-btn whatsapp-hero"
-                onClick={() => {
-                  window.dataLayer = window.dataLayer || [];
-                  window.dataLayer.push({ event: 'whatsapp_hero_click' });
-                }}
-              >
-                <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-                Fale com Especialista
-              </a>
+            <Button
+              variant="whatsapp"
+              size="lg"
+              className="group whatsapp-btn whatsapp-hero"
+              aria-label="Fale no WhatsApp"
+              onClick={() => {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({ event: 'whatsapp_hero_click' });
+              }}
+            >
+              <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
+              Fale com Especialista
             </Button>
             
             <Button variant="heroOutline" size="lg" asChild>

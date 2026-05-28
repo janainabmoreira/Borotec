@@ -10,7 +10,6 @@ import {
   Share2, Link2, Check, Search, Tag, Send, X,
 } from 'lucide-react';
 import { blogPosts } from '@/data/blog';
-import { WHATSAPP_NUMBER } from '@/config/whatsapp';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
 
@@ -150,8 +149,7 @@ const BlogPost = () => {
     }
   };
 
-  const whatsappUrl = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(`${post.title} — ${postUrl}`)}`;
-  const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`;
+const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`;
 
   const articleSchema = {
     '@context': 'https://schema.org',
@@ -255,15 +253,13 @@ const BlogPost = () => {
                   <span className="flex items-center gap-1.5 text-sm text-primary-foreground/40 font-body">
                     <Share2 className="w-4 h-4" /> Compartilhar:
                   </span>
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
                     aria-label="Compartilhar no WhatsApp"
                     className="whatsapp-btn whatsapp-geral px-3 py-1.5 bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 rounded-lg text-xs font-medium hover:bg-[#25D366]/30 transition-colors"
                   >
                     WhatsApp
-                  </a>
+                  </button>
                   <a
                     href={linkedinUrl}
                     target="_blank"

@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AnimateOnScroll } from '@/hooks/useScrollAnimation';
-import { WHATSAPP_MESSAGES, getWhatsAppUrl } from '@/config/whatsapp';
 
 const CTASection = () => {
   return (
@@ -38,17 +37,9 @@ const CTASection = () => {
 
         <AnimateOnScroll animation="fade-up" delay={200}>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="whatsapp" size="xl" className="group" asChild>
-              <a
-                href={getWhatsAppUrl(WHATSAPP_MESSAGES.cta)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Solicitar orçamento pelo WhatsApp"
-                className="whatsapp-btn whatsapp-geral"
-              >
-                <MessageCircle className="w-5 h-5" />
-                Fale com Especialista
-              </a>
+            <Button variant="whatsapp" size="xl" className="group whatsapp-btn whatsapp-geral" aria-label="Solicitar orçamento pelo WhatsApp">
+              <MessageCircle className="w-5 h-5" />
+              Fale com Especialista
             </Button>
             
             <Button variant="heroOutline" size="xl" asChild>
