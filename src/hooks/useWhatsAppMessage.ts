@@ -14,9 +14,11 @@ function toFriendlySource(source: string, medium: string): string {
   const src = source.toLowerCase();
   const med = medium.toLowerCase();
   if (src === 'google' && med === 'cpc') return 'Google Ads';
-  if (src === 'google') return 'Google';
+  if (src === 'google') return 'Orgânico';
   if (src === 'googlemynegocio') return 'GMN';
+  if (src === 'facebook' && med === 'cpc') return 'Facebook Ads';
   if (src === 'facebook') return 'Facebook';
+  if (src === 'instagram' && med === 'cpc') return 'Instagram Ads';
   if (src === 'instagram') return 'Instagram';
   if (src === 'linkedin') return 'LinkedIn';
   if (src === 'email') return 'Email';
