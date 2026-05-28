@@ -16,6 +16,14 @@ function readFromSession(): UTMData | null {
   }
 }
 
+function sessionKeyExists(): boolean {
+  try {
+    return sessionStorage.getItem(SESSION_KEY) !== null;
+  } catch {
+    return false;
+  }
+}
+
 function writeToSession(data: UTMData) {
   try {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
@@ -57,7 +65,8 @@ export function useUTMCapture(): UTMData {
       return;
     }
 
-    // Visita direta sem UTMs e sem histórico na sessão
+    // Só escreve "direto" se o sessionStorage estiver completamente vazio
+    if (sessionKeyExists()) return;
     const direct: UTMData = { utm_source: 'direto', utm_medium: 'direto', utm_campaign: '', utm_term: '', utm_content: '' };
     writeToSession(direct);
     setUtms(direct);
