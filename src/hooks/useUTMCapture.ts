@@ -9,7 +9,7 @@ const EMPTY_UTMS: UTMData = { utm_source: '', utm_medium: '', utm_campaign: '', 
 
 function readFromSession(): UTMData | null {
   try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
+    const raw = localStorage.getItem(SESSION_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
@@ -18,7 +18,7 @@ function readFromSession(): UTMData | null {
 
 function sessionKeyExists(): boolean {
   try {
-    return sessionStorage.getItem(SESSION_KEY) !== null;
+    return localStorage.getItem(SESSION_KEY) !== null;
   } catch {
     return false;
   }
@@ -26,8 +26,8 @@ function sessionKeyExists(): boolean {
 
 function writeToSession(data: UTMData) {
   try {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
-  } catch { /* sessionStorage indisponível */ }
+    localStorage.setItem(SESSION_KEY, JSON.stringify(data));
+  } catch { /* localStorage indisponível */ }
 }
 
 export function useUTMCapture(): UTMData {
