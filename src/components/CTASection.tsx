@@ -1,12 +1,9 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, MessageCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AnimateOnScroll } from '@/hooks/useScrollAnimation';
-import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 
 const CTASection = () => {
-  const { openWhatsApp } = useWhatsAppMessage();
-
   return (
     <section className="relative py-24 overflow-hidden">
       {/* Background gradient */}
@@ -40,11 +37,6 @@ const CTASection = () => {
 
         <AnimateOnScroll animation="fade-up" delay={200}>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="whatsapp" size="xl" className="group whatsapp-btn whatsapp-geral" aria-label="Solicitar orçamento pelo WhatsApp" onClick={() => { openWhatsApp('geral'); window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'Botao_Whatsapp_cta' }); }}>
-              <MessageCircle className="w-5 h-5" />
-              Fale com Especialista
-            </Button>
-            
             <Button variant="heroOutline" size="xl" asChild>
               <Link to="/produtos">
                 Ver Catálogo Completo
