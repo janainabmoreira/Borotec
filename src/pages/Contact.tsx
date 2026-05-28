@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useGclidCapture } from '@/hooks/useGclidCapture';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -22,21 +23,8 @@ const Contact = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [gclid, setGclid] = useState('');
+  const gclid = useGclidCapture();
   const utms = useUTMCapture();
-
-  useEffect(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const fromUrl = params.get('gclid') || '';
-      if (fromUrl) {
-        sessionStorage.setItem('borotec_gclid', fromUrl);
-        setGclid(fromUrl);
-      } else {
-        setGclid(sessionStorage.getItem('borotec_gclid') || '');
-      }
-    } catch { /* sessionStorage indisponível */ }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
