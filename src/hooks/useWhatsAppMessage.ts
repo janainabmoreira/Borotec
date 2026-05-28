@@ -10,26 +10,39 @@ function getGreeting(): string {
   return 'Boa noite';
 }
 
+function toFriendlySource(source: string, medium: string): string {
+  const src = source.toLowerCase();
+  const med = medium.toLowerCase();
+  if (src === 'google' && med === 'cpc') return 'Google Ads';
+  if (src === 'google') return 'Google';
+  if (src === 'googlemynegocio') return 'GMN';
+  if (src === 'facebook') return 'Facebook';
+  if (src === 'instagram') return 'Instagram';
+  if (src === 'linkedin') return 'LinkedIn';
+  if (src === 'email') return 'Email';
+  return source.charAt(0).toUpperCase() + source.slice(1);
+}
+
 function getSource(): string {
   const params = new URLSearchParams(window.location.search);
 
-  // 1. utm_source do localStorage (ignora fallback 'direto' gravado pelo useUTMCapture)
+  // 1. utm_source + utm_medium do localStorage (ignora fallback 'direto')
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      const stored = JSON.parse(raw) as { utm_source?: string };
+      const stored = JSON.parse(raw) as { utm_source?: string; utm_medium?: string };
       if (stored.utm_source && stored.utm_source !== 'direto') {
-        return stored.utm_source;
+        return toFriendlySource(stored.utm_source, stored.utm_medium ?? '');
       }
     }
   } catch {}
 
-  // 2. utm_source na URL atual
+  // 2. utm_source + utm_medium na URL atual
   const utmSource = params.get('utm_source');
-  if (utmSource) return utmSource;
+  if (utmSource) return toFriendlySource(utmSource, params.get('utm_medium') ?? '');
 
-  // 3. gclid → google
-  if (params.get('gclid')) return 'google';
+  // 3. gclid → Google Ads
+  if (params.get('gclid')) return 'Google Ads';
 
   return 'Direto';
 }
