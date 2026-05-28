@@ -22,7 +22,21 @@ const Contact = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [gclid, setGclid] = useState('');
   const utms = useUTMCapture();
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const fromUrl = params.get('gclid') || '';
+      if (fromUrl) {
+        sessionStorage.setItem('borotec_gclid', fromUrl);
+        setGclid(fromUrl);
+      } else {
+        setGclid(sessionStorage.getItem('borotec_gclid') || '');
+      }
+    } catch { /* sessionStorage indisponível */ }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +44,6 @@ const Contact = () => {
 
     (window as any).dataLayer = (window as any).dataLayer || [];
     (window as any).dataLayer.push({ event: 'Formulario_contato' });
-
-    const gclid = (document.getElementById('gclid') as HTMLInputElement)?.value || '';
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
@@ -209,7 +221,6 @@ const Contact = () => {
                   </h2>
                   
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <input type="hidden" name="gclid" id="gclid" value="" />
                     <input type="hidden" name="utm_source" value={utms.utm_source} />
                     <input type="hidden" name="utm_medium" value={utms.utm_medium} />
                     <input type="hidden" name="utm_campaign" value={utms.utm_campaign} />
