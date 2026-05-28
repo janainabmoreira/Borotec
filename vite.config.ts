@@ -86,7 +86,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: plugins.filter(Boolean),
     build: {
-      emptyOutDir: false,
+      emptyOutDir: true,
       rollupOptions: {
         output: {
           entryFileNames: 'assets/[name]-[hash].js',
