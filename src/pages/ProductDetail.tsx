@@ -1,4 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -25,6 +26,7 @@ const ProductDetail = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { addItem, removeItem, isInCart } = useQuoteCart();
+  const { openWhatsApp } = useWhatsAppMessage();
   
   const product = products.find(p => p.id === productId);
   
@@ -80,6 +82,7 @@ const ProductDetail = () => {
   };
 
   const handleWhatsAppDirect = () => {
+    openWhatsApp('produto', product.name);
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'Botao_Whatsapp_produto' });
   };

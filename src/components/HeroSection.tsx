@@ -2,8 +2,11 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroVideo from '@/assets/hero-video.mp4';
+import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 
 const HeroSection = () => {
+  const { openWhatsApp } = useWhatsAppMessage();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Video */}
@@ -61,8 +64,9 @@ const HeroSection = () => {
               className="group whatsapp-btn whatsapp-hero"
               aria-label="Fale no WhatsApp"
               onClick={() => {
+                openWhatsApp('hero');
                 window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push({ event: 'whatsapp_hero_click' });
+                window.dataLayer.push({ event: 'Botao_Whatsapp_hero' });
               }}
             >
               <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />

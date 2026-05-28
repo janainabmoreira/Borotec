@@ -2,6 +2,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Button } from '@/components/ui/button';
 import { X, MessageCircle, Trash2 } from 'lucide-react';
 import { useQuoteCart } from '@/contexts/QuoteCartContext';
+import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 
 interface QuoteCartSheetProps {
   open: boolean;
@@ -10,10 +11,13 @@ interface QuoteCartSheetProps {
 
 const QuoteCartSheet = ({ open, onOpenChange }: QuoteCartSheetProps) => {
   const { items, removeItem, clearCart } = useQuoteCart();
+  const { openWhatsApp } = useWhatsAppMessage();
 
   const handleWhatsAppQuote = () => {
+    const lista = items.map(i => `- ${i.name}`).join('\n');
+    openWhatsApp('carrinho', lista);
     window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: 'Botao_whatsapp_carrinho' });
+    window.dataLayer.push({ event: 'Botao_Whatsapp_carrinho' });
   };
 
   return (

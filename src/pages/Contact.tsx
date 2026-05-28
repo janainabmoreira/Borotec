@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGclidCapture } from '@/hooks/useGclidCapture';
+import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -24,6 +25,7 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const gclid = useGclidCapture();
   const utms = useUTMCapture();
+  const { openWhatsApp } = useWhatsAppMessage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +76,7 @@ const Contact = () => {
   };
 
   const handleWhatsApp = () => {
+    openWhatsApp('contato');
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'Botao_Whatsapp_contato' });
   };

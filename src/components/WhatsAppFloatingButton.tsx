@@ -1,8 +1,11 @@
 import whatsappIcon from '@/assets/whatsapp-icon.webp';
-import { getWhatsAppUrl } from '@/config/whatsapp';
+import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 
 const WhatsAppFloatingButton = () => {
+  const { openWhatsApp } = useWhatsAppMessage();
+
   const handleClick = () => {
+    openWhatsApp('flutuante');
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'Botao_Whatsapp_flutuante' });
   };

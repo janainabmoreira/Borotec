@@ -253,14 +253,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                   <span className="flex items-center gap-1.5 text-sm text-primary-foreground/40 font-body">
                     <Share2 className="w-4 h-4" /> Compartilhar:
                   </span>
-                  <button
-                    type="button"
-                    aria-label="Compartilhar no WhatsApp"
-                    className="whatsapp-btn whatsapp-geral px-3 py-1.5 bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 rounded-lg text-xs font-medium hover:bg-[#25D366]/30 transition-colors"
-                  >
-                    WhatsApp
-                  </button>
-                  <a
+<a
                     href={linkedinUrl}
                     target="_blank"
                     rel="noopener noreferrer"
