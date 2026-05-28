@@ -55,7 +55,7 @@ export function useWhatsAppMessage() {
     }
 
     const msg = `[${origem}] ${body}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   return { openWhatsApp };
