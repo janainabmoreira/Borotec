@@ -20,8 +20,10 @@ function toFriendlySource(source: string, medium: string): string {
   if (src === 'facebook') return 'Facebook';
   if (src === 'instagram' && med === 'cpc') return 'Instagram Ads';
   if (src === 'instagram') return 'Instagram';
+  if (src === 'linkedin' && med === 'cpc') return 'LinkedIn Ads';
   if (src === 'linkedin') return 'LinkedIn';
   if (src === 'email') return 'Email';
+  if (src === 'direto') return 'Direto';
   return source.charAt(0).toUpperCase() + source.slice(1);
 }
 
