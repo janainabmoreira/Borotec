@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { useGclidCapture } from "@/hooks/useGclidCapture";
+import { usePageView } from "@/hooks/usePageView";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -40,6 +41,7 @@ declare global {
 const GTMRouteTracker = () => {
   const location = useLocation();
   useGclidCapture();
+  usePageView();
 
   useEffect(() => {
     window.dataLayer = window.dataLayer || [];
