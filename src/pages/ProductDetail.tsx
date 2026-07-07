@@ -755,8 +755,10 @@ const ProductDetail = () => {
       '@type': 'Offer',
       url: productUrl,
       availability: 'https://schema.org/InStock',
-      seller: { '@type': 'Organization', name: 'BOROTEC Industrial', url: 'https://borotec.com.br' },
+      price: '0',
       priceCurrency: 'BRL',
+      priceValidUntil: '2027-12-31',
+      seller: { '@type': 'Organization', name: 'BOROTEC Industrial', url: 'https://borotec.com.br' },
     },
   };
 
