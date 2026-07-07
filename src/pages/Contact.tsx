@@ -11,8 +11,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useUTMCapture } from '@/hooks/useUTMCapture';
+import { supabase } from '@/lib/supabase';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
+
+const SESSION_KEY = 'brt_sid';
+function getSessionId() {
+  let sid = sessionStorage.getItem(SESSION_KEY);
+  if (!sid) { sid = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem(SESSION_KEY, sid); }
+  return sid;
+}
+
+const COOLDOWN_KEY = 'brt_form_last';
+const COOLDOWN_MS  = 60_000; // 1 minuto entre envios
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -20,19 +31,51 @@ const Contact = () => {
     email: '',
     phone: '',
     company: '',
+    subject: '',
     message: ''
   });
+  const [honeypot, setHoneypot]   = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formStarted, setFormStarted]   = useState(false);
   const gclid = useGclidCapture();
   const utms = useUTMCapture();
   const { openWhatsApp } = useWhatsAppMessage();
 
+  const trackFormEvent = (event_type: string) => {
+    supabase.from('form_events').insert({
+      event_type,
+      session_id: getSessionId(),
+      utm_source: utms.utm_source || null,
+      utm_medium: utms.utm_medium || null,
+      utm_campaign: utms.utm_campaign || null,
+    }).then(() => {});
+  };
+
+  const handleFormFocus = () => {
+    if (!formStarted) {
+      setFormStarted(true);
+      trackFormEvent('start');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Honeypot — bot preencheu campo invisível
+    if (honeypot) return;
+
+    // Cooldown — evita spam de envios rápidos
+    const last = parseInt(sessionStorage.getItem(COOLDOWN_KEY) ?? '0', 10);
+    if (Date.now() - last < COOLDOWN_MS) {
+      toast({ title: 'Aguarde um momento', description: 'Você já enviou uma mensagem recentemente. Tente novamente em instantes.', variant: 'destructive' });
+      return;
+    }
+
     setIsSubmitting(true);
 
     (window as any).dataLayer = (window as any).dataLayer || [];
     (window as any).dataLayer.push({ event: 'Formulario_contato' });
+    trackFormEvent('submit_attempt');
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
@@ -40,11 +83,12 @@ const Contact = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           access_key: WEB3FORMS_ACCESS_KEY,
-          subject: 'Novo Contato pelo Site',
+          subject: formData.subject ? `[${formData.subject}] Novo Contato pelo Site` : 'Novo Contato pelo Site',
           from_name: formData.name,
           email: formData.email,
           phone: formData.phone || 'Não informado',
           company: formData.company || 'Não informada',
+          assunto: formData.subject || 'Não informado',
           message: formData.message,
           ...(gclid && { gclid }),
           ...(utms.utm_source && { 'Origem (utm_source)': utms.utm_source }),
@@ -58,13 +102,33 @@ const Contact = () => {
       const data = await response.json();
       if (!data.success) throw new Error('Falha no envio');
 
+      sessionStorage.setItem(COOLDOWN_KEY, Date.now().toString());
+      trackFormEvent('submit_success');
+
+      // Salva lead no Supabase (falha silenciosa — não bloqueia o usuário)
+      supabase.from('leads').insert({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        company: formData.company || null,
+        subject: formData.subject || null,
+        message: formData.message,
+        utm_source: utms.utm_source || null,
+        utm_medium: utms.utm_medium || null,
+        utm_campaign: utms.utm_campaign || null,
+        utm_term: utms.utm_term || null,
+        utm_content: utms.utm_content || null,
+        gclid: gclid || null,
+      }).then(() => {});
+
       toast({
         title: "Mensagem enviada!",
         description: "Entraremos em contato em breve.",
       });
 
-      setFormData({ name: '', email: '', phone: '', company: '', message: '' });
+      setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '' });
     } catch {
+      trackFormEvent('submit_error');
       toast({
         title: "Erro ao enviar",
         description: "Não foi possível enviar a mensagem. Tente novamente ou entre em contato pelo WhatsApp.",
@@ -91,8 +155,8 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'E-mail',
-      info: 'contato@borotec.com.br',
-      action: 'mailto:contato@borotec.com.br'
+      info: 'vendas@borotec.com.br',
+      action: 'mailto:vendas@borotec.com.br'
     },
     {
       icon: MapPin,
@@ -102,8 +166,8 @@ const Contact = () => {
     },
     {
       icon: Clock,
-      title: 'Horário',
-      info: 'Seg - Sex: 8h às 18h',
+      title: 'Horário de Atendimento',
+      info: 'Segunda a Quinta: 8h às 18h\nSexta: 8h às 17h',
       action: null
     }
   ];
@@ -174,14 +238,14 @@ const Contact = () => {
                             {item.title}
                           </h3>
                           {item.action ? (
-                            <a 
-                              href={item.action} 
+                            <a
+                              href={item.action}
                               className="font-body text-sm text-primary-foreground/60 hover:text-cyan transition-colors"
                             >
                               {item.info}
                             </a>
                           ) : (
-                            <p className="font-body text-sm text-primary-foreground/60">{item.info}</p>
+                            <p className="font-body text-sm text-primary-foreground/60 whitespace-pre-line">{item.info}</p>
                           )}
                         </div>
                       </div>
@@ -191,7 +255,7 @@ const Contact = () => {
 
                 <Button variant="whatsapp" size="lg" className="w-full whatsapp-btn whatsapp-contato" onClick={handleWhatsApp} aria-label="Falar via WhatsApp">
                   <MessageCircle className="w-5 h-5 mr-2" />
-                  Fale com Especialista
+                  Falar com o Especialista
                 </Button>
               </div>
 
@@ -201,7 +265,18 @@ const Contact = () => {
                     Envie uma Mensagem
                   </h2>
                   
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} onFocus={handleFormFocus} className="space-y-6">
+                    {/* Honeypot — invisível para humanos, bots preenchem automaticamente */}
+                    <input
+                      type="text"
+                      name="website"
+                      value={honeypot}
+                      onChange={e => setHoneypot(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+                    />
                     <input type="hidden" name="utm_source" value={utms.utm_source} />
                     <input type="hidden" name="utm_medium" value={utms.utm_medium} />
                     <input type="hidden" name="utm_campaign" value={utms.utm_campaign} />
@@ -261,6 +336,25 @@ const Contact = () => {
                           className="h-12 bg-charcoal border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/40 focus:border-cyan"
                         />
                       </div>
+                    </div>
+
+                    <div>
+                      <label className="block font-body text-sm font-medium text-primary-foreground mb-2">
+                        Assunto *
+                      </label>
+                      <select
+                        value={formData.subject}
+                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                        required
+                        className="w-full h-12 px-3 bg-charcoal border border-primary-foreground/20 rounded-md text-sm text-primary-foreground focus:outline-none focus:border-cyan transition-colors appearance-none cursor-pointer"
+                      >
+                        <option value="" disabled className="text-primary-foreground/40">Selecione o assunto...</option>
+                        <option value="Solicitação de Orçamento">Solicitação de Orçamento</option>
+                        <option value="Informações sobre Produto">Informações sobre Produto</option>
+                        <option value="Suporte Técnico">Suporte Técnico</option>
+                        <option value="Parceria Comercial">Parceria Comercial</option>
+                        <option value="Outro">Outro</option>
+                      </select>
                     </div>
 
                     <div>

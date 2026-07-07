@@ -1,4 +1,13 @@
-import { Product } from '@/contexts/QuoteCartContext';
+export interface Product {
+  id: string;
+  name: string;
+  category: string;
+  image: string;
+  description: string;
+  specs?: Record<string, string>;
+  seoTitle?: string;
+  seoDescription?: string;
+}
 import productSK3208 from '@/assets/product-sk3208.webp';
 import productSK3210 from '@/assets/product-sk3210.webp';
 import productSK3328 from '@/assets/product-sk3328.webp';
@@ -224,6 +233,39 @@ export const products: Product[] = [
       'Linha': 'E - Especiais'
     }
   },
+  // Novos produtos Linha T
+  {
+    id: 'bt-1000',
+    name: 'BT-1000 Endoscópio para Dutos',
+    category: 'Linha T - Tubulações',
+    image: productSK3610,
+    description: 'Endoscópio robusto para inspeção de tubulações industriais de médio porte. Câmera HD com cabo de 50m e sonda de Ø8mm resistente a impactos.',
+    specs: { 'Sonda': 'Ø8mm', 'Cabo': '50m', 'Câmera': 'HD 720p', 'Proteção': 'IP68' }
+  },
+  {
+    id: 'bt-1001',
+    name: 'BT-1001 Endoscópio Slim 1080p',
+    category: 'Linha T - Tubulações',
+    image: productSK3208,
+    description: 'Endoscópio slim com sonda de Ø6mm para tubulações de menor diâmetro. Câmera Full HD 1080p com gravação integrada em cartão SD.',
+    specs: { 'Sonda': 'Ø6mm', 'Cabo': '50m', 'Câmera': 'Full HD 1080p', 'Proteção': 'IP68' }
+  },
+  {
+    id: 'bt-h3',
+    name: 'BT-H3 Boroscópio Full HD',
+    category: 'Linha T - Tubulações',
+    image: productSK3208,
+    description: 'Boroscópio profissional com sonda slim de Ø6mm e câmera Full HD. Ideal para inspeção em tubulações de pequeno diâmetro e passagens apertadas.',
+    specs: { 'Sonda': 'Ø6mm', 'Cabo': '30m', 'Câmera': 'Full HD 1080p', 'Proteção': 'IP68' }
+  },
+  {
+    id: 'bt-4000',
+    name: 'BT-4000 Endoscópio de Longa Extensão',
+    category: 'Linha T - Tubulações',
+    image: productSK3828,
+    description: 'Endoscópio de longa extensão para inspeção em tubulações de grande porte. Cabo reforçado de 150m com câmera robusta e sonda de Ø10mm.',
+    specs: { 'Sonda': 'Ø10mm', 'Cabo': '150m', 'Câmera': 'HD 720p', 'Proteção': 'IP68' }
+  },
   // Linha R - Robôs
   {
     id: 'fb20p-camera',
@@ -261,7 +303,64 @@ export const products: Product[] = [
       'Linha': 'R - Robôs'
     }
   },
+  // Linha R - novos robôs
+  {
+    id: 'bt-robo-lite',
+    name: 'BT-Robo Lite',
+    category: 'Linha R - Robôs',
+    image: productFB20PCamera,
+    description: 'Robô de inspeção compacto para tubulações a partir de Ø100mm. Câmera HD com visão 360°.',
+    specs: { 'Diâmetro mín.': 'Ø100mm', 'Cabo': '80m', 'Câmera': 'HD', 'Articulação': '360°' }
+  },
+  {
+    id: 'bt-robo-fx',
+    name: 'BT-Robo FX',
+    category: 'Linha R - Robôs',
+    image: productFB20PTablet,
+    description: 'Robô de inspeção versátil com tração 6x6, câmera Full HD e articulação de 360°.',
+    specs: { 'Diâmetro mín.': 'Ø150mm', 'Cabo': '120m', 'Câmera': 'Full HD', 'Articulação': '360°' }
+  },
+  {
+    id: 'bt-robo-pro',
+    name: 'BT-Robo Pro',
+    category: 'Linha R - Robôs',
+    image: productFB20PSystem,
+    description: 'Robô profissional de alto desempenho para tubulações de grande porte, IP68 com relatório automático.',
+    specs: { 'Diâmetro mín.': 'Ø200mm', 'Cabo': '200m', 'Câmera': '4K', 'Articulação': '360°' }
+  },
   // Linha M - Máquinas
+  {
+    id: 'bt-5000',
+    name: 'BT-5000 Videoscópio Industrial',
+    category: 'Linha M - Máquinas',
+    image: productPSeries,
+    description: 'Videoscópio profissional com câmera Full HD 1080p e articulação de 4 vias para inspeção de motores, turbinas e compressores industriais.',
+    specs: { 'Sonda': 'Ø6mm', 'Cabo': '1,5m', 'Câmera': '1080p', 'Proteção': 'IP67' }
+  },
+  {
+    id: 'bt-400',
+    name: 'BT-400 Boroscópio para Motores',
+    category: 'Linha M - Máquinas',
+    image: productKSeries,
+    description: 'Boroscópio robusto para inspeção de cilindros, válvulas e câmaras de combustão. Câmera HD com sonda de Ø8mm.',
+    specs: { 'Sonda': 'Ø8mm', 'Cabo': '1m', 'Câmera': 'HD', 'Proteção': 'IP67' }
+  },
+  {
+    id: 'bt-300',
+    name: 'BT-300 Endoscópio Compacto',
+    category: 'Linha M - Máquinas',
+    image: productLASeries,
+    description: 'Endoscópio compacto e versátil para manutenção preditiva de máquinas. Sonda de Ø6mm com câmera HD integrada.',
+    specs: { 'Sonda': 'Ø6mm', 'Cabo': '1m', 'Câmera': 'HD', 'Proteção': 'IP67' }
+  },
+  {
+    id: 'bt-100',
+    name: 'BT-100 Micro Boroscópio',
+    category: 'Linha M - Máquinas',
+    image: productHJSeries,
+    description: 'Micro boroscópio com sonda ultra-slim de Ø4mm para inspeção em passagens extremamente estreitas.',
+    specs: { 'Sonda': 'Ø4mm', 'Cabo': '1m', 'Câmera': 'HD', 'Proteção': 'IP67' }
+  },
   {
     id: 'p-series',
     name: 'Série P Endoscópio Industrial FHD Touch',
@@ -315,7 +414,34 @@ export const products: Product[] = [
       'Sondas': '0.85-8mm',
       'Linha': 'M - Máquinas'
     }
-  }
+  },
+  // Linha E - novos
+  {
+    id: 'bt-3d',
+    name: 'BT-3D Videoscópio 3D Estéreo',
+    category: 'Linha E - Especiais',
+    image: productKSeries3D,
+    description: 'Videoscópio com câmera 3D estéreo para medição dimensional sem contato. Tecnologia exclusiva de visão tridimensional para inspeções críticas.',
+    specs: { 'Sonda': 'Ø8mm', 'Cabo': '1m', 'Câmera': '3D Full HD', 'Proteção': 'IP67' }
+  },
+  // Linha P - Poços
+  {
+    id: 'bt-8000',
+    name: 'BT-8000 Câmera para Poços',
+    category: 'Linha P - Poços',
+    image: productFB20PSystem,
+    description: 'Câmera submersível de alto desempenho para inspeção de poços artesianos, reservatórios e ambientes subaquáticos. IP68 com cabo de 100m.',
+    specs: { 'Câmera': 'Ø60mm', 'Cabo': '100m', 'Resolução': 'Full HD', 'Proteção': 'IP68' }
+  },
+  // Linha TC - Telescópicos
+  {
+    id: 'bt-3000',
+    name: 'BT-3000 Câmera Telescópica',
+    category: 'Linha TC - Telescópicos',
+    image: productLASeries,
+    description: 'Câmera telescópica com haste extensível de até 5m para inspeção em altura, tetos, estruturas elevadas e locais de difícil alcance.',
+    specs: { 'Câmera': 'Ø30mm', 'Haste': '5m', 'Resolução': 'Full HD', 'Proteção': 'IP65' }
+  },
 ];
 
 export const categories = [

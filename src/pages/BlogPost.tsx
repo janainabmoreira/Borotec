@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -7,17 +7,64 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Calendar, Clock, ArrowLeft, ArrowRight, ChevronRight, ChevronDown,
-  Share2, Link2, Check, Search, Tag, Send, X,
+  Share2, Link2, Check, Search, Tag, Send, X, Loader2,
 } from 'lucide-react';
-import { blogPosts } from '@/data/blog';
+import { supabase } from '@/lib/supabase';
+import type { DbBlogPost } from '@/types/database';
+import { blogPosts as staticPosts } from '@/data/blog';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
+
+type BlogComment = {
+  id: string;
+  author_name: string;
+  message: string;
+  reply: string | null;
+  created_at: string;
+};
+
+const staticAsDb: DbBlogPost[] = staticPosts.map((p) => ({
+  id: p.id,
+  title: p.title,
+  excerpt: p.excerpt,
+  category: p.category,
+  author: 'Equipe BOROTEC',
+  date: p.date,
+  read_time: p.readTime,
+  image: p.image,
+  content: p.content,
+  faqs: p.faqs ?? [],
+  active: true,
+  created_at: p.date,
+  updated_at: p.date,
+}));
 
 const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
 const BlogPost = () => {
   const { postId } = useParams();
-  const post = blogPosts.find((p) => p.id === postId);
+  const [allPosts, setAllPosts] = useState<DbBlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('active', true)
+      .order('date', { ascending: false })
+      .then(({ data }) => {
+        const fromDb = data ?? [];
+        const dbIds = new Set(fromDb.map((p) => p.id));
+        const merged = [
+          ...fromDb,
+          ...staticAsDb.filter((p) => !dbIds.has(p.id)),
+        ].sort((a, b) => b.date.localeCompare(a.date));
+        setAllPosts(merged);
+        setLoading(false);
+      });
+  }, []);
+
+  const post = allPosts.find((p) => p.id === postId) ?? null;
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
@@ -25,43 +72,56 @@ const BlogPost = () => {
   const [comment, setComment] = useState({ name: '', text: '' });
   const [commentSent, setCommentSent] = useState(false);
   const [sendingComment, setSendingComment] = useState(false);
+  const [publishedComments, setPublishedComments] = useState<BlogComment[]>([]);
 
   // All useMemo before early return (Rules of Hooks)
   const postUrl = useMemo(() =>
     post ? `https://borotec.com.br/blog/${post.id}` : '', [post]);
 
   const currentIndex = useMemo(() =>
-    blogPosts.findIndex((p) => p.id === postId), [postId]);
+    allPosts.findIndex((p) => p.id === postId), [allPosts, postId]);
 
   const prevPost = useMemo(() =>
-    currentIndex > 0 ? blogPosts[currentIndex - 1] : null, [currentIndex]);
+    currentIndex > 0 ? allPosts[currentIndex - 1] : null, [currentIndex, allPosts]);
 
   const nextPost = useMemo(() =>
-    currentIndex < blogPosts.length - 1 ? blogPosts[currentIndex + 1] : null, [currentIndex]);
+    currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null, [currentIndex, allPosts]);
 
   const relatedPosts = useMemo(() =>
-    post ? blogPosts.filter((p) => p.id !== post.id).slice(0, 3) : [], [post]);
+    post ? allPosts.filter((p) => p.id !== post.id).slice(0, 3) : [], [post, allPosts]);
 
   const categories = useMemo(() =>
-    Array.from(new Set(blogPosts.map((p) => p.category))), []);
+    Array.from(new Set(allPosts.map((p) => p.category))), [allPosts]);
 
   const recentPosts = useMemo(() =>
-    post ? blogPosts.filter((p) => p.id !== post.id).slice(0, 4) : [], [post]);
+    post ? allPosts.filter((p) => p.id !== post.id).slice(0, 4) : [], [post, allPosts]);
 
   const searchResults = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return [];
-    return blogPosts.filter((p) =>
+    return allPosts.filter((p) =>
       p.title.toLowerCase().includes(q) ||
       p.excerpt.toLowerCase().includes(q) ||
       p.category.toLowerCase().includes(q) ||
       p.content.toLowerCase().includes(q)
     );
-  }, [searchQuery]);
+  }, [searchQuery, allPosts]);
 
-  // Expensive HTML generation memoized — only recalculates when post changes, not on every keystroke
+  useEffect(() => {
+    if (!postId) return;
+    supabase
+      .from('blog_comments')
+      .select('id, author_name, message, reply, created_at')
+      .eq('post_id', postId)
+      .eq('published', true)
+      .order('created_at', { ascending: true })
+      .then(({ data }) => setPublishedComments((data ?? []) as BlogComment[]));
+  }, [postId]);
+
   const articleHtml = useMemo(() => {
     if (!post) return '';
+    // Content from admin is already HTML; static posts use Markdown
+    if (post.content.trimStart().startsWith('<')) return post.content;
     return post.content
       .split('\n\n')
       .map((block) => {
@@ -102,6 +162,14 @@ const BlogPost = () => {
       .join('\n');
   }, [post]);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-charcoal flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-cyan animate-spin" />
+      </div>
+    );
+  }
+
   if (!post) {
     return (
       <div className="min-h-screen bg-charcoal flex items-center justify-center">
@@ -127,21 +195,25 @@ const BlogPost = () => {
     e.preventDefault();
     if (!comment.name.trim() || !comment.text.trim()) return;
     setSendingComment(true);
-    const gclid = (document.getElementById('gclid') as HTMLInputElement)?.value || '';
-
     try {
-      await fetch('https://api.web3forms.com/submit', {
+      await supabase.from('blog_comments').insert({
+        post_id: post.id,
+        post_title: post.title,
+        author_name: comment.name.trim(),
+        message: comment.text.trim(),
+      });
+      // Notificação por e-mail como backup
+      fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           access_key: WEB3FORMS_ACCESS_KEY,
-          subject: `[Blog] Comentário em: ${post.title}`,
+          subject: `[Blog] Novo comentário em: ${post.title}`,
           from_name: comment.name,
           message: comment.text,
           post_url: postUrl,
-          ...(gclid && { gclid }),
         }),
-      });
+      }).catch(() => {});
       setCommentSent(true);
       setComment({ name: '', text: '' });
     } finally {
@@ -163,7 +235,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
     url: postUrl,
   };
 
-  const faqSchema = post.faqs
+  const faqSchema = post.faqs && post.faqs.length > 0
     ? {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
@@ -195,7 +267,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
         <meta property="og:title" content={post.title} />
         <meta property="og:description" content={post.excerpt} />
         <meta property="og:url" content={postUrl} />
-        <meta property="og:image" content={post.image} />
+        <meta property="og:image" content={post.image ?? ''} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="pt_BR" />
@@ -203,7 +275,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={post.title} />
         <meta name="twitter:description" content={post.excerpt} />
-        <meta name="twitter:image" content={post.image} />
+        <meta name="twitter:image" content={post.image ?? ''} />
         <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         {faqSchema && <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>}
@@ -236,7 +308,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                     <Calendar className="w-4 h-4" /> {new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
                   </span>
                   <span className="flex items-center gap-1 text-sm text-primary-foreground/50">
-                    <Clock className="w-4 h-4" /> {post.readTime} de leitura
+                    <Clock className="w-4 h-4" /> {post.read_time} de leitura
                   </span>
                 </div>
 
@@ -270,7 +342,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                   </button>
                 </div>
 
-                {/* Article body — pre-computed, no recompute on search typing */}
+                {/* Article body */}
                 <div
                   className="prose prose-invert prose-cyan max-w-none text-primary-foreground/80 leading-relaxed space-y-4"
                   dangerouslySetInnerHTML={{ __html: articleHtml }}
@@ -358,6 +430,42 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                   )}
                 </div>
 
+                {/* Published comments */}
+                {publishedComments.length > 0 && (
+                  <div className="mt-10 space-y-4">
+                    <h3 className="font-heading text-base font-bold text-primary-foreground">
+                      {publishedComments.length} comentário{publishedComments.length !== 1 ? 's' : ''}
+                    </h3>
+                    {publishedComments.map((c) => (
+                      <div key={c.id} className="space-y-2">
+                        <div className="bg-navy-dark/40 border border-primary-foreground/10 rounded-xl p-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-7 h-7 rounded-full bg-cyan/20 flex items-center justify-center text-cyan text-xs font-bold flex-shrink-0">
+                              {c.author_name.charAt(0).toUpperCase()}
+                            </div>
+                            <span className="text-sm font-semibold text-primary-foreground">{c.author_name}</span>
+                            <span className="text-xs text-primary-foreground/30 ml-auto">
+                              {new Date(c.created_at).toLocaleDateString('pt-BR')}
+                            </span>
+                          </div>
+                          <p className="text-sm text-primary-foreground/70 leading-relaxed font-body">{c.message}</p>
+                        </div>
+                        {c.reply && (
+                          <div className="ml-6 bg-cyan/5 border border-cyan/20 rounded-xl p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                                <Send className="w-3 h-3 text-accent" />
+                              </div>
+                              <span className="text-sm font-semibold text-accent">Equipe BOROTEC</span>
+                            </div>
+                            <p className="text-sm text-primary-foreground/70 leading-relaxed font-body">{c.reply}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* Prev / Next */}
                 <div className="mt-10 pt-8 border-t border-primary-foreground/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {prevPost ? (
@@ -423,7 +531,6 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                     )}
                   </div>
 
-                  {/* Resultados inline */}
                   {searchQuery.trim() && (
                     <div className="mt-3">
                       {searchResults.length === 0 ? (
@@ -444,7 +551,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                                 className="flex gap-2 group p-2 rounded-lg hover:bg-primary-foreground/10 transition-colors"
                               >
                                 <img
-                                  src={result.image}
+                                  src={result.image ?? ''}
                                   alt={result.title}
                                   className="w-10 h-10 object-cover rounded flex-shrink-0"
                                 />
@@ -463,14 +570,14 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                   )}
                 </div>
 
-                {/* Categories — links para /blog?categoria=... */}
+                {/* Categories */}
                 <div className="bg-navy-dark/50 border border-primary-foreground/10 rounded-xl p-5">
                   <h3 className="font-heading font-bold text-sm text-primary-foreground mb-3 flex items-center gap-2">
                     <Tag className="w-4 h-4 text-cyan" /> Categorias
                   </h3>
                   <ul className="space-y-1">
                     {categories.map((cat) => {
-                      const count = blogPosts.filter((p) => p.category === cat).length;
+                      const count = allPosts.filter((p) => p.category === cat).length;
                       return (
                         <li key={cat}>
                           <Link
@@ -504,7 +611,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                           className="flex gap-3 group"
                         >
                           <img
-                            src={recent.image}
+                            src={recent.image ?? ''}
                             alt={recent.title}
                             className="w-14 h-14 object-cover rounded-lg flex-shrink-0 group-hover:opacity-80 transition-opacity"
                           />
@@ -513,7 +620,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                               {recent.title}
                             </p>
                             <span className="text-[10px] text-primary-foreground/40 font-body mt-0.5 block">
-                              {recent.readTime}
+                              {recent.read_time}
                             </span>
                           </div>
                         </Link>
@@ -540,7 +647,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                     >
                       <div className="aspect-[4/3] md:aspect-[19/10] overflow-hidden">
                         <img
-                          src={related.image}
+                          src={related.image ?? ''}
                           alt={related.title}
                           loading="lazy"
                           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
@@ -554,7 +661,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                           {related.title}
                         </h3>
                         <span className="flex items-center gap-1 text-xs text-primary-foreground/40 font-body">
-                          <Clock className="w-3 h-3" /> {related.readTime}
+                          <Clock className="w-3 h-3" /> {related.read_time}
                         </span>
                       </div>
                     </Link>

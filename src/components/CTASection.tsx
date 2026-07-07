@@ -42,11 +42,11 @@ const CTASection = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="whatsapp" size="xl" className="group whatsapp-btn whatsapp-geral" aria-label="Solicitar orçamento pelo WhatsApp" onClick={() => { openWhatsApp('geral'); window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'Botao_Whatsapp_cta' }); }}>
               <MessageCircle className="w-5 h-5" />
-              Fale com Especialista
+              Falar com o Especialista
             </Button>
 
             <Button variant="heroOutline" size="xl" asChild>
-              <Link to="/produtos">
+              <Link to="/boroscopios">
                 Ver Catálogo Completo
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
