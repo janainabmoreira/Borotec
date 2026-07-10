@@ -8,6 +8,7 @@ import { type SpecGroup, type AccessoryRow } from '@/data/productDetails';
 import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 import { useUTMCapture } from '@/hooks/useUTMCapture';
 import { useGclidCapture } from '@/hooks/useGclidCapture';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { ICON_MAP } from '@/lib/iconMap';
 import {
@@ -23,7 +24,7 @@ const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
 // ── Category → breadcrumb mapping ────────────────────────────────────────────
 
 const categoryBreadcrumb: Record<string, { label: string; path: string }> = {
-  'Linha T - Tubulações':               { label: 'Tubulações e Dutos',       path: '/tubulacoes' },
+  'Linha T - Tubulações':               { label: 'Tubulações e Dutos',       path: '/linha-t'    },
   'Linha R - Acesso Autônomo':          { label: 'Acesso Autônomo',           path: '/linha-r'    },
   'Linha M - Máquinas e Motores':       { label: 'Máquinas e Motores',        path: '/linha-m'    },
   'Linha E - Aplicações Especiais':     { label: 'Aplicações Especiais',      path: '/linha-e'    },
@@ -645,6 +646,7 @@ const ProductDetail = () => {
   const [dbDetail, setDbDetail] = useState<typeof productDetailsMap[string] | null>(null);
   const [loadingDb, setLoadingDb] = useState(!!productId && !!isSupabaseConfigured);
   const [notFound, setNotFound] = useState(false);
+  usePrerenderSignal(!loadingDb);
 
   // Always try Supabase first — DB product overrides any static version with same ID
   useEffect(() => {
@@ -729,7 +731,12 @@ const ProductDetail = () => {
     );
   }
 
-  const productUrl = `https://borotec.com.br/produtos/${product.id}`;
+  // Canonical is the product's line route (/linha-t/:id etc.), not /produtos/:id —
+  // /produtos/* is a legacy prefix kept only as a redirect target (see .htaccess).
+  const linePath = categoryBreadcrumb[product.category]?.path;
+  const productUrl = linePath
+    ? `https://borotec.com.br${linePath}/${product.id}`
+    : `https://borotec.com.br/produtos/${product.id}`;
   const absoluteImage = product.image?.startsWith('http')
     ? product.image
     : `https://borotec.com.br${product.image}`;
@@ -748,6 +755,7 @@ const ProductDetail = () => {
     name: product.name,
     description: product.description,
     image: absoluteImage,
+    sku: product.id,
     brand: { '@type': 'Brand', name: 'BOROTEC Industrial' },
     category: product.category,
     url: productUrl,

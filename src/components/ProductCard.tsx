@@ -2,15 +2,17 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Eye } from 'lucide-react';
 import type { Product } from '@/data/products';
+import { getProductPath } from '@/lib/productLines';
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const productPath = getProductPath(product.category, product.id);
   return (
     <div className="group relative bg-card rounded-xl overflow-hidden shadow-card card-hover border border-border">
-      <Link to={`/produtos/${product.id}`}>
+      <Link to={productPath}>
         <div className="aspect-square sm:aspect-[4/3] overflow-hidden bg-secondary relative">
           <img
             src={product.image}
@@ -31,7 +33,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           {product.category}
         </span>
 
-        <Link to={`/produtos/${product.id}`}>
+        <Link to={productPath}>
           <h3 className="font-heading font-bold text-sm md:text-base text-foreground mb-2 line-clamp-2 group-hover:text-accent transition-colors min-h-[2.5rem]">
             {product.name}
           </h3>
@@ -42,7 +44,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </p>
 
         <Button variant="cta" size="sm" className="w-full text-xs h-8" asChild>
-          <Link to={`/produtos/${product.id}`}>
+          <Link to={productPath}>
             Ver Detalhes
           </Link>
         </Button>

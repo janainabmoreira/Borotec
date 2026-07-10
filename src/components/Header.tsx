@@ -6,15 +6,9 @@ import { Button } from '@/components/ui/button';
 import logo from '@/assets/logo-borotec.webp';
 import { blogPosts } from '@/data/blog';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { CATEGORY_TO_LINE, getProductPath } from '@/lib/productLines';
 
-const categoryToPath: Record<string, string> = {
-  'Linha T - Tubulações':          '/linha-t',
-  'Linha R - Acesso Autônomo':     '/linha-r',
-  'Linha M - Máquinas e Motores':  '/linha-m',
-  'Linha E - Aplicações Especiais':'/linha-e',
-  'Linha P - Poços e Subaquático': '/linha-p',
-  'Linha TC - Altura e Difícil Acesso': '/linha-tc',
-};
+const categoryToPath = CATEGORY_TO_LINE;
 
 type DbProduct = { id: string; name: string; category: string; image_url: string | null };
 
@@ -404,24 +398,28 @@ const Header = () => {
                         </p>
                       ) : (
                         <>
-                          {searchResults.products.length > 0 && (
+                          {dbProducts.length > 0 && (
                             <div>
                               <p className="px-4 py-1.5 text-[10px] text-primary-foreground/40 uppercase tracking-wide bg-primary-foreground/5 font-body">Produtos</p>
-                              {searchResults.products.map((p) => (
+                              {dbProducts.map((p) => (
                                 <Link
                                   key={p.id}
-                                  to={`/produtos/${p.id}`}
+                                  to={getProductPath(p.category, p.id)}
                                   onClick={handleResultClick}
                                   className="flex items-center gap-3 px-4 py-2 hover:bg-primary-foreground/10 transition-colors"
                                 >
-                                  <img src={p.image} alt={p.name} className="w-8 h-8 object-cover rounded flex-shrink-0" />
+                                  {p.image_url ? (
+                                    <img src={p.image_url} alt={p.name} className="w-8 h-8 object-cover rounded flex-shrink-0" />
+                                  ) : (
+                                    <div className="w-8 h-8 rounded bg-primary-foreground/10 flex-shrink-0" />
+                                  )}
                                   <p className="text-xs font-heading font-semibold text-primary-foreground line-clamp-1">{p.name}</p>
                                 </Link>
                               ))}
                             </div>
                           )}
                           {searchResults.posts.length > 0 && (
-                            <div className={searchResults.products.length > 0 ? 'border-t border-primary-foreground/10' : ''}>
+                            <div className={dbProducts.length > 0 ? 'border-t border-primary-foreground/10' : ''}>
                               <p className="px-4 py-1.5 text-[10px] text-primary-foreground/40 uppercase tracking-wide bg-primary-foreground/5 font-body">Blog</p>
                               {searchResults.posts.map((p) => (
                                 <Link
