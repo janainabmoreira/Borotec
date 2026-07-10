@@ -48,16 +48,35 @@ jobs:
           [[ "$DIR" != */ ]] && DIR="${DIR}/"
           echo "dir=$DIR" >> "$GITHUB_OUTPUT"
 
-      - name: Deploy dist/ via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          local-dir: ./dist/
-          # Adjust the FTP_SERVER_DIR secret to wherever the site root is on
-          # your host (commonly /public_html/ on cPanel — check what folder
-          # your current manual FTP uploads go into and match it there).
-          server-dir: ${{ steps.ftp-dir.outputs.dir }}
-          dangerous-clean-slate: false
+      - name: Deploy dist/ via FTP (lftp)
+        # SamKirkland/FTP-Deploy-Action consistently failed with
+        # "550 assets: No such file or directory" against this host across
+        # several configurations (absolute/relative server-dir, with and
+        # without a pre-existing assets/ folder) — a known, unresolved issue
+        # in that action (see its GitHub issues for "550"). lftp is the
+        # underlying tool most FTP deploy actions wrap anyway; talking to it
+        # directly avoids whatever that wrapper does differently, and its
+        # --verbose output actually shows the FTP commands/responses if this
+        # still needs debugging.
+        #
+        # Intentionally NOT using --delete on mirror: this only creates/
+        # updates files, it never removes anything already on the server, so
+        # unrelated content there (e.g. old_site/) is untouched. Means old
+        # cache-busted JS/CSS from previous builds will accumulate in
+        # assets/ over time — fine for now, worth revisiting later.
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_DIR: ${{ steps.ftp-dir.outputs.dir }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+          lftp -u "$FTP_USERNAME,$FTP_PASSWORD" -e "
+            set ftp:ssl-allow no;
+            set ftp:passive-mode true;
+            set net:timeout 20;
+            set net:max-retries 3;
+            set mirror:parallel-transfer-count 2;
+            mirror --reverse --verbose ./dist/ \"$FTP_DIR\";
+            quit;
+          " "$FTP_SERVER"
