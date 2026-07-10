@@ -7,18 +7,17 @@
   RewriteCond %{HTTP_HOST} ^www\.borotec\.com\.br$ [NC]
   RewriteRule ^(.*)$ https://borotec.com.br/$1 [L,R=301]
 
-  # Every prerendered route is a real folder (dist/linha-t/:id/index.html).
-  # Apache's default behavior for a directory request with no trailing slash
-  # is to 301-redirect to the version with a slash before serving it — every
-  # product/blog page took that extra hop, and its canonical (no trailing
-  # slash) pointed right back at the URL that had just redirected away from
-  # it. Serving the index.html directly here (an internal rewrite, not a
-  # redirect) avoids that hop entirely. (DirectorySlash Off alone isn't
-  # enough — Apache falls back to a directory listing instead, which
-  # "Options -Indexes" below blocks, i.e. 403.)
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteCond %{REQUEST_FILENAME}/index.html -f
-  RewriteRule ^(.*[^/])$ $1/index.html [L]
+  # NOTE: tried to avoid the trailing-slash redirect Apache does for
+  # directory requests (every prerendered route is a real folder,
+  # dist/linha-t/:id/index.html) — neither DirectorySlash Off (caused a 403,
+  # since Options -Indexes then blocks the directory listing Apache falls
+  # back to) nor an explicit RewriteRule to serve index.html directly worked:
+  # on this host, mod_dir's redirect fires before .htaccess rewrite rules
+  # ever get a chance to run for a request that maps to an existing
+  # directory. Leaving this as Apache's default behavior — a single, clean
+  # 301 to the trailing-slash URL isn't a real SEO problem (unlike the
+  # canonical-always-points-home bug this project actually fixes), just not
+  # perfectly optimized.
 
   # URLs antigas (pré-migração para Supabase, confirmadas no Search Console)
 
