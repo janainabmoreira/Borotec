@@ -39,6 +39,15 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
+      - name: Normalize FTP server-dir
+        id: ftp-dir
+        # FTP-Deploy-Action requires a trailing slash — compute it here so the
+        # FTP_SERVER_DIR secret doesn't need to be typed exactly right.
+        run: |
+          DIR="${{ secrets.FTP_SERVER_DIR }}"
+          [[ "$DIR" != */ ]] && DIR="${DIR}/"
+          echo "dir=$DIR" >> "$GITHUB_OUTPUT"
+
       - name: Deploy dist/ via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -47,8 +56,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           local-dir: ./dist/
-          # Adjust to wherever the site root is on your host (commonly
-          # /public_html/ on cPanel — check what folder your current manual
-          # FTP uploads go into and match it here).
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          # Adjust the FTP_SERVER_DIR secret to wherever the site root is on
+          # your host (commonly /public_html/ on cPanel — check what folder
+          # your current manual FTP uploads go into and match it there).
+          server-dir: ${{ steps.ftp-dir.outputs.dir }}
           dangerous-clean-slate: false
