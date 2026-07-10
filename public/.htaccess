@@ -1,14 +1,3 @@
-<IfModule mod_dir.c>
-  # Every prerendered route is a real folder (dist/linha-t/:id/index.html) —
-  # without this, Apache auto-redirects /linha-t/:id -> /linha-t/:id/ (a
-  # trailing-slash 301) before ever reaching the file, so every product/blog
-  # page took an extra hop and its canonical (no trailing slash) pointed back
-  # at the URL that had just redirected away from it. All asset references in
-  # the built HTML are absolute (/assets/...), so index.html still serves
-  # correctly without the slash.
-  DirectorySlash Off
-</IfModule>
-
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -17,6 +6,19 @@
   RewriteCond %{HTTPS} off [OR]
   RewriteCond %{HTTP_HOST} ^www\.borotec\.com\.br$ [NC]
   RewriteRule ^(.*)$ https://borotec.com.br/$1 [L,R=301]
+
+  # Every prerendered route is a real folder (dist/linha-t/:id/index.html).
+  # Apache's default behavior for a directory request with no trailing slash
+  # is to 301-redirect to the version with a slash before serving it — every
+  # product/blog page took that extra hop, and its canonical (no trailing
+  # slash) pointed right back at the URL that had just redirected away from
+  # it. Serving the index.html directly here (an internal rewrite, not a
+  # redirect) avoids that hop entirely. (DirectorySlash Off alone isn't
+  # enough — Apache falls back to a directory listing instead, which
+  # "Options -Indexes" below blocks, i.e. 403.)
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_FILENAME}/index.html -f
+  RewriteRule ^(.*[^/])$ $1/index.html [L]
 
   # URLs antigas (pré-migração para Supabase, confirmadas no Search Console)
 
