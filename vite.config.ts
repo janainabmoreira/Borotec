@@ -1,60 +1,38 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { createRequire } from "module";
+import fs from "fs";
 import { componentTagger } from "lovable-tagger";
+import { fetchBuildRoutes } from "./scripts/buildRoutes.mjs";
+import { buildSitemapXml } from "./scripts/generateSitemap.mjs";
 
-const require = createRequire(import.meta.url);
-
-// Prerender routes — execute `npm install` before building if @prerenderer packages are missing
-const prerenderRoutes = [
-  "/",
-  "/sobre",
-  "/produtos",
-  "/categorias",
-  "/contato",
-  "/blog",
-  "/privacidade",
-  // Blog posts
-  "/blog/o-que-e-boroscopio-industrial",
-  "/blog/importancia-inspecao-tubulacoes",
-  "/blog/como-escolher-boroscopio",
-  "/blog/tecnologia-3d-inspecao",
-  "/blog/manutencao-preventiva-robos",
-  "/blog/certificacoes-atex-iecex",
-  "/blog/termografia-industrial",
-  // Produtos — Linha T
-  "/produtos/sk3208",
-  "/produtos/sk3210",
-  "/produtos/sk3328",
-  "/produtos/sk3408",
-  "/produtos/sk3608",
-  "/produtos/sk3610",
-  "/produtos/sk3808",
-  "/produtos/sk3828",
-  // Produtos — Linha E
-  "/produtos/y-series",
-  "/produtos/dz-series",
-  "/produtos/k-series-3d",
-  "/produtos/k-series-ex",
-  "/produtos/k-series-ht",
-  "/produtos/k-series-thermal",
-  "/produtos/k-series-uv",
-  "/produtos/trolley-73mm",
-  // Produtos — Linha R
-  "/produtos/fb20p-camera",
-  "/produtos/fb20p-tablet",
-  "/produtos/fb20p-system",
-  // Produtos — Linha M
-  "/produtos/p-series",
-  "/produtos/k-series",
-  "/produtos/la-series",
-  "/produtos/hj-series",
-];
+// Writes dist/sitemap.xml from the routes resolved at build time.
+//
+// The actual page prerendering (Puppeteer) does NOT run here — it used to,
+// via vite-plugin-prerender, but that wrapper would hang indefinitely inside
+// the Vite build process whenever a route's navigation timed out under load
+// (confirmed: killed after 12+ hours with no error, no completion). It's now
+// a separate step chained after `vite build` in package.json's "build"
+// script (see scripts/prerender.mjs), which renders reliably in a clean
+// process and fails loudly instead of hanging.
+function sitemapPlugin(sitemapEntries) {
+  return {
+    name: "borotec:sitemap",
+    apply: "build",
+    enforce: "post",
+    closeBundle() {
+      const outDir = path.join(__dirname, "dist");
+      fs.mkdirSync(outDir, { recursive: true });
+      fs.writeFileSync(path.join(outDir, "sitemap.xml"), buildSitemapXml(sitemapEntries));
+      console.log(`[sitemap] wrote dist/sitemap.xml with ${sitemapEntries.length} URLs`);
+    },
+  };
+}
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(async ({ mode }) => {
   const isProd = mode === "production";
+  const env = loadEnv(mode, process.cwd(), "");
 
   const plugins = [
     react(),
@@ -62,21 +40,12 @@ export default defineConfig(({ mode }) => {
   ];
 
   if (isProd) {
-    // vite-plugin-prerender requires @prerenderer/prerenderer and
-    // @prerenderer/renderer-puppeteer — run `npm install` if build fails
-    // with MODULE_NOT_FOUND.
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const vitePrerender = require("vite-plugin-prerender");
-      plugins.push(
-        vitePrerender({
-          staticDir: path.join(__dirname, "dist"),
-          routes: prerenderRoutes,
-        })
-      );
-    } catch {
-      console.warn("[prerender] vite-plugin-prerender not available — skipping prerender step.");
-    }
+    const { sitemapEntries } = await fetchBuildRoutes({
+      supabaseUrl: env.VITE_SUPABASE_URL,
+      supabaseAnonKey: env.VITE_SUPABASE_ANON_KEY,
+    });
+
+    plugins.push(sitemapPlugin(sitemapEntries));
   }
 
   return {

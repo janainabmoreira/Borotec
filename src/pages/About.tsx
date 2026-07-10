@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
 import { CheckCircle, Target, Eye, Award } from 'lucide-react';
-import aboutImage from '@/assets/about-company.webp';
+import BoroscopeIllustration from '@/components/BoroscopeIllustration';
 
 const About = () => {
+  usePrerenderSignal(true);
   const values = [
     {
       icon: Target,
@@ -93,20 +95,17 @@ const About = () => {
                   Nossa História
                 </span>
                 <h2 className="font-heading text-3xl md:text-4xl font-black text-primary-foreground mb-6">
-                  Uma trajetória de <span className="text-gradient">inovação</span> e compromisso
+                  Referência em <span className="text-gradient">inspeção industrial</span> no Brasil
                 </h2>
                 <p className="font-body text-lg text-primary-foreground/60 leading-relaxed mb-6">
-                  Fundada em 2003, a BOROTEC Industrial nasceu com a missão de trazer ao mercado 
-                  brasileiro equipamentos de metrologia óptica de alta qualidade. Ao longo dos anos, 
-                  nos tornamos referência no setor.
+                  Desde 2003, a BOROTEC Industrial fornece <strong className="text-primary-foreground/80">boroscópios, videoscópios e robôs de inspeção</strong> para indústrias de petróleo e gás, energia, saneamento, mineração e manufatura em todo o Brasil.
                 </p>
                 <p className="font-body text-primary-foreground/50 leading-relaxed mb-6">
-                  Nossa trajetória é marcada pela busca constante por inovação, pela entrega de
-                  soluções de alta performance e pelo compromisso inabalável com a satisfação dos nossos clientes.
+                  Nossas soluções de <strong className="text-primary-foreground/60">inspeção sem desmontagem</strong> reduzem o tempo de parada, aumentam a segurança operacional e otimizam a <strong className="text-primary-foreground/60">manutenção preditiva</strong> — com equipamentos que inspecionam tubulações, dutos, motores, poços e estruturas de difícil acesso.
                 </p>
                 
                 <ul className="space-y-3">
-                  {['Especialização em inspeção visual remota', 'Equipe técnica especializada', 'Suporte e assistência em todo Brasil', 'Compromisso com qualidade'].map((item) => (
+                  {['Assistência técnica e suporte pós-venda', 'Equipe técnica especializada', 'Representante oficial de marcas líderes mundiais', 'Consultoria técnica personalizada'].map((item) => (
                     <li key={item} className="flex items-center gap-3">
                       <div className="w-6 h-6 bg-cyan/10 rounded-full flex items-center justify-center">
                         <CheckCircle className="w-4 h-4 text-cyan" />
@@ -118,16 +117,11 @@ const About = () => {
               </div>
               
               <div className="relative">
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-primary-foreground/10">
-                  <img
-                    src={aboutImage}
-                    alt="Equipe e instalações da BOROTEC Industrial em São Paulo"
-                    loading="lazy"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-primary-foreground/10 bg-[#07101E]">
+                  <BoroscopeIllustration />
                 </div>
-                {/* Decorative element */}
                 <div className="absolute -top-4 -left-4 w-24 h-24 border-2 border-cyan/30 rounded-2xl" />
+                <div className="absolute -bottom-4 -right-4 w-16 h-16 border border-accent/30 rounded-xl" />
               </div>
             </div>
           </div>

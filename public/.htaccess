@@ -6,6 +6,13 @@
   RewriteCond %{HTTPS} off
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+  # Bloqueia acesso a arquivos sensíveis
+  RewriteRule ^\.env          - [F,L]
+  RewriteRule ^\.git          - [F,L]
+  RewriteRule ^\.htpasswd     - [F,L]
+  RewriteRule ^composer\.(json|lock)$ - [F,L]
+  RewriteRule ^package(-lock)?\.json$ - [F,L]
+
   # Rotas do React (SPA fallback)
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
@@ -13,8 +20,33 @@
   RewriteRule . /index.html [L]
 </IfModule>
 
+# Bloqueia User-Agents de scanners/bots maliciosos comuns
+<IfModule mod_setenvif.c>
+  SetEnvIfNoCase User-Agent "sqlmap"        bad_bot
+  SetEnvIfNoCase User-Agent "nikto"         bad_bot
+  SetEnvIfNoCase User-Agent "masscan"       bad_bot
+  SetEnvIfNoCase User-Agent "zgrab"         bad_bot
+  SetEnvIfNoCase User-Agent "nuclei"        bad_bot
+  SetEnvIfNoCase User-Agent "python-httpx"  bad_bot
+  SetEnvIfNoCase User-Agent "python-urllib" bad_bot
+  <RequireAll>
+    Require all granted
+    Require not env bad_bot
+  </RequireAll>
+</IfModule>
+
 <IfModule mod_headers.c>
-  Header always unset Content-Security-Policy
+  # Segurança — cabeçalhos de proteção
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # Oculta versão do servidor
+  Header always unset X-Powered-By
+  Header always unset Server
 
   # HTML: sem cache — garante versão mais nova sempre
   <FilesMatch "\.html$">
@@ -23,12 +55,12 @@
     Header set Expires "0"
   </FilesMatch>
 
-  # JS e CSS: cache de 1 hora — visitantes recorrentes não baixam tudo de novo
+  # JS e CSS: cache de 1 hora
   <FilesMatch "\.(js|css)$">
     Header set Cache-Control "public, max-age=3600, must-revalidate"
   </FilesMatch>
 
-  # Imagens e fontes: cache de 30 dias (nomes fixos, raramente mudam)
+  # Imagens e fontes: cache de 30 dias
   <FilesMatch "\.(webp|png|jpg|jpeg|svg|gif|ico|woff2|woff|ttf|mp4)$">
     Header set Cache-Control "public, max-age=2592000"
   </FilesMatch>
@@ -38,3 +70,6 @@
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
 </IfModule>
+
+# Bloqueia listagem de diretórios
+Options -Indexes

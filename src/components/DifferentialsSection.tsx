@@ -39,12 +39,12 @@ const DifferentialsSection = () => {
           <h2 className="font-heading text-3xl md:text-4xl font-black text-primary-foreground mb-4">
             Nossos <span className="text-gradient">Diferenciais</span>
           </h2>
-          <p className="font-body text-lg text-primary-foreground/60 max-w-2xl mx-auto">
+          <p className="font-body text-base md:text-lg text-primary-foreground/60 max-w-3xl mx-auto">
             Excelência em cada detalhe para garantir a melhor solução em metrologia óptica industrial.
           </p>
         </AnimateOnScroll>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {differentials.map((item, index) => (
             <AnimateOnScroll key={index} animation="fade-up" delay={index * 100}>
               <div className="group relative p-8 bg-gradient-to-b from-primary/10 to-transparent rounded-2xl border border-primary-foreground/10 hover:border-cyan/30 transition-all duration-500 h-full">

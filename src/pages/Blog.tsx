@@ -1,25 +1,65 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, ArrowRight, X } from 'lucide-react';
-import { blogPosts } from '@/data/blog';
+import { Calendar, Clock, ArrowRight, X, Loader2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
+import type { DbBlogPost } from '@/types/database';
+import { blogPosts as staticPosts } from '@/data/blog';
+
+const staticAsDb: DbBlogPost[] = staticPosts.map((p) => ({
+  id: p.id,
+  title: p.title,
+  excerpt: p.excerpt,
+  category: p.category,
+  author: 'Equipe BOROTEC',
+  date: p.date,
+  read_time: p.readTime,
+  image: p.image,
+  content: p.content,
+  faqs: p.faqs ?? [],
+  active: true,
+  created_at: p.date,
+  updated_at: p.date,
+}));
 
 const Blog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedCategory = searchParams.get('categoria');
+  const [blogPosts, setBlogPosts] = useState<DbBlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  usePrerenderSignal(!loading);
+
+  useEffect(() => {
+    supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('active', true)
+      .order('date', { ascending: false })
+      .then(({ data }) => {
+        const fromDb = data ?? [];
+        const dbIds = new Set(fromDb.map((p) => p.id));
+        const merged = [
+          ...fromDb,
+          ...staticAsDb.filter((p) => !dbIds.has(p.id)),
+        ].sort((a, b) => b.date.localeCompare(a.date));
+        setBlogPosts(merged);
+        setLoading(false);
+      });
+  }, []);
 
   const allCategories = useMemo(() =>
-    Array.from(new Set(blogPosts.map((p) => p.category))), []);
+    Array.from(new Set(blogPosts.map((p) => p.category))), [blogPosts]);
 
   const filteredPosts = useMemo(() =>
     selectedCategory
       ? blogPosts.filter((p) => p.category === selectedCategory)
       : blogPosts,
-    [selectedCategory]
+    [blogPosts, selectedCategory]
   );
 
   const handleClearCategory = () => setSearchParams({}, { replace: true });
@@ -105,8 +145,14 @@ const Blog = () => {
         {/* Blog Posts Grid */}
         <section className="py-16 bg-charcoal">
           <div className="container mx-auto px-4">
+            {loading && (
+              <div className="flex justify-center py-24">
+                <Loader2 className="w-8 h-8 text-cyan animate-spin" />
+              </div>
+            )}
+
             {/* Active filter label */}
-            {selectedCategory && (
+            {!loading && selectedCategory && (
               <div className="flex items-center gap-2 mb-6">
                 <span className="text-primary-foreground/50 text-sm font-body">
                   {filteredPosts.length} {filteredPosts.length === 1 ? 'post' : 'posts'} em
@@ -121,7 +167,7 @@ const Blog = () => {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredPosts.map((post) => (
+              {!loading && filteredPosts.map((post) => (
                 <Link key={post.id} to={`/blog/${post.id}`} className="block group">
                   <Card className="h-full bg-navy-dark/50 border-primary-foreground/10 hover:border-cyan/50 transition-all duration-300 overflow-hidden hover:shadow-lg hover:shadow-cyan/5">
                     <div className="aspect-[4/3] md:aspect-[19/10] overflow-hidden">
@@ -153,7 +199,7 @@ const Blog = () => {
                         </span>
                         <span className="flex items-center gap-1">
                           <Clock className="w-4 h-4" />
-                          {post.readTime}
+                          {post.read_time}
                         </span>
                       </div>
                       <span className="flex items-center gap-2 text-cyan font-medium group-hover:gap-3 transition-all">
@@ -166,7 +212,7 @@ const Blog = () => {
               ))}
             </div>
 
-            {filteredPosts.length === 0 && (
+            {!loading && filteredPosts.length === 0 && (
               <div className="text-center py-16">
                 <p className="font-body text-lg text-primary-foreground/50 mb-4">
                   Nenhum post encontrado nesta categoria.

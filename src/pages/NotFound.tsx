@@ -38,11 +38,11 @@ const NotFound = () => {
                 Voltar ao início
               </Link>
               <Link
-                to="/produtos"
+                to="/contato"
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-primary-foreground/10 text-primary-foreground border border-primary-foreground/20 rounded-xl hover:bg-primary-foreground/20 transition-colors text-sm"
               >
                 <Search className="w-4 h-4" />
-                Ver produtos
+                Falar com especialista
               </Link>
             </div>
           </div>

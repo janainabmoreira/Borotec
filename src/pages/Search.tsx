@@ -3,20 +3,20 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { products } from '@/data/products';
 import { blogPosts } from '@/data/blog';
-import { Search, Package, BookOpen, ArrowRight, X } from 'lucide-react';
-import type { Product } from '@/contexts/QuoteCartContext';
+import { Search, BookOpen, ArrowRight, X } from 'lucide-react';
 import type { BlogPost } from '@/data/blog';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get('q') ?? '');
+  const qParam = searchParams.get('q') ?? '';
+  const [query, setQuery] = useState(qParam);
 
+  // Sincroniza input quando URL muda (primitivo string evita loop infinito)
   useEffect(() => {
-    const q = searchParams.get('q') ?? '';
-    setQuery(q);
-  }, [searchParams]);
+    setQuery(qParam);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qParam]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,15 +27,6 @@ const Search = () => {
 
   const q = (searchParams.get('q') ?? '').toLowerCase().trim();
 
-  const matchedProducts: Product[] = q
-    ? products.filter(
-        p =>
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q)
-      )
-    : [];
-
   const matchedPosts: BlogPost[] = q
     ? blogPosts.filter(
         p =>
@@ -45,7 +36,7 @@ const Search = () => {
       )
     : [];
 
-  const totalResults = matchedProducts.length + matchedPosts.length;
+  const totalResults = matchedPosts.length;
 
   return (
     <>
@@ -126,57 +117,6 @@ const Search = () => {
             <section className="section-padding bg-charcoal">
               <div className="container-wide mx-auto space-y-16">
 
-                {/* Products */}
-                {matchedProducts.length > 0 && (
-                  <div>
-                    <div className="flex items-center gap-3 mb-6">
-                      <Package className="w-5 h-5 text-cyan" />
-                      <h2 className="font-heading text-xl font-bold text-primary-foreground">
-                        Produtos
-                        <span className="ml-2 text-sm font-normal text-primary-foreground/50">
-                          ({matchedProducts.length})
-                        </span>
-                      </h2>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                      {matchedProducts.map(product => (
-                        <Link
-                          key={product.id}
-                          to={`/produtos/${product.id}`}
-                          className="group bg-navy-dark/50 backdrop-blur-sm border border-primary-foreground/10 rounded-xl overflow-hidden hover:border-cyan/40 hover:shadow-glow hover:-translate-y-1 transition-all duration-300"
-                        >
-                          <div className="aspect-square sm:aspect-[4/3] overflow-hidden">
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              loading="lazy"
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                          </div>
-                          <div className="p-4">
-                            <span className="inline-block px-2 py-0.5 bg-cyan/10 text-cyan text-xs font-body rounded-full border border-cyan/20 mb-2">
-                              {product.category}
-                            </span>
-                            <h3 className="font-heading font-bold text-sm text-primary-foreground group-hover:text-cyan transition-colors line-clamp-2">
-                              {product.name}
-                            </h3>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-
-                    <div className="mt-6">
-                      <Link
-                        to={`/produtos?busca=${encodeURIComponent(searchParams.get('q') ?? '')}`}
-                        className="inline-flex items-center gap-2 text-cyan text-sm font-medium hover:gap-3 transition-all"
-                      >
-                        Ver todos os produtos <ArrowRight className="w-4 h-4" />
-                      </Link>
-                    </div>
-                  </div>
-                )}
-
                 {/* Blog */}
                 {matchedPosts.length > 0 && (
                   <div>
@@ -233,7 +173,7 @@ const Search = () => {
                       Tente outros termos ou navegue pelas categorias.
                     </p>
                     <Link
-                      to="/categorias"
+                      to="/boroscopios"
                       className="inline-flex items-center gap-2 px-5 py-2.5 bg-cyan text-charcoal font-semibold rounded-lg hover:bg-cyan/90 transition-colors text-sm"
                     >
                       Ver Categorias <ArrowRight className="w-4 h-4" />

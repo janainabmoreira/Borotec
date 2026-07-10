@@ -3,17 +3,19 @@ import { Linkedin, Youtube, Clock, MapPin, Phone, Mail } from 'lucide-react';
 import { getWhatsAppUrl } from '@/config/whatsapp';
 
 const quickLinks = [
-  { label: 'Início',    to: '/' },
-  { label: 'Sobre Nós', to: '/sobre' },
-  { label: 'Blog',      to: '/blog' },
-  { label: 'Produtos',  to: '/produtos' },
+  { label: 'Início',       to: '/' },
+  { label: 'Sobre Nós',    to: '/sobre' },
+  { label: 'Blog',         to: '/blog' },
+  { label: 'Boroscópios',  to: '/boroscopios' },
 ];
 
 const productLines = [
-  { label: 'Linha T — Tubulações', to: '/produtos?categoria=Linha%20T%20-%20Tubula%C3%A7%C3%B5es' },
-  { label: 'Linha M — Máquinas',   to: '/produtos?categoria=Linha%20M%20-%20M%C3%A1quinas' },
-  { label: 'Linha R — Robôs',      to: '/produtos?categoria=Linha%20R%20-%20Rob%C3%B4s' },
-  { label: 'Linha E — Especiais',  to: '/produtos?categoria=Linha%20E%20-%20Especiais' },
+  { label: 'Linha T — Tubulações',      to: '/linha-t'  },
+  { label: 'Linha R — Robôs',           to: '/linha-r'  },
+  { label: 'Linha M — Máquinas',        to: '/linha-m'  },
+  { label: 'Linha E — Especiais',       to: '/linha-e'  },
+  { label: 'Linha P — Poços',           to: '/linha-p'  },
+  { label: 'Linha TC — Telescopia',     to: '/linha-tc' },
 ];
 
 const navLink = "font-body text-xs text-primary-foreground/60 hover:text-cyan transition-colors inline-flex items-center gap-1.5 group";
@@ -105,7 +107,7 @@ const Footer = () => {
           {/* Col 3 — Produtos */}
           <div>
             <h4 className="font-heading font-bold text-xs uppercase tracking-widest mb-4 text-accent">
-              Produtos
+              Linhas de Produtos
             </h4>
             <ul className="space-y-2.5">
               {productLines.map(({ label, to }) => (
@@ -202,7 +204,7 @@ const Footer = () => {
                 Política de Privacidade
               </Link>
               <span className="text-primary-foreground/20 text-xs">·</span>
-              <a href="mailto:contato@borotec.com.br"
+              <a href="mailto:vendas@borotec.com.br"
                 className="font-body text-xs text-primary-foreground/40 hover:text-cyan transition-colors">
                 Fale Conosco
               </a>

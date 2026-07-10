@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getWhatsAppUrl } from '@/config/whatsapp';
@@ -16,6 +17,7 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 );
 
 const PrivacyPolicy = () => {
+  usePrerenderSignal(true);
   return (
     <>
       <Helmet>
