@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useUTMCapture } from '@/hooks/useUTMCapture';
-import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
+import { usePrerenderReady } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import DifferentialsSection from '@/components/DifferentialsSection';
@@ -62,11 +62,11 @@ const localBusinessSchema = {
 
 const Index = () => {
   useUTMCapture();
-  usePrerenderSignal(true);
+  const onPrerenderReady = usePrerenderReady();
 
   return (
     <>
-      <Helmet>
+      <Helmet onChangeClientState={onPrerenderReady}>
         <title>BOROTEC | Boroscópios, Videoscópios e Robôs de Inspeção Industrial</title>
         <meta name="description" content="Boroscópios, videoscópios e robôs para inspeção industrial sem desmontagem. Sondas até 130m, câmera HD, gravação em vídeo, tela LCD, IP68 à prova d'água. Inspeção de tubulações, dutos, motores e poços. +20 anos. Todo o Brasil." />
         <link rel="canonical" href="https://borotec.com.br/" />

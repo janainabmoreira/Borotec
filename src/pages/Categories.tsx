@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
+import { usePrerenderReady } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ArrowRight, Pipette, Bot, Cpu, Sparkles, Telescope, Drill } from 'lucide-react';
@@ -69,10 +69,10 @@ const categoryInfo = [
 ];
 
 const Categories = () => {
-  usePrerenderSignal(true);
+  const onPrerenderReady = usePrerenderReady();
   return (
     <>
-      <Helmet>
+      <Helmet onChangeClientState={onPrerenderReady}>
         <title>Boroscópios Industriais | BOROTEC Industrial</title>
         <meta name="description" content="Explore as linhas de boroscópios BOROTEC: Tubulações, Máquinas, Robôs e Especiais (ATEX, 3D, Termografia, UV). Soluções para cada necessidade de inspeção industrial." />
         <link rel="canonical" href="https://borotec.com.br/boroscopios" />

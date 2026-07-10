@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
+import { usePrerenderReady } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
@@ -8,7 +8,7 @@ import { CheckCircle, Target, Eye, Award } from 'lucide-react';
 import BoroscopeIllustration from '@/components/BoroscopeIllustration';
 
 const About = () => {
-  usePrerenderSignal(true);
+  const onPrerenderReady = usePrerenderReady();
   const values = [
     {
       icon: Target,
@@ -37,7 +37,7 @@ const About = () => {
 
   return (
     <>
-      <Helmet>
+      <Helmet onChangeClientState={onPrerenderReady}>
         <title>Sobre a BOROTEC | +20 Anos em Metrologia Óptica Industrial</title>
         <meta name="description" content="Conheça a BOROTEC: empresa brasileira especializada em boroscópios e videoscópios industriais. Mais de 20 anos atendendo a indústria nacional com suporte técnico e soluções em inspeção visual remota." />
         <link rel="canonical" href="https://borotec.com.br/sobre" />
