@@ -731,8 +731,10 @@ const ProductDetail = () => {
     );
   }
 
-  // Canonical is the product's line route (/linha-t/:id etc.), not /produtos/:id —
-  // /produtos/* is a legacy prefix kept only as a redirect target (see .htaccess).
+  // Canonical is the product's line route (/linha-t/:id etc.), not /produtos/:id.
+  // /produtos/:id still works as an alias for active products (no redirect —
+  // by design, so it doesn't need updating in .htaccess every time a product
+  // is added/removed); it just isn't the URL search engines should index.
   const linePath = categoryBreadcrumb[product.category]?.path;
   const productUrl = linePath
     ? `https://borotec.com.br${linePath}/${product.id}`
