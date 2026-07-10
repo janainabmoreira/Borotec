@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useUTMCapture } from '@/hooks/useUTMCapture';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import DifferentialsSection from '@/components/DifferentialsSection';
@@ -61,6 +62,7 @@ const localBusinessSchema = {
 
 const Index = () => {
   useUTMCapture();
+  usePrerenderSignal(true);
 
   return (
     <>

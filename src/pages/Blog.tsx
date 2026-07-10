@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, ArrowRight, X, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import type { DbBlogPost } from '@/types/database';
 import { blogPosts as staticPosts } from '@/data/blog';
 
@@ -31,6 +32,7 @@ const Blog = () => {
   const selectedCategory = searchParams.get('categoria');
   const [blogPosts, setBlogPosts] = useState<DbBlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  usePrerenderSignal(!loading);
 
   useEffect(() => {
     supabase

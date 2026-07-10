@@ -11,6 +11,7 @@ import {
 import { IconMaquina } from '@/components/LineIcons';
 import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 import { useLineProducts, type SpecLabels } from '@/hooks/useLineProducts';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type MaquinasProduct = {
@@ -166,6 +167,7 @@ const FilterGroup = ({
 const LineMaquinas = () => {
   const { openWhatsApp } = useWhatsAppMessage();
   const { products, loading } = useLineProducts('Linha M - Máquinas e Motores');
+  usePrerenderSignal(!loading);
   const [filters, setFilters] = useState<FilterState>(emptyFilters);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 

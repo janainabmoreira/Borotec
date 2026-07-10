@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ArrowRight, Pipette, Bot, Cpu, Sparkles, Telescope, Drill } from 'lucide-react';
@@ -68,6 +69,7 @@ const categoryInfo = [
 ];
 
 const Categories = () => {
+  usePrerenderSignal(true);
   return (
     <>
       <Helmet>

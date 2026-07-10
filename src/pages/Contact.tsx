@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useUTMCapture } from '@/hooks/useUTMCapture';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import { supabase } from '@/lib/supabase';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
@@ -26,6 +27,7 @@ const COOLDOWN_KEY = 'brt_form_last';
 const COOLDOWN_MS  = 60_000; // 1 minuto entre envios
 
 const Contact = () => {
+  usePrerenderSignal(true);
   const [formData, setFormData] = useState({
     name: '',
     email: '',

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
@@ -7,6 +8,7 @@ import { CheckCircle, Target, Eye, Award } from 'lucide-react';
 import BoroscopeIllustration from '@/components/BoroscopeIllustration';
 
 const About = () => {
+  usePrerenderSignal(true);
   const values = [
     {
       icon: Target,

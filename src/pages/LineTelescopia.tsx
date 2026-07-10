@@ -11,6 +11,7 @@ import {
 import { IconAltura } from '@/components/LineIcons';
 import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 import { useLineProducts, type SpecLabels } from '@/hooks/useLineProducts';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type TelescopiaProduct = {
@@ -165,6 +166,7 @@ const FilterGroup = ({
 const LineTelescopia = () => {
   const { openWhatsApp } = useWhatsAppMessage();
   const { products, loading } = useLineProducts('Linha TC - Altura e Difícil Acesso');
+  usePrerenderSignal(!loading);
   const [filters, setFilters] = useState<FilterState>(emptyFilters);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 

@@ -10,6 +10,7 @@ import {
   Share2, Link2, Check, Search, Tag, Send, X, Loader2,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import type { DbBlogPost } from '@/types/database';
 import { blogPosts as staticPosts } from '@/data/blog';
 
@@ -45,6 +46,7 @@ const BlogPost = () => {
   const { postId } = useParams();
   const [allPosts, setAllPosts] = useState<DbBlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  usePrerenderSignal(!loading);
 
   useEffect(() => {
     supabase

@@ -11,6 +11,7 @@ import {
 import { IconTubulacao } from '@/components/LineIcons';
 import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 import { useLineProducts, type SpecLabels } from '@/hooks/useLineProducts';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type TubProduct = {
@@ -160,6 +161,7 @@ const FilterGroup = ({
 const LineTubulacoes = () => {
   const { openWhatsApp } = useWhatsAppMessage();
   const { products, loading } = useLineProducts('Linha T - Tubulações');
+  usePrerenderSignal(!loading);
   const [filters, setFilters] = useState<FilterState>(emptyFilters);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 

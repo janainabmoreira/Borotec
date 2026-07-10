@@ -11,6 +11,7 @@ import {
 import { IconEspecial } from '@/components/LineIcons';
 import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 import { useLineProducts, type SpecLabels } from '@/hooks/useLineProducts';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -164,6 +165,7 @@ const FilterGroup = ({
 const LineEspeciais = () => {
   const { openWhatsApp } = useWhatsAppMessage();
   const { products, loading } = useLineProducts('Linha E - Aplicações Especiais');
+  usePrerenderSignal(!loading);
   const [filters, setFilters] = useState<FilterState>(emptyFilters);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 

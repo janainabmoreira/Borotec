@@ -11,6 +11,7 @@ import {
 import { IconRobo } from '@/components/LineIcons';
 import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 import { useLineProducts } from '@/hooks/useLineProducts';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type RoboProduct = {
@@ -203,6 +204,7 @@ const FilterGroup = ({
 const LineRobo = () => {
   const { openWhatsApp } = useWhatsAppMessage();
   const { products: dbProducts, loading } = useLineProducts('Linha R - Acesso Autônomo');
+  usePrerenderSignal(!loading);
 
   const allProducts = useMemo<RoboProduct[]>(() => dbProducts.map(p => ({
     id: p.id, name: p.name, description: p.description, image: p.image,
