@@ -2,9 +2,23 @@
   RewriteEngine On
   RewriteBase /
 
-  # Força HTTPS
-  RewriteCond %{HTTPS} off
-  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # Consolida em https://borotec.com.br (sem www) em um único salto
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} ^www\.borotec\.com\.br$ [NC]
+  RewriteRule ^(.*)$ https://borotec.com.br/$1 [L,R=301]
+
+  # URLs antigas (pré-migração para Supabase, confirmadas no Search Console)
+
+  # "/produtos" sem ID nunca foi uma rota válida (reportado como "erro de
+  # redirecionamento" no GSC — 1 URL, 20/05/2026 em diante)
+  RewriteRule ^produtos/?$ - [R=404,L]
+
+  # Catálogo antigo (pré-Supabase) descontinuado — nenhum destes IDs existe no
+  # catálogo atual (confirmado: 9 produtos ativos, todos com sufixo bt-*).
+  # 14 destes já aparecem como "página com redirecionamento" no GSC; os outros
+  # 9 (mesma origem: prerenderRoutes antigo / src/data/products.ts) ainda não
+  # foram recrawleados nessa categoria, mas são igualmente órfãos.
+  RewriteRule ^produtos/(sk3208|sk3210|sk3328|sk3408|sk3608|sk3610|sk3808|sk3828|y-series|dz-series|k-series-3d|k-series-ex|k-series-ht|k-series-thermal|k-series-uv|trolley-73mm|fb20p-camera|fb20p-tablet|fb20p-system|p-series|k-series|la-series|hj-series)/?$ - [G,L]
 
   # Rotas do React
   RewriteRule ^index\.html$ - [L]
