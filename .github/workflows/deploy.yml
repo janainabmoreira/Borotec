@@ -48,6 +48,21 @@ jobs:
           [[ "$DIR" != */ ]] && DIR="${DIR}/"
           echo "dir=$DIR" >> "$GITHUB_OUTPUT"
 
+      - name: Debug FTP credentials (temporary — no secret values printed)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          echo "server length: ${#FTP_SERVER}"
+          echo "username length: ${#FTP_USERNAME}"
+          echo "password length: ${#FTP_PASSWORD}"
+          echo "server has leading/trailing space: $([[ "$FTP_SERVER" != $(echo "$FTP_SERVER" | xargs) ]] && echo yes || echo no)"
+          echo "username has leading/trailing space: $([[ "$FTP_USERNAME" != $(echo "$FTP_USERNAME" | xargs) ]] && echo yes || echo no)"
+          echo "password has leading/trailing space: $([[ "$FTP_PASSWORD" != $(echo "$FTP_PASSWORD" | xargs) ]] && echo yes || echo no)"
+          echo "--- trying plain curl FTP login (independent of lftp) ---"
+          curl -v --connect-timeout 15 --user "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" 2>&1 | grep -Ev "^\* " || true
+
       - name: Deploy dist/ via FTP (lftp)
         # SamKirkland/FTP-Deploy-Action consistently failed with
         # "550 assets: No such file or directory" against this host across
