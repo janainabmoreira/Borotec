@@ -1581,7 +1581,9 @@ const AnalyticsTab = () => {
     return views.filter(v => new Date(v.created_at) >= start).length;
   }, [views]);
 
-  const period = Math.max(1, Math.round((dateRange.to.getTime() - dateRange.from.getTime()) / 86400000) + 1);
+  const period = Math.max(1, Math.round(
+    (new Date(dateRange.to).setHours(0, 0, 0, 0) - new Date(dateRange.from).setHours(0, 0, 0, 0)) / 86400000
+  ) + 1);
 
   const uniqueSessions = useMemo(() =>
     new Set(filtered.map(v => v.session_id).filter(Boolean)).size, [filtered]);
