@@ -43,8 +43,7 @@ type WaClick = {
   created_at: string;
 };
 
-// ���� Products tab ��������������������������������������������������������������������������������������������������������������������������
-
+// ---- Products tab ----
 const ProductsTab = () => {
   const [products, setProducts] = useState<DbProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -193,8 +192,7 @@ const ProductsTab = () => {
   );
 };
 
-// ���� Blog: comment card ����������������������������������������������������������������������������������������������������������������
-
+// ---- Blog: comment card ----
 type BlogComment = {
   id: string;
   post_id: string;
@@ -271,8 +269,7 @@ const CommentCard = ({
   </div>
 );
 
-// ���� Blog tab ������������������������������������������������������������������������������������������������������������������������������������
-
+// ---- Blog tab ----
 const BlogTab = () => {
   const [posts, setPosts] = useState<DbBlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -375,7 +372,7 @@ const BlogTab = () => {
         ))}
       </div>
 
-      {/* ���� Artigos ���� */}
+      {/* ---- Artigos ---- */}
       {blogSubTab === 'artigos' && (
         loading ? (
           <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-cyan" /></div>
@@ -461,7 +458,7 @@ const BlogTab = () => {
         )
       )}
 
-      {/* ���� Ranking: mais lidos ���� */}
+      {/* ---- Ranking: mais lidos ---- */}
       {blogSubTab === 'ranking' && (
         <div className="space-y-4">
           {blogViews.length === 0 ? (
@@ -473,7 +470,7 @@ const BlogTab = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {blogViews.slice(0, 12).map(({ post_id, count }, idx) => {
                 const post = posts.find(p => p.id === post_id);
-                const medal = ['�x�!', '�x��', '�x�0'][idx] ?? `${idx + 1}º`;
+                const medal = ['🥇', '🥈', '🥉'][idx] ?? `${idx + 1}º`;
                 const maxViews = blogViews[0]?.count ?? 1;
                 const pct = Math.round((count / maxViews) * 100);
                 return (
@@ -512,7 +509,7 @@ const BlogTab = () => {
         </div>
       )}
 
-      {/* ���� Comentários / Dúvidas ���� */}
+      {/* ---- Comentários / Dúvidas ---- */}
       {blogSubTab === 'comentarios' && (
         <div className="space-y-6">
           {/* Pendentes */}
@@ -568,8 +565,7 @@ const BlogTab = () => {
   );
 };
 
-// ���� Leads tab ����������������������������������������������������������������������������������������������������������������������������������
-
+// ---- Leads tab ----
 const subjectColor: Record<string, string> = {
   'Solicitação de Orçamento': 'bg-cyan/15 text-cyan',
   'Informações sobre Produto': 'bg-blue-500/15 text-blue-400',
@@ -697,7 +693,7 @@ const LeadsTab = () => {
                           {[lead.utm_source, lead.utm_medium].filter(Boolean).join(' / ')}
                         </span>
                       ) : (
-                        <span className="text-xs text-primary-foreground/25">�</span>
+                        <span className="text-xs text-primary-foreground/25">–</span>
                       )}
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell">
@@ -778,8 +774,7 @@ const LeadsTab = () => {
   );
 };
 
-// ���� Analytics tab ��������������������������������������������������������������������������������������������������������������������������
-
+// ---- Analytics tab ----
 const groupByPath = (list: PageView[]) => {
   const map = new Map<string, { path: string; title: string; count: number }>();
   list.forEach(v => {
@@ -823,12 +818,12 @@ const makeDatePresets = (): { id: PresetId; label: string; range: DateRange }[] 
   return [
     { id: 'today',     label: 'Hoje',            range: { from: bod(now), to: eod(now) } },
     { id: 'yesterday', label: 'Ontem',            range: { from: bod(addDays(now, -1)), to: eod(addDays(now, -1)) } },
-    { id: 'last7',     label: '�altimos 7 dias',   range: { from: bod(addDays(now, -6)), to: eod(now) } },
-    { id: 'last28',    label: '�altimos 28 dias',  range: { from: bod(addDays(now, -27)), to: eod(now) } },
-    { id: 'last30',    label: '�altimos 30 dias',  range: { from: bod(addDays(now, -29)), to: eod(now) } },
+    { id: 'last7',     label: 'Últimos 7 dias',   range: { from: bod(addDays(now, -6)), to: eod(now) } },
+    { id: 'last28',    label: 'Últimos 28 dias',  range: { from: bod(addDays(now, -27)), to: eod(now) } },
+    { id: 'last30',    label: 'Últimos 30 dias',  range: { from: bod(addDays(now, -29)), to: eod(now) } },
     { id: 'thisMonth', label: 'Este mês',          range: { from: bod(startOfMonth(now)), to: eod(now) } },
     { id: 'lastMonth', label: 'Mês passado',       range: { from: bod(startOfMonth(subMonths(now, 1))), to: eod(endOfMonth(subMonths(now, 1))) } },
-    { id: 'last90',    label: '�altimos 90 dias',   range: { from: bod(addDays(now, -89)), to: eod(now) } },
+    { id: 'last90',    label: 'Últimos 90 dias',   range: { from: bod(addDays(now, -89)), to: eod(now) } },
   ];
 };
 
@@ -895,7 +890,7 @@ const PdfReport = ({ data }: { data: PdfData }) => {
 
   const DIAS = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 
-  // Group daily data into weeks (Mon�Sun)
+  // Group daily data into weeks (Mon–Sun)
   const weeklyGroups: { weekLabel: string; days: typeof data.dailyData }[] = [];
   if (data.dailyData.length > 0) {
     let currentWeek: typeof data.dailyData = [];
@@ -907,7 +902,7 @@ const PdfReport = ({ data }: { data: PdfData }) => {
       currentWeek.push(day);
       const isLastDay = idx === data.dailyData.length - 1;
       if (dow === 0 || isLastDay) {
-        weeklyGroups.push({ weekLabel: `${weekStart} � ${day.label}`, days: currentWeek });
+        weeklyGroups.push({ weekLabel: `${weekStart} – ${day.label}`, days: currentWeek });
         currentWeek = [];
         weekStart = '';
       }
@@ -950,7 +945,7 @@ const PdfReport = ({ data }: { data: PdfData }) => {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '0' }}>
             <div style={s.cardAccent}><div style={s.cardValAccent}>{data.waTotal}</div><div style={s.cardLabel}>Cliques WhatsApp</div></div>
-            <div style={s.card}><div style={{ ...s.cardVal, color: data.bounceRate !== '�' && parseInt(data.bounceRate) > 70 ? '#e74c3c' : data.bounceRate !== '�' && parseInt(data.bounceRate) < 40 ? '#27ae60' : '#0f1c2e' }}>{data.bounceRate}</div><div style={s.cardLabel}>Taxa de rejeição</div></div>
+            <div style={s.card}><div style={{ ...s.cardVal, color: data.bounceRate !== '–' && parseInt(data.bounceRate) > 70 ? '#e74c3c' : data.bounceRate !== '–' && parseInt(data.bounceRate) < 40 ? '#27ae60' : '#0f1c2e' }}>{data.bounceRate}</div><div style={s.cardLabel}>Taxa de rejeição</div></div>
             <div style={s.card}><div style={s.cardVal}>{data.avgPages}</div><div style={s.cardLabel}>Págs. por sessão</div></div>
           </div>
         </div>
@@ -979,7 +974,7 @@ const PdfReport = ({ data }: { data: PdfData }) => {
                 ];
                 return steps.map((step, i) => {
                   const pct = total > 0 ? ((step.value / total) * 100).toFixed(1) : '0.0';
-                  const conv = i > 0 && steps[i-1].value > 0 ? ((step.value / steps[i-1].value) * 100).toFixed(1) : '�';
+                  const conv = i > 0 && steps[i-1].value > 0 ? ((step.value / steps[i-1].value) * 100).toFixed(1) : '–';
                   const isConv = i > 0 && steps[i-1].value > 0;
                   const convNum = isConv ? parseFloat(conv) : 100;
                   return (
@@ -988,7 +983,7 @@ const PdfReport = ({ data }: { data: PdfData }) => {
                       <td style={s.tdRight}>{step.value}</td>
                       <td style={s.tdRight}>{pct}%</td>
                       <td style={{ ...s.tdRight, color: !isConv ? '#9aa5b4' : convNum >= 50 ? '#27ae60' : convNum >= 20 ? '#e67e22' : '#e74c3c' }}>
-                        {i === 0 ? '�' : `${conv}%`}
+                        {i === 0 ? '–' : `${conv}%`}
                       </td>
                     </tr>
                   );
@@ -1021,7 +1016,7 @@ const PdfReport = ({ data }: { data: PdfData }) => {
 
         {/* Visitas por semana */}
         <div style={s.section}>
-          <div style={s.sectionTitle}>Visitas por Dia � Agrupadas por Semana</div>
+          <div style={s.sectionTitle}>Visitas por Dia – Agrupadas por Semana</div>
           {weeklyGroups.map((week, wi) => (
             <div key={wi} style={{ marginBottom: '16px' }}>
               <div style={s.weekHeader}>Semana {week.weekLabel}</div>
@@ -1094,7 +1089,7 @@ const PdfReport = ({ data }: { data: PdfData }) => {
               </table>
             </div>
             <div>
-              <div style={{ fontSize: '11px', color: '#6b7a8d', fontWeight: '700', marginBottom: '8px' }}>POR BOTÒO</div>
+              <div style={{ fontSize: '11px', color: '#6b7a8d', fontWeight: '700', marginBottom: '8px' }}>POR BOTÃO</div>
               <table style={s.table}>
                 <tbody>{data.waByType.map((p, i) => <tr key={i}><td style={s.td}>{p.type}</td><td style={s.tdRight}>{p.count}</td></tr>)}</tbody>
               </table>
@@ -1129,13 +1124,13 @@ const PdfReport = ({ data }: { data: PdfData }) => {
 
         {/* Taxa de conversão + Semana vs semana */}
         <div style={s.section}>
-          <div style={s.sectionTitle}>Desempenho � Conversão e Comparativo Semanal</div>
+          <div style={s.sectionTitle}>Desempenho – Conversão e Comparativo Semanal</div>
           <div style={{ ...s.grid2, marginBottom: '0' }}>
             {/* Conversão */}
             <div style={{ background: '#e8f8ff', borderRadius: '8px', padding: '20px', textAlign: 'center' }}>
               <div style={{ fontSize: '11px', color: '#6b7a8d', fontWeight: '700', textTransform: 'uppercase' as const, letterSpacing: '0.5px', marginBottom: '8px' }}>Taxa de Conversão</div>
               <div style={{ fontSize: '40px', fontWeight: '900', color: '#0077b6' }}>{data.conversionRate}%</div>
-              <div style={{ fontSize: '11px', color: '#9aa5b4', marginTop: '4px' }}>visitas �  clique WhatsApp</div>
+              <div style={{ fontSize: '11px', color: '#9aa5b4', marginTop: '4px' }}>visitas → clique WhatsApp</div>
             </div>
             {/* Semana vs semana */}
             <div style={{ background: '#f4f8fc', borderRadius: '8px', padding: '20px' }}>
@@ -1147,10 +1142,10 @@ const PdfReport = ({ data }: { data: PdfData }) => {
               ].map(({ label, curr, prev, diff }) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                   <span style={{ fontSize: '12px', color: '#1a1a2e', fontWeight: '600' }}>{label}</span>
-                  <span style={{ fontSize: '12px', color: '#6b7a8d' }}>{prev} �  <strong style={{ color: '#0f1c2e' }}>{curr}</strong></span>
+                  <span style={{ fontSize: '12px', color: '#6b7a8d' }}>{prev} → <strong style={{ color: '#0f1c2e' }}>{curr}</strong></span>
                   {diff !== null && (
                     <span style={{ fontSize: '12px', fontWeight: '700', color: diff >= 0 ? '#27ae60' : '#e74c3c' }}>
-                      {diff >= 0 ? '� ' : '� '} {Math.abs(diff).toFixed(1)}%
+                      {diff >= 0 ? '↑ ' : '↓ '} {Math.abs(diff).toFixed(1)}%
                     </span>
                   )}
                 </div>
@@ -1189,7 +1184,7 @@ const PdfReport = ({ data }: { data: PdfData }) => {
         {/* Horário de pico WA */}
         {data.waHourlyData.some(h => h.count > 0) && (
           <div style={s.section}>
-            <div style={s.sectionTitle}>Horário de Pico � Cliques WhatsApp</div>
+            <div style={s.sectionTitle}>Horário de Pico – Cliques WhatsApp</div>
             <table style={s.table}>
               <thead>
                 <tr>
@@ -1203,7 +1198,7 @@ const PdfReport = ({ data }: { data: PdfData }) => {
                   const period = hour < 6 ? 'Madrugada' : hour < 12 ? 'Manhã' : hour < 18 ? 'Tarde' : 'Noite';
                   return (
                     <tr key={hour}>
-                      <td style={s.td}>{String(hour).padStart(2, '0')}h � {String(hour + 1).padStart(2, '0')}h</td>
+                      <td style={s.td}>{String(hour).padStart(2, '0')}h – {String(hour + 1).padStart(2, '0')}h</td>
                       <td style={s.td}>{period}</td>
                       <td style={s.tdRight}>{count}</td>
                     </tr>
@@ -1214,10 +1209,10 @@ const PdfReport = ({ data }: { data: PdfData }) => {
           </div>
         )}
 
-        {/* Heatmap dia � hora */}
+        {/* Heatmap dia × hora */}
         {data.weekdayHourHeatmap.some(row => row.some(v => v > 0)) && (
           <div style={s.section}>
-            <div style={s.sectionTitle}>Heatmap � Dia da Semana � Hora</div>
+            <div style={s.sectionTitle}>Heatmap – Dia da Semana × Hora</div>
             {(() => {
               const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
               const HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -1280,7 +1275,7 @@ const PdfReport = ({ data }: { data: PdfData }) => {
         {/* Produtos sem visitas */}
         {data.productsWithoutVisits.length > 0 && (
           <div style={s.section}>
-            <div style={s.sectionTitle}>Produtos sem Visitas nos �altimos {data.period} Dias</div>
+            <div style={s.sectionTitle}>Produtos sem Visitas nos Últimos {data.period} Dias</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
               {data.productsWithoutVisits.map(p => (
                 <div key={p.id} style={{ background: '#fff5f5', border: '1px solid #fecaca', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', color: '#7f1d1d' }}>
@@ -1333,28 +1328,28 @@ const AnalyticsTab = () => {
     ]);
 
     const pvSection = [
-      row('=== PAGE_VIEWS � TODAS AS VISITAS ==='),
+      row('=== PAGE_VIEWS – TODAS AS VISITAS ==='),
       row('id', 'created_at', 'path', 'page_title', 'utm_source', 'utm_medium', 'utm_campaign', 'city', 'region', 'country', 'session_id'),
       ...(pvAll ?? []).map((v: Record<string, unknown>) => row(v.id, v.created_at, v.path, v.page_title, v.utm_source, v.utm_medium, v.utm_campaign, v.city, v.region, v.country, v.session_id)),
       '',
     ];
 
     const waSection = [
-      row('=== WHATSAPP_CLICKS � TODOS OS CLIQUES ==='),
+      row('=== WHATSAPP_CLICKS – TODOS OS CLIQUES ==='),
       row('id', 'created_at', 'path', 'page_title', 'button_type', 'utm_source', 'utm_medium', 'utm_campaign', 'session_id'),
       ...(waAll ?? []).map((v: Record<string, unknown>) => row(v.id, v.created_at, v.path, v.page_title, v.button_type, v.utm_source, v.utm_medium, v.utm_campaign, v.session_id)),
       '',
     ];
 
     const feSection = [
-      row('=== FORM_EVENTS � TODOS OS EVENTOS ==='),
+      row('=== FORM_EVENTS – TODOS OS EVENTOS ==='),
       row('id', 'created_at', 'event_type', 'utm_source', 'utm_medium', 'utm_campaign', 'session_id'),
       ...(feAll ?? []).map((v: Record<string, unknown>) => row(v.id, v.created_at, v.event_type, v.utm_source, v.utm_medium, v.utm_campaign, v.session_id)),
       '',
     ];
 
     const header = [
-      row('BACKUP COMPLETO � BOROTEC ANALYTICS'),
+      row('BACKUP COMPLETO – BOROTEC ANALYTICS'),
       row('Exportado em', now.toLocaleString('pt-BR')),
       row('Total page_views', (pvAll ?? []).length),
       row('Total whatsapp_clicks', (waAll ?? []).length),
@@ -1376,9 +1371,9 @@ const AnalyticsTab = () => {
     const e = (v: string | number | null | undefined) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const row = (...cols: (string | number | null | undefined)[]) => cols.map(e).join(',');
 
-    // ���� Resumo ����
+    // ---- Resumo ----
     const summary = [
-      row('RELAT�RIO BOROTEC ANALYTICS'),
+      row('RELATÓRIO BOROTEC ANALYTICS'),
       row('Gerado em', now.toLocaleString('pt-BR')),
       row('Período início', dateRange.from.toLocaleDateString('pt-BR')),
       row('Período fim', dateRange.to.toLocaleDateString('pt-BR')),
@@ -1392,7 +1387,7 @@ const AnalyticsTab = () => {
       '',
     ];
 
-    // ���� Visitas ����
+    // ---- Visitas ----
     const pvSection = [
       row('=== VISITAS POR PÁGINA ==='),
       row('Data', 'Hora (UTC-3)', 'Caminho', 'Título da Página', 'Origem (UTM)', 'Mídia (UTM)', 'Campanha (UTM)', 'Cidade', 'Estado', 'País', 'Session ID'),
@@ -1412,7 +1407,7 @@ const AnalyticsTab = () => {
       '',
     ];
 
-    // ���� WhatsApp ����
+    // ---- WhatsApp ----
     const waSection = [
       row('=== CLIQUES WHATSAPP ==='),
       row('Data', 'Hora (UTC-3)', 'Página de Origem', 'Título da Página', 'Tipo de Botão', 'Origem (UTM)', 'Mídia (UTM)', 'Campanha (UTM)', 'Session ID'),
@@ -1430,7 +1425,7 @@ const AnalyticsTab = () => {
       '',
     ];
 
-    // ���� Formulário ����
+    // ---- Formulário ----
     const start = new Date(dateRange.from); start.setHours(0, 0, 0, 0);
     const end   = new Date(dateRange.to);   end.setHours(23, 59, 59, 999);
     const filteredFe = formEvents.filter(fe => { const d = new Date(fe.created_at); return d >= start && d <= end; });
@@ -1458,7 +1453,7 @@ const AnalyticsTab = () => {
       '',
     ];
 
-    // ���� Top páginas ����
+    // ---- Top páginas ----
     const topPagesSection = [
       row('=== PÁGINAS MAIS VISITADAS ==='),
       row('Título', 'Visitas'),
@@ -1466,7 +1461,7 @@ const AnalyticsTab = () => {
       '',
     ];
 
-    // ���� Top fontes ����
+    // ---- Top fontes ----
     const sourcesSection = [
       row('=== ORIGEM DO TRÁFEGO ==='),
       row('Origem', 'Visitas'),
@@ -1474,9 +1469,9 @@ const AnalyticsTab = () => {
       '',
     ];
 
-    // ���� Conversão por origem ����
+    // ---- Conversão por origem ----
     const convSection = convBySource.length > 0 ? [
-      row('=== CONVERSÒO POR ORIGEM ==='),
+      row('=== CONVERSÃO POR ORIGEM ==='),
       row('Origem', 'Visitas', 'Cliques WA', 'Taxa de Conversão'),
       ...convBySource.map(c => row(c.source, c.visits, c.wa, c.rate.toFixed(1) + '%')),
       '',
@@ -1694,12 +1689,12 @@ const AnalyticsTab = () => {
     return Array.from(map.entries()).map(([source, count]) => ({ source, count })).sort((a, b) => b.count - a.count);
   }, [filteredWa]);
 
-  // ���� Feature 1: Conversion rate ��������������������������������������������������������������������������������������������
+  // ---- Feature 1: Conversion rate ----
   const conversionRate = filtered.length > 0
     ? ((filteredWa.length / filtered.length) * 100).toFixed(1)
     : '0.0';
 
-  // ���� Feature 2: Week-over-week ������������������������������������������������������������������������������������������������
+  // ---- Feature 2: Week-over-week ----
   const weekStats = useMemo(() => {
     const now = new Date();
     const w0start = new Date(now); w0start.setDate(now.getDate() - 6); w0start.setHours(0, 0, 0, 0);
@@ -1717,7 +1712,7 @@ const AnalyticsTab = () => {
     return { thisWeekViews, lastWeekViews, thisWeekWa, lastWeekWa, thisWeekForm, lastWeekForm, viewsDiff, waDiff, formDiff };
   }, [views, waClicks, leads]);
 
-  // ���� Feature 3: Conversion by source ����������������������������������������������������������������������������������
+  // ---- Feature 3: Conversion by source ----
   const convBySource = useMemo(() => {
     const visitMap = new Map<string, number>();
     filtered.forEach(v => {
@@ -1737,7 +1732,7 @@ const AnalyticsTab = () => {
       .sort((a, b) => b.rate - a.rate);
   }, [filtered, filteredWa]);
 
-  // ���� Feature 4: WA clicks by hour ����������������������������������������������������������������������������������������
+  // ---- Feature 4: WA clicks by hour ----
   const waHourlyData = useMemo(() => {
     const hours = Array.from({ length: 24 }, (_, h) => ({ hour: h, count: 0 }));
     filteredWa.forEach(c => { hours[new Date(c.created_at).getHours()].count++; });
@@ -1746,7 +1741,7 @@ const AnalyticsTab = () => {
   const maxWaHour = Math.max(...waHourlyData.map(h => h.count), 1);
   const peakWaHour = waHourlyData.reduce((a, b) => b.count > a.count ? b : a, waHourlyData[0]);
 
-  // ���� Feature 5: Products without visits ����������������������������������������������������������������������������
+  // ---- Feature 5: Products without visits ----
   const [allProducts, setAllProducts] = useState<{ id: string; name: string; slug: string }[]>([]);
   useEffect(() => {
     supabase.from('products').select('id, name, slug').then(({ data }) => {
@@ -1760,7 +1755,7 @@ const AnalyticsTab = () => {
     return allProducts.filter(p => !visitedSlugs.has(p.slug));
   }, [allProducts, filtered]);
 
-  // ���� Form metrics ��������������������������������������������������������������������������������������������������������������������������
+  // ---- Form metrics ----
   const formStats = useMemo(() => {
     const start = new Date(dateRange.from); start.setHours(0, 0, 0, 0);
     const end   = new Date(dateRange.to);   end.setHours(23, 59, 59, 999);
@@ -1775,12 +1770,12 @@ const AnalyticsTab = () => {
     return { contactViews, starts, attempts, successes, errors, startRate, submitRate };
   }, [formEvents, filtered, dateRange]);
 
-  // ���� Bounce rate & avg pages/session ����������������������������������������������������������������������������������
+  // ---- Bounce rate & avg pages/session ----
   const { bounceRate, avgPages } = useMemo(() => {
     const sessionCounts = new Map<string, number>();
     filtered.forEach(v => { if (v.session_id) sessionCounts.set(v.session_id, (sessionCounts.get(v.session_id) ?? 0) + 1); });
     const total = sessionCounts.size;
-    if (total === 0) return { bounceRate: '�', avgPages: '�' };
+    if (total === 0) return { bounceRate: '–', avgPages: '–' };
     const bounces = Array.from(sessionCounts.values()).filter(c => c === 1).length;
     return {
       bounceRate: `${Math.round((bounces / total) * 100)}%`,
@@ -1788,7 +1783,7 @@ const AnalyticsTab = () => {
     };
   }, [filtered]);
 
-  // ���� Previous period (for comparison overlay) ������������������������������������������������������������������
+  // ---- Previous period (for comparison overlay) ----
   const prevDailyData = useMemo(() => {
     if (!showComparison) return [] as { date: string; count: number }[];
     const days: { date: string; count: number }[] = [];
@@ -1802,7 +1797,7 @@ const AnalyticsTab = () => {
     return days;
   }, [views, dateRange, period, showComparison]);
 
-  // ���� Weekday � Hour heatmap ��������������������������������������������������������������������������������������������������������
+  // ---- Weekday × Hour heatmap ----
   const weekdayHourHeatmap = useMemo(() => {
     const grid: number[][] = Array.from({ length: 7 }, () => Array(24).fill(0));
     filtered.forEach(v => { const d = new Date(v.created_at); grid[d.getDay()][d.getHours()]++; });
@@ -1859,7 +1854,7 @@ const AnalyticsTab = () => {
   return (
     <div className="space-y-6">
 
-      {/* ���� PDF oculto ���� */}
+      {/* ---- PDF oculto ---- */}
       <div style={{ position: 'fixed', left: '-9999px', top: 0, zIndex: -1 }}>
         <div ref={pdfRef}>
           <PdfReport data={{
@@ -1875,7 +1870,7 @@ const AnalyticsTab = () => {
         </div>
       </div>
 
-      {/* ���� Topo: título + controles ���� */}
+      {/* ---- Topo: título + controles ---- */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-heading text-2xl font-bold text-primary-foreground flex items-center gap-2">
@@ -1901,7 +1896,7 @@ const AnalyticsTab = () => {
               const sameYear = from.getFullYear() === to.getFullYear();
               const f = format(from, sameYear ? "dd 'de' MMM" : "dd 'de' MMM yyyy", { locale: ptBR });
               const t = format(to, "dd 'de' MMM 'de' yyyy", { locale: ptBR });
-              return from.toDateString() === to.toDateString() ? format(from, "dd 'de' MMM 'de' yyyy", { locale: ptBR }) : `${f} � ${t}`;
+              return from.toDateString() === to.toDateString() ? format(from, "dd 'de' MMM 'de' yyyy", { locale: ptBR }) : `${f} – ${t}`;
             };
             const presetLabel = activePreset !== 'custom' ? presets.find(p => p.id === activePreset)?.label : 'Personalizado';
             const handleOpen = (open: boolean) => {
@@ -1960,10 +1955,10 @@ const AnalyticsTab = () => {
                             <span className="text-[9px] uppercase tracking-wide block text-muted-foreground/50 mb-0.5">Data de início</span>
                             <span className="font-medium">{fmtDate(pendingRange.from)}</span>
                           </div>
-                          <div className="self-center text-muted-foreground/30">�</div>
+                          <div className="self-center text-muted-foreground/30">→</div>
                           <div className={`flex-1 border rounded px-2 py-1.5 transition-colors ${!pendingRange.to ? 'border-border opacity-40' : 'border-border'}`}>
                             <span className="text-[9px] uppercase tracking-wide block text-muted-foreground/50 mb-0.5">Data de término</span>
-                            <span className="font-medium">{pendingRange.to ? fmtDate(pendingRange.to) : '�'}</span>
+                            <span className="font-medium">{pendingRange.to ? fmtDate(pendingRange.to) : '–'}</span>
                           </div>
                         </div>
                         <Calendar
@@ -2027,16 +2022,16 @@ const AnalyticsTab = () => {
         </div>
       ) : (<>
 
-        {/* ���� KPI Strip ���� */}
+        {/* ---- KPI Strip ---- */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
           {[
             { label: 'Hoje',         value: todayCount,            color: 'text-primary-foreground', sub: 'visitas',      tooltip: 'Total de pageviews registrados hoje (desde meia-noite).' },
-            { label: (() => { const presets = makeDatePresets(); return activePreset !== 'custom' ? (presets.find(p => p.id === activePreset)?.label ?? `${period}d`) : `${format(dateRange.from, 'dd/MM')} � ${format(dateRange.to, 'dd/MM')}`; })(), value: filtered.length, color: 'text-primary-foreground', sub: 'visitas totais', tooltip: 'Soma de todas as páginas visualizadas no período selecionado. Uma mesma pessoa acessando 3 páginas conta como 3 visitas.' },
+            { label: (() => { const presets = makeDatePresets(); return activePreset !== 'custom' ? (presets.find(p => p.id === activePreset)?.label ?? `${period}d`) : `${format(dateRange.from, 'dd/MM')} – ${format(dateRange.to, 'dd/MM')}`; })(), value: filtered.length, color: 'text-primary-foreground', sub: 'visitas totais', tooltip: 'Soma de todas as páginas visualizadas no período selecionado. Uma mesma pessoa acessando 3 páginas conta como 3 visitas.' },
             { label: 'Sessões',      value: uniqueSessions,        color: 'text-cyan',               sub: 'únicas',       tooltip: 'Número de visitantes distintos no período, identificados por ID de sessão. Dá uma ideia de quantas pessoas (não pageviews) acessaram o site.' },
             { label: 'WhatsApp',     value: filteredWa.length,     color: 'text-[#25D366]',          sub: 'cliques',      tooltip: 'Total de cliques em qualquer botão de WhatsApp do site no período.' },
-            { label: 'Conversão WA', value: `${conversionRate}%`,  color: 'text-accent',             sub: 'visitas �  WA', tooltip: 'Percentual de visitas que resultaram em um clique no WhatsApp. Indica o quanto o site está convertendo visitantes em contatos.' },
+            { label: 'Conversão WA', value: `${conversionRate}%`,  color: 'text-accent',             sub: 'visitas → WA', tooltip: 'Percentual de visitas que resultaram em um clique no WhatsApp. Indica o quanto o site está convertendo visitantes em contatos.' },
             { label: 'Formulários',  value: leadsByType.total,     color: 'text-cyan',               sub: 'enviados',     tooltip: 'Total de formulários enviados no período: contato, orçamento de produto e solicitação de catálogo.' },
-            { label: 'Rejeição',     value: bounceRate,            color: bounceRate !== '�' && parseInt(bounceRate) > 70 ? 'text-red-400' : bounceRate !== '�' && parseInt(bounceRate) < 40 ? 'text-green-400' : 'text-primary-foreground', sub: 'bounce rate', tooltip: 'Percentual de sessões em que o visitante viu apenas 1 página e saiu. Abaixo de 40% é ótimo; acima de 70% indica que a página inicial não está engajando.' },
+            { label: 'Rejeição',     value: bounceRate,            color: bounceRate !== '–' && parseInt(bounceRate) > 70 ? 'text-red-400' : bounceRate !== '–' && parseInt(bounceRate) < 40 ? 'text-green-400' : 'text-primary-foreground', sub: 'bounce rate', tooltip: 'Percentual de sessões em que o visitante viu apenas 1 página e saiu. Abaixo de 40% é ótimo; acima de 70% indica que a página inicial não está engajando.' },
           ].map(({ label, value, color, sub, tooltip }) => (
             <div key={label} className="relative group bg-navy-dark/40 border border-primary-foreground/10 rounded-xl p-4 text-center hover:border-primary-foreground/25 transition-colors cursor-default">
               <p className={`text-2xl font-black font-heading ${color}`}>{value}</p>
@@ -2051,7 +2046,7 @@ const AnalyticsTab = () => {
           ))}
         </div>
 
-        {/* ���� Sub-navegação ���� */}
+        {/* ---- Sub-navegação ---- */}
         <div className="flex gap-1 bg-navy-dark/60 border border-primary-foreground/10 rounded-xl p-1">
           {aTabItems.map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setATab(id)}
@@ -2062,7 +2057,7 @@ const AnalyticsTab = () => {
           ))}
         </div>
 
-        {/* �"��"� TAB: VISÒO GERAL �"��"� */}
+        {/* ==== TAB: VISÃO GERAL ==== */}
         {aTab === 'geral' && (
           <div className="space-y-6">
             {/* Comparativo semanal */}
@@ -2088,7 +2083,7 @@ const AnalyticsTab = () => {
                     </div>
                     <div className={`h-px ${diff === null ? 'bg-primary-foreground/10' : diff >= 0 ? 'bg-green-500/30' : 'bg-red-500/30'}`} />
                     <p className={`text-xs font-bold ${diff === null ? 'text-primary-foreground/20' : diff >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {diff === null ? 'sem dados anteriores' : `${diff >= 0 ? '� ' : '� '} ${Math.abs(diff).toFixed(1)}% em relação à semana passada`}
+                      {diff === null ? 'sem dados anteriores' : `${diff >= 0 ? '↑ ' : '↓ '} ${Math.abs(diff).toFixed(1)}% em relação à semana passada`}
                     </p>
                   </div>
                 ))}
@@ -2126,14 +2121,14 @@ const AnalyticsTab = () => {
                         </div>
                         {i > 0 && steps[i - 1].value > 0 && (
                           <div className={`w-14 text-[10px] font-semibold text-right flex-shrink-0 ${step.value / steps[i-1].value >= 0.5 ? 'text-green-400' : 'text-red-400'}`}>
-                            �  {((step.value / steps[i-1].value) * 100).toFixed(0)}%
+                            → {((step.value / steps[i-1].value) * 100).toFixed(0)}%
                           </div>
                         )}
                         {i === 0 && <div className="w-14 flex-shrink-0" />}
                       </div>
                     ))}
                   </div>
-                  <p className="text-[10px] text-primary-foreground/25 mt-4">A coluna "�  X%" mostra a taxa de conversão entre cada etapa consecutiva do funil.</p>
+                  <p className="text-[10px] text-primary-foreground/25 mt-4">A coluna "→ X%" mostra a taxa de conversão entre cada etapa consecutiva do funil.</p>
                 </SectionCard>
               );
             })()}
@@ -2232,7 +2227,7 @@ const AnalyticsTab = () => {
               </SectionCard>
             </div>
 
-            {/* Heatmap dia da semana � hora */}
+            {/* Heatmap dia da semana × hora */}
             {(() => {
               const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
               const HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -2251,7 +2246,7 @@ const AnalyticsTab = () => {
               };
               return (
                 <SectionCard>
-                  <SectionTitle icon={Clock} label="Heatmap: dia da semana � hora" color="text-accent"
+                  <SectionTitle icon={Clock} label="Heatmap: dia da semana × hora" color="text-accent"
                     badge={<Badge color="bg-accent/10 text-accent border-accent/20">quando seu público visita</Badge>} />
                   <div>
                     <table className="text-[9px] border-collapse" style={{ tableLayout: 'fixed', width: '100%' }}>
@@ -2350,7 +2345,7 @@ const AnalyticsTab = () => {
           </div>
         )}
 
-        {/* �"��"� TAB: WHATSAPP �"��"� */}
+        {/* ==== TAB: WHATSAPP ==== */}
         {aTab === 'whatsapp' && (() => {
           const btnLabels: Record<string, string> = {
             flutuante: 'Botão Flutuante', produto: 'Página de Produto',
@@ -2373,8 +2368,8 @@ const AnalyticsTab = () => {
           const btnRows = [...byBtn.entries()]
             .map(([label, d]) => ({
               label, count: d.count,
-              topPage:   [...d.pages.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? '�',
-              topSource: [...d.sources.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? '�',
+              topPage:   [...d.pages.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? '–',
+              topSource: [...d.sources.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? '–',
             }))
             .sort((a, b) => b.count - a.count);
 
@@ -2393,7 +2388,7 @@ const AnalyticsTab = () => {
                 <MiniCard value={filteredWa.length} label="Cliques totais" color="text-[#25D366]" />
                 <MiniCard value={`${conversionRate}%`} label="Taxa de conversão" color="text-accent" />
                 <MiniCard value={weekStats.thisWeekWa} label="Esta semana" color="text-cyan" />
-                <MiniCard value={peakWaHour.count > 0 ? hourLabel(peakWaHour.hour) : '�'} label="Horário de pico" color="text-[#25D366]" />
+                <MiniCard value={peakWaHour.count > 0 ? hourLabel(peakWaHour.hour) : '–'} label="Horário de pico" color="text-[#25D366]" />
               </div>
 
               {filteredWa.length === 0 ? (
@@ -2439,19 +2434,19 @@ const AnalyticsTab = () => {
                       <p className="text-sm text-primary-foreground/70 flex items-start gap-2">
                         <span className="text-[#25D366] flex-shrink-0 mt-0.5">⬢</span>
                         Pico às <span className="text-primary-foreground font-semibold mx-1">{hourLabel(peakWaHour.hour)}</span>
-                        com {peakWaHour.count} clique{peakWaHour.count !== 1 ? 's' : ''} � ideal para disparar campanhas neste horário.
+                        com {peakWaHour.count} clique{peakWaHour.count !== 1 ? 's' : ''} — ideal para disparar campanhas neste horário.
                       </p>
                     )}
                   </div>
                   <div className="flex items-start gap-2 pt-2 border-t border-primary-foreground/8 mt-2">
-                    <span className="text-yellow-400 text-sm flex-shrink-0 mt-0.5">�a�</span>
+                    <span className="text-yellow-400 text-sm flex-shrink-0 mt-0.5">💡</span>
                     <p className="text-xs text-primary-foreground/40 leading-relaxed">
-                      <span className="font-semibold text-primary-foreground/50">Cliques no botão WhatsApp:</span> representa o número de vezes que o botão foi acionado. Esse dado não confirma que o usuário iniciou a conversa � apenas que houve intenção de contato.
+                      <span className="font-semibold text-primary-foreground/50">Cliques no botão WhatsApp:</span> representa o número de vezes que o botão foi acionado. Esse dado não confirma que o usuário iniciou a conversa — apenas que houve intenção de contato.
                     </p>
                   </div>
                 </SectionCard>
 
-                {/* Tabela: por botão � página � origem */}
+                {/* Tabela: por botão × página × origem */}
                 <SectionCard>
                   <SectionTitle icon={MessageCircle} label="Cliques por botão" color="text-[#25D366]"
                     badge={<Badge color="bg-[#25D366]/10 text-[#25D366] border-[#25D366]/20">{btnRows.length} tipo{btnRows.length !== 1 ? 's' : ''} de botão</Badge>} />
@@ -2499,7 +2494,7 @@ const AnalyticsTab = () => {
                   </div>
                 </SectionCard>
 
-                {/* Heatmap dia � hora � WA */}
+                {/* Heatmap dia × hora – WA */}
                 {(() => {
                   const DAYS  = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
                   const HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -2517,7 +2512,7 @@ const AnalyticsTab = () => {
                   };
                   return (
                     <SectionCard>
-                      <SectionTitle icon={Clock} label="Heatmap � Dia � Hora (cliques WhatsApp)" color="text-[#25D366]"
+                      <SectionTitle icon={Clock} label="Heatmap – Dia × Hora (cliques WhatsApp)" color="text-[#25D366]"
                         badge={<Badge color="bg-[#25D366]/10 text-[#25D366] border-[#25D366]/20">quando seu público clica</Badge>} />
                       <table className="text-[9px] border-collapse" style={{ tableLayout: 'fixed', width: '100%' }}>
                         <thead>
@@ -2630,7 +2625,7 @@ const AnalyticsTab = () => {
           );
         })()}
 
-        {/* �"��"� TAB: FORMULÁRIO �"��"� */}
+        {/* ==== TAB: FORMULÁRIO ==== */}
         {aTab === 'form' && (() => {
           const contactViews  = filtered.filter(v => v.path === '/contato').length;
           const productViews  = filtered.filter(v => v.path.startsWith('/produtos/')).length;
@@ -2660,7 +2655,7 @@ const AnalyticsTab = () => {
 
           return (
           <div className="space-y-6">
-            {/* �� Análise de conversão por página �� */}
+            {/* ---- Análise de conversão por página ---- */}
             <div className="bg-navy-dark/40 border border-accent/20 rounded-2xl p-6 space-y-5">
               <SectionTitle icon={TrendingUp} label="Conversão por página" color="text-accent"
                 badge={<Badge color="bg-accent/10 text-accent border-accent/20">{leadsByType.total} leads em {period} dias</Badge>} />
@@ -2698,7 +2693,7 @@ const AnalyticsTab = () => {
                                 convNum >= 0.5 ? 'bg-yellow-500/15 text-yellow-400' :
                                 'bg-primary-foreground/8 text-primary-foreground/40'
                               }`}>{conv}%</span>
-                            ) : <span className="text-primary-foreground/20 text-xs">�</span>}
+                            ) : <span className="text-primary-foreground/20 text-xs">–</span>}
                           </td>
                         </tr>
                       );
@@ -2712,26 +2707,26 @@ const AnalyticsTab = () => {
                 <div className="space-y-2 pt-1">
                   {convContact && parseFloat(convContact) >= parseFloat(convProduct ?? '0') ? (
                     <p className="text-xs text-primary-foreground/50 flex items-start gap-2">
-                      <span className="text-cyan mt-0.5">� </span>
-                      A página de contato converte <span className="text-cyan font-semibold mx-1">{convContact}%</span> dos visitantes � {parseFloat(convContact) > parseFloat(convProduct ?? '0') ? 'acima' : 'igual a'} produtos ({convProduct ?? '0'}%).
+                      <span className="text-cyan mt-0.5">⬢</span>
+                      A página de contato converte <span className="text-cyan font-semibold mx-1">{convContact}%</span> dos visitantes — {parseFloat(convContact) > parseFloat(convProduct ?? '0') ? 'acima' : 'igual a'} produtos ({convProduct ?? '0'}%).
                     </p>
                   ) : convProduct ? (
                     <p className="text-xs text-primary-foreground/50 flex items-start gap-2">
-                      <span className="text-accent mt-0.5">� </span>
-                      Páginas de produto convertem <span className="text-accent font-semibold mx-1">{convProduct}%</span> � mais que contato ({convContact ?? '0'}%). Visitantes de produto estão mais qualificados.
+                      <span className="text-accent mt-0.5">⬢</span>
+                      Páginas de produto convertem <span className="text-accent font-semibold mx-1">{convProduct}%</span> a mais que contato ({convContact ?? '0'}%). Visitantes de produto estão mais qualificados.
                     </p>
                   ) : null}
                   {productLeads > leadsByType.contact && (
                     <p className="text-xs text-primary-foreground/50 flex items-start gap-2">
                       <span className="text-accent mt-0.5">⬢</span>
-                      <span>{Math.round((productLeads / leadsByType.total) * 100)}% dos leads vêm de páginas de produto � invista em mais produtos cadastrados e conteúdo técnico.</span>
+                      <span>{Math.round((productLeads / leadsByType.total) * 100)}% dos leads vêm de páginas de produto — invista em mais produtos cadastrados e conteúdo técnico.</span>
                     </p>
                   )}
                 </div>
               )}
             </div>
 
-            {/* �� Breakdown por tipo de formulário �� */}
+            {/* ---- Breakdown por tipo de formulário ---- */}
             <div className="bg-navy-dark/40 border border-primary-foreground/10 rounded-2xl p-6 space-y-4">
               <SectionTitle icon={Send} label="Por tipo de formulário" color="text-cyan" />
               {leadsByType.total === 0 ? (
@@ -2768,7 +2763,7 @@ const AnalyticsTab = () => {
               )}
             </div>
 
-            {/* �� Por produto �� */}
+            {/* ---- Por produto ---- */}
             {perProductList.length > 0 && (
               <div className="bg-navy-dark/40 border border-primary-foreground/10 rounded-2xl p-6 space-y-4">
                 <SectionTitle icon={Eye} label="Leads por produto" color="text-accent"
@@ -2805,7 +2800,7 @@ const AnalyticsTab = () => {
           );
         })()}
 
-        {/* �"��"� TAB: PRODUTOS & GEO �"��"� */}
+        {/* ==== TAB: PRODUTOS & GEO ==== */}
         {aTab === 'produtos' && (
           <div className="space-y-6">
             {/* Ranking de produtos */}
@@ -2846,7 +2841,7 @@ const AnalyticsTab = () => {
             {/* Produtos sem visitas */}
             {allProducts.length > 0 && (
               <SectionCard>
-                <SectionTitle icon={Eye} label={`Produtos sem visitas � últimos ${period} dias`} color="text-primary-foreground/40"
+                <SectionTitle icon={Eye} label={`Produtos sem visitas nos últimos ${period} dias`} color="text-primary-foreground/40"
                   badge={<Badge color={productsWithoutVisits.length === 0 ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}>
                     {productsWithoutVisits.length === 0 ? 'Todos visitados' : `${productsWithoutVisits.length} sem visita`}
                   </Badge>} />
@@ -2872,8 +2867,7 @@ const AnalyticsTab = () => {
   );
 };
 
-// ���� Admin shell ������������������������������������������������������������������������������������������������������������������������������
-
+// ---- Admin shell ----
 const Admin = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
