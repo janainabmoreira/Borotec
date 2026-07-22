@@ -56,6 +56,12 @@ export default defineConfig(async ({ mode }) => {
     plugins: plugins.filter(Boolean),
     build: {
       emptyOutDir: true,
+      // Images under Vite's default 4KB threshold get base64-inlined into
+      // the JS bundle instead of emitted as standalone files — that broke
+      // FTP-only logo swaps (no separate file on the server to overwrite
+      // for small logos like Gerdau's). Force every asset to stay a real
+      // file so any logo can be replaced in place after deploy.
+      assetsInlineLimit: 0,
       rollupOptions: {
         output: {
           entryFileNames: 'assets/[name]-[hash].js',
