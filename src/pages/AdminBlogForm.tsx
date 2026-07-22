@@ -1,10 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams, Link as RouterLink } from 'react-router-dom';
+import { useEditor, EditorContent, type Editor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import TiptapLink from '@tiptap/extension-link';
+import TiptapImage from '@tiptap/extension-image';
+import Underline from '@tiptap/extension-underline';
+import Placeholder from '@tiptap/extension-placeholder';
 import { supabase } from '@/lib/supabase';
 import type { DbBlogPost } from '@/types/database';
 import {
   ArrowLeft, Loader2, Save, Plus, Trash2, ChevronDown, ChevronUp,
-  Upload, X, ImageIcon, Image,
+  Upload, X, ImageIcon, Image, Bold, Italic, UnderlineIcon, Heading2, Heading3,
+  List, ListOrdered, Quote, LinkIcon, Undo2, Redo2,
 } from 'lucide-react';
 
 type FaqRow = { q: string; a: string };
@@ -117,25 +124,30 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 const inputCls = "w-full h-10 px-3 rounded-lg bg-charcoal border border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/30 text-sm focus:outline-none focus:border-cyan transition-colors";
 const labelCls = "block text-xs font-medium text-primary-foreground/50 mb-1";
 
-// ── Content editor with inline image insertion ───────────────────────────────
+// ── Rich text content editor (visual formatting + inline images) ────────────
 
-const ContentEditor = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+const StyledImage = TiptapImage.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      class: { default: 'w-full rounded-xl my-6' },
+    };
+  },
+});
+
+const ToolbarButton = ({ active, onClick, disabled, title, children }: {
+  active?: boolean; onClick: () => void; disabled?: boolean; title: string; children: React.ReactNode;
+}) => (
+  <button type="button" title={title} disabled={disabled} onClick={onClick}
+    className={`flex items-center justify-center w-8 h-8 rounded transition-colors disabled:opacity-40 disabled:cursor-not-allowed
+      ${active ? 'bg-cyan/20 text-cyan' : 'bg-primary-foreground/5 hover:bg-primary-foreground/15 text-primary-foreground/70'}`}>
+    {children}
+  </button>
+);
+
+const EditorToolbar = ({ editor }: { editor: Editor }) => {
   const imgInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-
-  const insertAtCursor = (text: string) => {
-    const ta = textareaRef.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const newValue = value.slice(0, start) + text + value.slice(end);
-    onChange(newValue);
-    setTimeout(() => {
-      ta.focus();
-      ta.setSelectionRange(start + text.length, start + text.length);
-    }, 0);
-  };
 
   const uploadInlineImage = useCallback(async (file: File) => {
     if (!file.type.startsWith('image/')) return;
@@ -146,62 +158,98 @@ const ContentEditor = ({ value, onChange }: { value: string; onChange: (v: strin
     const { error } = await supabase.storage.from('produtos').upload(fileName, file, { upsert: true });
     if (error) { alert(`Erro no upload: ${error.message}`); setUploading(false); return; }
     const { data: urlData } = supabase.storage.from('produtos').getPublicUrl(fileName);
-    insertAtCursor(`\n<img src="${urlData.publicUrl}" alt="" class="w-full rounded-xl my-6" />\n`);
+    editor.chain().focus().setImage({ src: urlData.publicUrl, alt: '' }).run();
     setUploading(false);
-  }, [value]);
+  }, [editor]);
+
+  const setLink = useCallback(() => {
+    const previous = editor.getAttributes('link').href as string | undefined;
+    const url = window.prompt('URL do link:', previous ?? 'https://');
+    if (url === null) return;
+    if (url === '') { editor.chain().focus().extendMarkRange('link').unsetLink().run(); return; }
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  }, [editor]);
+
+  return (
+    <div className="flex items-center gap-1 flex-wrap p-1.5 rounded-lg bg-charcoal border border-primary-foreground/20">
+      <ToolbarButton title="Título 2" active={editor.isActive('heading', { level: 2 })}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 className="w-4 h-4" /></ToolbarButton>
+      <ToolbarButton title="Título 3" active={editor.isActive('heading', { level: 3 })}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}><Heading3 className="w-4 h-4" /></ToolbarButton>
+      <div className="w-px h-5 bg-primary-foreground/10 mx-1" />
+      <ToolbarButton title="Negrito" active={editor.isActive('bold')}
+        onClick={() => editor.chain().focus().toggleBold().run()}><Bold className="w-4 h-4" /></ToolbarButton>
+      <ToolbarButton title="Itálico" active={editor.isActive('italic')}
+        onClick={() => editor.chain().focus().toggleItalic().run()}><Italic className="w-4 h-4" /></ToolbarButton>
+      <ToolbarButton title="Sublinhado" active={editor.isActive('underline')}
+        onClick={() => editor.chain().focus().toggleUnderline().run()}><UnderlineIcon className="w-4 h-4" /></ToolbarButton>
+      <div className="w-px h-5 bg-primary-foreground/10 mx-1" />
+      <ToolbarButton title="Lista com marcadores" active={editor.isActive('bulletList')}
+        onClick={() => editor.chain().focus().toggleBulletList().run()}><List className="w-4 h-4" /></ToolbarButton>
+      <ToolbarButton title="Lista numerada" active={editor.isActive('orderedList')}
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered className="w-4 h-4" /></ToolbarButton>
+      <ToolbarButton title="Citação" active={editor.isActive('blockquote')}
+        onClick={() => editor.chain().focus().toggleBlockquote().run()}><Quote className="w-4 h-4" /></ToolbarButton>
+      <div className="w-px h-5 bg-primary-foreground/10 mx-1" />
+      <ToolbarButton title="Link" active={editor.isActive('link')} onClick={setLink}><LinkIcon className="w-4 h-4" /></ToolbarButton>
+      <ToolbarButton title="Inserir imagem" disabled={uploading} onClick={() => imgInputRef.current?.click()}>
+        {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Image className="w-4 h-4" />}
+      </ToolbarButton>
+      <input ref={imgInputRef} type="file" accept="image/*" className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) { uploadInlineImage(f); e.target.value = ''; } }} />
+      <div className="w-px h-5 bg-primary-foreground/10 mx-1" />
+      <ToolbarButton title="Desfazer" disabled={!editor.can().undo()}
+        onClick={() => editor.chain().focus().undo().run()}><Undo2 className="w-4 h-4" /></ToolbarButton>
+      <ToolbarButton title="Refazer" disabled={!editor.can().redo()}
+        onClick={() => editor.chain().focus().redo().run()}><Redo2 className="w-4 h-4" /></ToolbarButton>
+    </div>
+  );
+};
+
+const ContentEditor = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => {
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      StyledImage,
+      TiptapLink.configure({ openOnClick: false, HTMLAttributes: { class: 'text-cyan underline' } }),
+      Placeholder.configure({ placeholder: 'Escreva o conteúdo do artigo…' }),
+    ],
+    content: value,
+    onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    editorProps: {
+      attributes: {
+        // @tailwindcss/typography isn't registered as a Tailwind plugin in
+        // this project (installed but never added to tailwind.config.ts),
+        // so `prose`/`prose-invert` generate no CSS — style tags explicitly
+        // instead, matching the rest of the admin's text-primary-foreground convention.
+        // ProseMirror splits this string on plain spaces only, so it must be
+        // a single line — embedded newlines produce invalid classList tokens.
+        class: [
+          'max-w-none px-4 py-3 min-h-[400px] focus:outline-none text-primary-foreground leading-relaxed',
+          '[&_h2]:text-xl [&_h2]:font-heading [&_h2]:font-bold [&_h2]:text-primary-foreground [&_h2]:mt-5 [&_h2]:mb-2',
+          '[&_h3]:text-lg [&_h3]:font-heading [&_h3]:font-semibold [&_h3]:text-primary-foreground [&_h3]:mt-4 [&_h3]:mb-2',
+          '[&_p]:mb-3 [&_strong]:font-bold [&_em]:italic [&_u]:underline',
+          '[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-3 [&_li]:mb-1',
+          '[&_blockquote]:border-l-2 [&_blockquote]:border-cyan/40 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-primary-foreground/70',
+          '[&_a]:text-cyan [&_a]:underline',
+          '[&_img]:rounded-xl [&_img]:my-4',
+          '[&_p.is-editor-empty:first-child::before]:text-primary-foreground/30 [&_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_p.is-editor-empty:first-child::before]:float-left [&_p.is-editor-empty:first-child::before]:pointer-events-none [&_p.is-editor-empty:first-child::before]:h-0',
+        ].join(' '),
+      },
+    },
+  });
+
+  if (!editor) return null;
 
   return (
     <div className="space-y-2">
-      {/* Toolbar */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[10px] text-primary-foreground/30 uppercase tracking-wide">Inserir:</span>
-        <button type="button"
-          onClick={() => insertAtCursor('\n<h2></h2>\n')}
-          className="px-2.5 py-1 text-xs bg-primary-foreground/10 hover:bg-primary-foreground/15 text-primary-foreground/70 rounded transition-colors font-mono">
-          H2
-        </button>
-        <button type="button"
-          onClick={() => insertAtCursor('\n<h3></h3>\n')}
-          className="px-2.5 py-1 text-xs bg-primary-foreground/10 hover:bg-primary-foreground/15 text-primary-foreground/70 rounded transition-colors font-mono">
-          H3
-        </button>
-        <button type="button"
-          onClick={() => insertAtCursor('\n<p></p>\n')}
-          className="px-2.5 py-1 text-xs bg-primary-foreground/10 hover:bg-primary-foreground/15 text-primary-foreground/70 rounded transition-colors font-mono">
-          P
-        </button>
-        <button type="button"
-          onClick={() => insertAtCursor('\n<ul>\n  <li></li>\n</ul>\n')}
-          className="px-2.5 py-1 text-xs bg-primary-foreground/10 hover:bg-primary-foreground/15 text-primary-foreground/70 rounded transition-colors font-mono">
-          Lista
-        </button>
-        <button type="button"
-          onClick={() => insertAtCursor('<strong></strong>')}
-          className="px-2.5 py-1 text-xs bg-primary-foreground/10 hover:bg-primary-foreground/15 text-primary-foreground/70 rounded transition-colors font-mono font-bold">
-          B
-        </button>
-        <button type="button"
-          disabled={uploading}
-          onClick={() => imgInputRef.current?.click()}
-          className="flex items-center gap-1.5 px-2.5 py-1 text-xs bg-cyan/10 hover:bg-cyan/20 text-cyan border border-cyan/20 rounded transition-colors disabled:opacity-50">
-          {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Image className="w-3.5 h-3.5" />}
-          {uploading ? 'Enviando...' : 'Imagem'}
-        </button>
-        <input ref={imgInputRef} type="file" accept="image/*" className="hidden"
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) { uploadInlineImage(f); e.target.value = ''; } }} />
+      <EditorToolbar editor={editor} />
+      <div className="rounded-lg bg-charcoal border border-primary-foreground/20 focus-within:border-cyan transition-colors">
+        <EditorContent editor={editor} />
       </div>
-
-      {/* Textarea */}
-      <textarea
-        ref={textareaRef}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        rows={20}
-        placeholder="<p>Escreva o conteúdo do artigo em HTML...</p>"
-        className="w-full px-3 py-3 rounded-lg bg-charcoal border border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/30 text-sm focus:outline-none focus:border-cyan transition-colors font-mono leading-relaxed resize-y"
-      />
       <p className="text-[10px] text-primary-foreground/30">
-        Use tags HTML: &lt;h2&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;&lt;li&gt;, &lt;strong&gt;. Clique em "Imagem" para inserir uma imagem no ponto do cursor.
+        Selecione um texto e use os botões acima para formatar. O botão de imagem insere no ponto do cursor.
       </p>
     </div>
   );
@@ -281,10 +329,10 @@ const AdminBlogForm = () => {
       <header className="border-b border-primary-foreground/10 bg-navy-dark/50 sticky top-0 z-10 backdrop-blur">
         <div className="max-w-4xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link to="/admin?tab=blog" className="flex items-center gap-1.5 text-sm text-primary-foreground/50 hover:text-primary-foreground transition-colors">
+            <RouterLink to="/admin?tab=blog" className="flex items-center gap-1.5 text-sm text-primary-foreground/50 hover:text-primary-foreground transition-colors">
               <ArrowLeft className="w-4 h-4" />
               Artigos
-            </Link>
+            </RouterLink>
             <span className="text-primary-foreground/20">/</span>
             <span className="text-sm text-primary-foreground">{isEdit ? 'Editar artigo' : 'Novo artigo'}</span>
           </div>
