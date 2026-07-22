@@ -30,7 +30,6 @@ const About = () => {
   const timeline = [
     { year: '2003', title: 'Fundação', description: 'Início das atividades com foco em equipamentos ópticos.' },
     { year: '2008', title: 'Expansão', description: 'Ampliação da linha de produtos e abertura de filiais.' },
-    { year: '2013', title: 'Certificação', description: 'Conquista de certificações ISO 9001 e ISO 14001.' },
     { year: '2018', title: 'Inovação', description: 'Ampliação do portfólio com videoscópios de alta tecnologia.' },
     { year: '2023', title: 'Consolidação', description: 'Consolidação como referência nacional em inspeção visual remota.' },
   ];
