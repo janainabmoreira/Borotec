@@ -1296,6 +1296,31 @@ const PdfReport = ({ data }: { data: PdfData }) => {
   );
 };
 
+// PostgREST caps rows per request at 1000 (project db-max-rows setting) no
+// matter what limit/range the client asks for — with ascending order and no
+// pagination, that silently dropped the most recent rows once a table had
+// more than 1000 matches in the queried window, making "Hoje" show 0 visits
+// despite tracking working fine. Page through in chunks until exhausted.
+const PAGE_SIZE = 1000;
+
+async function fetchAllRows<T>(table: string, select: string, sinceIso: string): Promise<T[]> {
+  const rows: T[] = [];
+  let from = 0;
+  while (true) {
+    const { data, error } = await supabase
+      .from(table)
+      .select(select)
+      .gte('created_at', sinceIso)
+      .order('created_at', { ascending: true })
+      .range(from, from + PAGE_SIZE - 1);
+    if (error || !data || data.length === 0) break;
+    rows.push(...(data as T[]));
+    if (data.length < PAGE_SIZE) break;
+    from += PAGE_SIZE;
+  }
+  return rows;
+}
+
 const AnalyticsTab = () => {
   const [views, setViews] = useState<PageView[]>([]);
   const [waClicks, setWaClicks] = useState<WaClick[]>([]);
@@ -1520,32 +1545,17 @@ const AnalyticsTab = () => {
     setLoading(true);
     const since = new Date();
     since.setDate(since.getDate() - 90);
-    const [{ data: pvData }, { data: waData }, { data: feData }, { data: leadsData }] = await Promise.all([
-      supabase
-        .from('page_views')
-        .select('id, path, page_title, utm_source, utm_medium, utm_campaign, session_id, city, region, country, created_at')
-        .gte('created_at', since.toISOString())
-        .order('created_at', { ascending: true }),
-      supabase
-        .from('whatsapp_clicks')
-        .select('id, path, page_title, button_type, utm_source, utm_medium, utm_campaign, session_id, created_at')
-        .gte('created_at', since.toISOString())
-        .order('created_at', { ascending: true }),
-      supabase
-        .from('form_events')
-        .select('event_type, session_id, created_at')
-        .gte('created_at', since.toISOString())
-        .order('created_at', { ascending: true }),
-      supabase
-        .from('leads')
-        .select('subject, created_at')
-        .gte('created_at', since.toISOString())
-        .order('created_at', { ascending: true }),
+    const sinceIso = since.toISOString();
+    const [pvData, waData, feData, leadsData] = await Promise.all([
+      fetchAllRows<PageView>('page_views', 'id, path, page_title, utm_source, utm_medium, utm_campaign, session_id, city, region, country, created_at', sinceIso),
+      fetchAllRows<WaClick>('whatsapp_clicks', 'id, path, page_title, button_type, utm_source, utm_medium, utm_campaign, session_id, created_at', sinceIso),
+      fetchAllRows<{ event_type: string; session_id: string | null; created_at: string }>('form_events', 'event_type, session_id, created_at', sinceIso),
+      fetchAllRows<{ subject: string | null; created_at: string }>('leads', 'subject, created_at', sinceIso),
     ]);
-    setViews(pvData ?? []);
-    setWaClicks(waData ?? []);
-    setFormEvents(feData ?? []);
-    setLeads(leadsData ?? []);
+    setViews(pvData);
+    setWaClicks(waData);
+    setFormEvents(feData);
+    setLeads(leadsData);
     setLastUpdated(new Date());
     setCountdown(180);
     setLoading(false);
