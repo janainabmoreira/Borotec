@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, Search } from 'lucide-react';
-import { IconTubulacao, IconRobo, IconMaquina, IconEspecial, IconPoco, IconAltura } from '@/components/LineIcons';
+import { IconTubulacao, IconRobo, IconMaquina, IconEspecial, IconPoco, IconAltura, IconHospital } from '@/components/LineIcons';
 import { Button } from '@/components/ui/button';
 import logo from '@/assets/logo-borotec.webp';
 import { blogPosts } from '@/data/blog';
@@ -19,6 +19,7 @@ const navApplications = [
   { label: 'Aplicações especiais',     badge: 'Linha E',  description: 'Medição 3D, termografia, UV, área classificada e alta temperatura',              path: '/linha-e',  icon: IconEspecial  },
   { label: 'Poços e subaquático',      badge: 'Linha P',  description: 'Inspeção em poços artesianos, poços de petróleo e aplicações subaquáticas',      path: '/linha-p',  icon: IconPoco      },
   { label: 'Altura e difícil alcance', badge: 'Linha TC', description: 'Câmeras telescópicas para inspeção em altura e locais de difícil alcance',       path: '/linha-tc', icon: IconAltura    },
+  { label: 'Vias aéreas e equipamentos médicos', badge: 'Linha H', description: 'Videolaringoscópios, boroscópios e câmeras flexíveis para intubação de vias aéreas, procedimentos clínicos e inspeção de equipamentos hospitalares.', path: '/linha-h', icon: IconHospital },
 ];
 
 const Header = () => {

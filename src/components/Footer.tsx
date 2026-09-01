@@ -16,6 +16,7 @@ const productLines = [
   { label: 'Linha E — Especiais',       to: '/linha-e'  },
   { label: 'Linha P — Poços',           to: '/linha-p'  },
   { label: 'Linha TC — Telescopia',     to: '/linha-tc' },
+  { label: 'Linha H — Hospitalar',      to: '/linha-h'  },
 ];
 
 const navLink = "font-body text-xs text-primary-foreground/60 hover:text-cyan transition-colors inline-flex items-center gap-1.5 group";
@@ -76,11 +77,11 @@ const Footer = () => {
               Atendimento personalizado para inspeção de tubulações, motores e dutos em todo o Brasil.
             </p>
             <div className="flex gap-2">
-              <a href="#" aria-label="LinkedIn BOROTEC"
+              <a href="https://www.linkedin.com/company/borotec-industrial" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn BOROTEC"
                 className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
                 <Linkedin className="w-3.5 h-3.5" />
               </a>
-              <a href="#" aria-label="YouTube BOROTEC"
+              <a href="https://www.youtube.com/@Borotecindustrial" target="_blank" rel="noopener noreferrer" aria-label="YouTube BOROTEC"
                 className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-foreground/50 hover:bg-accent hover:text-accent-foreground transition-all duration-300">
                 <Youtube className="w-3.5 h-3.5" />
               </a>

@@ -6,7 +6,7 @@ const SESSION_KEY = 'brt_sid';
 
 export type WhatsAppType =
   | 'flutuante' | 'hero' | 'contato' | 'geral' | 'produto' | 'carrinho'
-  | 'linha-t' | 'linha-r' | 'linha-m' | 'linha-e' | 'linha-p' | 'linha-tc';
+  | 'linha-t' | 'linha-r' | 'linha-m' | 'linha-e' | 'linha-p' | 'linha-tc' | 'linha-h';
 
 const GTM_EVENT: Record<WhatsAppType, string> = {
   flutuante:  'Botao_Whatsapp_flutuante',
@@ -21,6 +21,7 @@ const GTM_EVENT: Record<WhatsAppType, string> = {
   'linha-e':  'Botao_Whatsapp_linha_e',
   'linha-p':  'Botao_Whatsapp_linha_p',
   'linha-tc': 'Botao_Whatsapp_linha_tc',
+  'linha-h':  'Botao_Whatsapp_linha_h',
 };
 
 function getGreeting(): string {
@@ -93,10 +94,11 @@ function pathToTitle(path: string): string {
     '/linha-e': 'Linha E - Especiais',
     '/linha-p': 'Linha P - Poços',
     '/linha-tc': 'Linha TC - Telescopia',
+    '/linha-h': 'Linha H - Hospitalar',
   };
   if (map[path]) return map[path];
   if (path.startsWith('/produtos/')) return `Produto: ${path.split('/')[2]}`;
-  const lineProductMatch = path.match(/^\/(linha-t|linha-r|linha-m|linha-e|linha-p|linha-tc|tubulacoes)\/(.+)$/);
+  const lineProductMatch = path.match(/^\/(linha-t|linha-r|linha-m|linha-e|linha-p|linha-tc|linha-h|tubulacoes)\/(.+)$/);
   if (lineProductMatch) return `Produto: ${lineProductMatch[2]}`;
   if (path.startsWith('/blog/')) return `Blog: ${path.split('/')[2].replace(/-/g, ' ')}`;
   return path;

@@ -21,6 +21,7 @@ const CATEGORIES = [
   'Linha E - Aplicações Especiais',
   'Linha P - Poços e Subaquático',
   'Linha TC - Altura e Difícil Acesso',
+  'Linha H - Hospitalar',
 ];
 
 const emptyProduct: Omit<DbProduct, 'created_at' | 'updated_at'> = {

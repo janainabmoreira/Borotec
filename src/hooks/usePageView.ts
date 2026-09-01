@@ -27,10 +27,11 @@ const pathToTitle = (path: string): string => {
     '/linha-e': 'Linha E - Especiais',
     '/linha-p': 'Linha P - Poços',
     '/linha-tc': 'Linha TC - Telescopia',
+    '/linha-h': 'Linha H - Hospitalar',
   };
   if (map[path]) return map[path];
   if (path.startsWith('/produtos/')) return `Produto: ${path.split('/')[2]}`;
-  const lineProductMatch = path.match(/^\/(linha-t|linha-r|linha-m|linha-e|linha-p|linha-tc|tubulacoes)\/(.+)$/);
+  const lineProductMatch = path.match(/^\/(linha-t|linha-r|linha-m|linha-e|linha-p|linha-tc|linha-h|tubulacoes)\/(.+)$/);
   if (lineProductMatch) return `Produto: ${lineProductMatch[2]}`;
   if (path.startsWith('/blog/')) return `Blog: ${path.split('/')[2].replace(/-/g, ' ')}`;
   return path;

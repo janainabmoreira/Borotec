@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { usePrerenderReady } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { ArrowRight, Pipette, Bot, Cpu, Sparkles, Telescope, Drill } from 'lucide-react';
+import { ArrowRight, Pipette, Bot, Cpu, Sparkles, Telescope, Drill, Stethoscope } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import categoryTubulacoes from '@/assets/category-tubulacoes.webp';
 import categoryRobos from '@/assets/category-robos.webp';
@@ -11,7 +11,17 @@ import categoryEspeciais from '@/assets/category-especiais.webp';
 import categoryPocos from '@/assets/category-pocos.webp';
 import categoryTelescopicos from '@/assets/category-telescopicos.webp';
 
-const categoryInfo = [
+type CategoryInfo = {
+  id: string;
+  name: string;
+  subtitle: string;
+  description: string;
+  icon: typeof Pipette;
+  image?: string;
+  path: string;
+};
+
+const categoryInfo: CategoryInfo[] = [
   {
     id: 'Linha T - Tubulações',
     name: 'Linha T',
@@ -65,6 +75,14 @@ const categoryInfo = [
     icon: Telescope,
     image: categoryTelescopicos,
     path: '/linha-tc',
+  },
+  {
+    id: 'Linha H - Hospitalar',
+    name: 'Linha H',
+    subtitle: 'Hospitalar',
+    description: 'Videolaringoscópios, boroscópios e câmeras flexíveis para procedimentos clínicos, intubação de vias aéreas, inspeção de equipamentos hospitalares e manutenção médica.',
+    icon: Stethoscope,
+    path: '/linha-h',
   },
 ];
 
@@ -136,18 +154,26 @@ const Categories = () => {
                       <div className="h-full bg-navy-dark/50 backdrop-blur-sm border border-primary-foreground/10 rounded-xl overflow-hidden hover:border-cyan/40 transition-all duration-300 hover:shadow-glow hover:-translate-y-1">
                         {/* Image */}
                         <div className="aspect-[4/3] md:aspect-video overflow-hidden relative">
-                          <img
-                            src={category.image}
-                            alt={`${category.name} — ${category.subtitle}`}
-                            loading="lazy"
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          />
-                          <div className="absolute inset-0 bg-charcoal/40 group-hover:bg-charcoal/20 transition-colors duration-300" />
-                          <div className="absolute top-3 left-3">
-                            <div className="bg-charcoal/60 backdrop-blur-sm rounded-lg p-2 border border-white/10">
-                              <IconComponent className="w-5 h-5 text-cyan" />
+                          {category.image ? (
+                            <>
+                              <img
+                                src={category.image}
+                                alt={`${category.name} — ${category.subtitle}`}
+                                loading="lazy"
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              />
+                              <div className="absolute inset-0 bg-charcoal/40 group-hover:bg-charcoal/20 transition-colors duration-300" />
+                              <div className="absolute top-3 left-3">
+                                <div className="bg-charcoal/60 backdrop-blur-sm rounded-lg p-2 border border-white/10">
+                                  <IconComponent className="w-5 h-5 text-cyan" />
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/15 via-navy-dark to-charcoal">
+                              <IconComponent className="w-16 h-16 text-emerald-400/70 transition-transform duration-500 group-hover:scale-110" />
                             </div>
-                          </div>
+                          )}
                         </div>
 
                         {/* Content */}

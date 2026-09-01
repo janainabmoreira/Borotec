@@ -51,6 +51,16 @@ export const IconPoco = ({ className = 'w-5 h-5' }: { className?: string }) => (
   </svg>
 );
 
+export const IconHospital = ({ className = 'w-5 h-5' }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M6 2v6a3 3 0 0 0 6 0V2" />
+    <path d="M9 11v3a5 5 0 0 0 10 0v-2" />
+    <circle cx="19" cy="9" r="2" />
+    <circle cx="9" cy="19" r="3" />
+    <path d="M7.5 19h3M9 17.5v3" />
+  </svg>
+);
+
 export const IconAltura = ({ className = 'w-5 h-5' }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
     <rect x="8" y="3" width="10" height="7" rx="1.5" />

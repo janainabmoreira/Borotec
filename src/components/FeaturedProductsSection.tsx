@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { AnimateOnScroll } from '@/hooks/useScrollAnimation';
-import { IconTubulacao, IconRobo, IconMaquina, IconEspecial, IconPoco, IconAltura } from '@/components/LineIcons';
+import { IconTubulacao, IconRobo, IconMaquina, IconEspecial, IconPoco, IconAltura, IconHospital } from '@/components/LineIcons';
 
 /* ---------- dados das linhas ---------- */
 
@@ -12,6 +12,7 @@ const applications = [
   { label: 'Aplicações Especiais',     badge: 'Linha E',  description: 'Medição 3D, termografia, UV, ATEX para área classificada e operação em alta temperatura.',                                path: '/linha-e',  Icon: IconEspecial,  bar: 'from-violet-400/60'},
   { label: 'Poços e Subaquático',      badge: 'Linha P',  description: 'Sistemas de câmera para inspeção em poços artesianos, poços de petróleo e ambientes subaquáticos.',                      path: '/linha-p',  Icon: IconPoco,      bar: 'from-emerald-400/60'},
   { label: 'Altura e Difícil Alcance', badge: 'Linha TC', description: 'Câmeras telescópicas para inspeção de estruturas em altura, coberturas e locais inacessíveis.',                          path: '/linha-tc', Icon: IconAltura,    bar: 'from-orange-400/60'},
+  { label: 'Vias aéreas e equipamentos médicos', badge: 'Linha H', description: 'Videolaringoscópios, boroscópios e câmeras flexíveis para procedimentos clínicos, intubação de vias aéreas, inspeção de equipamentos hospitalares e manutenção médica.', path: '/linha-h', Icon: IconHospital, bar: 'from-emerald-400/60'},
 ];
 
 /* ---------- componente ---------- */

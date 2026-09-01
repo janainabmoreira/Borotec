@@ -9,6 +9,7 @@ export const CATEGORY_TO_LINE = {
   'Linha E - Aplicações Especiais': '/linha-e',
   'Linha P - Poços e Subaquático': '/linha-p',
   'Linha TC - Altura e Difícil Acesso': '/linha-tc',
+  'Linha H - Hospitalar': '/linha-h',
 };
 
 export const STATIC_ROUTES = ['/', '/boroscopios', '/sobre', '/contato', '/privacidade', '/blog'];

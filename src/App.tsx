@@ -28,6 +28,7 @@ import LineMaquinas from "./pages/LineMaquinas";
 import LineEspeciais from "./pages/LineEspeciais";
 import LinePocos from "./pages/LinePocos";
 import LineTelescopia from "./pages/LineTelescopia";
+import LineHospitalar from "./pages/LineHospitalar";
 import { supabase } from "@/lib/supabase";
 
 const queryClient = new QueryClient();
@@ -110,6 +111,8 @@ const App = () => (
             <Route path="/linha-p/:productId" element={<ProductDetail />} />
             <Route path="/linha-tc" element={<LineTelescopia />} />
             <Route path="/linha-tc/:productId" element={<ProductDetail />} />
+            <Route path="/linha-h" element={<LineHospitalar />} />
+            <Route path="/linha-h/:productId" element={<ProductDetail />} />
 
             {/* Produto genérico */}
             <Route path="/produtos/:productId" element={<ProductDetail />} />

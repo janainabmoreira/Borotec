@@ -77,6 +77,7 @@ const ProductsTab = () => {
     'Linha E - Aplicações Especiais': 'bg-yellow-500/15 text-yellow-400',
     'Linha P - Poços e Subaquático': 'bg-teal-500/15 text-teal-400',
     'Linha TC - Altura e Difícil Acesso': 'bg-orange-500/15 text-orange-400',
+    'Linha H - Hospitalar': 'bg-emerald-500/15 text-emerald-400',
   };
 
   const categorySlug: Record<string, string> = {
@@ -86,6 +87,7 @@ const ProductsTab = () => {
     'Linha E - Aplicações Especiais':     '/linha-e',
     'Linha P - Poços e Subaquático':      '/linha-p',
     'Linha TC - Altura e Difícil Acesso': '/linha-tc',
+    'Linha H - Hospitalar': '/linha-h',
   };
 
   const productUrl = (p: { category: string; id: string }) =>
@@ -2363,6 +2365,7 @@ const AnalyticsTab = () => {
             'linha-m': 'Linha Máquinas', 'linha-p': 'Linha Poços',
             'linha-r': 'Linha Robô', 'linha-t': 'Linha Tubulações',
             'linha-e': 'Linha Especiais', 'linha-tc': 'Linha Telescopia',
+            'linha-h': 'Linha Hospitalar',
           };
           const byBtn = new Map<string, { count: number; pages: Map<string, number>; sources: Map<string, number> }>();
           filteredWa.forEach(c => {

@@ -30,6 +30,7 @@ const categoryBreadcrumb: Record<string, { label: string; path: string }> = {
   'Linha E - Aplicações Especiais':     { label: 'Aplicações Especiais',      path: '/linha-e'    },
   'Linha P - Poços e Subaquático':      { label: 'Poços e Subaquático',       path: '/linha-p'    },
   'Linha TC - Altura e Difícil Acesso': { label: 'Altura e Difícil Acesso',   path: '/linha-tc'   },
+  'Linha H - Hospitalar': { label: 'Hospitalar', path: '/linha-h' },
 };
 
 // ── Icon thumbnails ───────────────────────────────────────────────────────────
