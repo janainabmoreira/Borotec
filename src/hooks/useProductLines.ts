@@ -4,14 +4,24 @@ import type { DbProductLine } from '@/types/database';
 
 // Header/Footer montam em toda página e chamariam este fetch repetidamente
 // a cada navegação — um cache simples em módulo + dedupe do fetch em voo
-// evita isso sem introduzir uma lib de data-fetching nova no projeto.
+// evita isso sem introduzir uma lib de data-fetching nova no projeto. Uma
+// aba de admin editando dados em paralelo (ou um script externo mexendo no
+// banco direto) não tem como avisar essa aba pra invalidar o cache — por
+// isso um TTL curto: depois de 30s o cache é tratado como velho e a
+// próxima navegação busca de novo sozinha, sem precisar de refresh manual.
+const CACHE_TTL_MS = 30_000;
 let cache: DbProductLine[] | null = null;
+let cacheTime = 0;
 let inFlight: Promise<DbProductLine[]> | null = null;
 
+function isStale() {
+  return !cache || Date.now() - cacheTime > CACHE_TTL_MS;
+}
+
 async function fetchLines(): Promise<DbProductLine[]> {
-  if (cache) return cache;
+  if (cache && !isStale()) return cache;
   if (inFlight) return inFlight;
-  if (!isSupabaseConfigured) return [];
+  if (!isSupabaseConfigured) return cache ?? [];
 
   inFlight = supabase
     .from('product_lines')
@@ -20,8 +30,9 @@ async function fetchLines(): Promise<DbProductLine[]> {
     .order('sort_order', { ascending: true })
     .then(({ data, error }) => {
       inFlight = null;
-      if (error || !data) return [];
+      if (error || !data) return cache ?? [];
       cache = data as DbProductLine[];
+      cacheTime = Date.now();
       return cache;
     });
 
@@ -33,7 +44,10 @@ export function useProductLines() {
   const [loading, setLoading] = useState(!cache && isSupabaseConfigured);
 
   useEffect(() => {
-    if (cache) { setLines(cache); setLoading(false); return; }
+    if (cache && !isStale()) { setLines(cache); setLoading(false); return; }
+    // Stale-while-revalidate: mostra o cache velho (se existir) na hora e
+    // busca de novo por trás, em vez de piscar um loading toda navegação.
+    if (cache) setLines(cache);
     let cancelled = false;
     fetchLines().then((data) => {
       if (!cancelled) { setLines(data); setLoading(false); }
@@ -83,4 +97,5 @@ export function getCachedLines(): DbProductLine[] {
 // (mesma aba) buscar os dados frescos em vez de reusar o cache antigo.
 export function invalidateLinesCache() {
   cache = null;
+  cacheTime = 0;
 }

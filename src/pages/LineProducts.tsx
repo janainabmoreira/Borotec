@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -147,10 +147,14 @@ const FilterGroup = ({
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 const LineProducts = () => {
-  const { lineSlug } = useParams<{ lineSlug: string }>();
+  // Resolve pelo pathname inteiro, não por um :param nomeado — linhas soltas
+  // (/linha-t) e linhas aninhadas numa seção (/termografia/linha-d) têm
+  // profundidades de URL diferentes, então casar pelo `path` salvo em cada
+  // linha é o que funciona pros dois formatos sem duplicar essa página.
+  const { pathname } = useLocation();
   const { openWhatsApp } = useWhatsAppMessage();
   const { lines, loading: loadingLines } = useProductLines();
-  const line = lines.find((l) => l.id === lineSlug);
+  const line = lines.find((l) => l.path === pathname.replace(/\/$/, ''));
 
   const { products, loading: loadingProducts } = useLineProducts(line?.category ?? '__none__');
   usePrerenderSignal(!loadingLines && (!!line ? !loadingProducts : true));

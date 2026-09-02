@@ -17,7 +17,6 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Search from "./pages/Search";
-import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 import AdminProductForm from "./pages/AdminProductForm";
@@ -98,15 +97,6 @@ const App = () => (
             {/* Produto genérico */}
             <Route path="/produtos/:productId" element={<ProductDetail />} />
 
-            {/* Linhas de produtos e seções de menu novas (ex: /termografia) — a
-                lista vem da tabela product_lines (cadastrável em /admin), não
-                de rotas fixas. Segmentos estáticos (acima) sempre têm
-                prioridade sobre :lineSlug no React Router v6, então isso não
-                conflita com nenhuma rota fixa. SlugRouter decide se o slug é
-                uma seção (renderiza CategoryIndex) ou uma linha (LineProducts). */}
-            <Route path="/:lineSlug" element={<SlugRouter />} />
-            <Route path="/:lineSlug/:productId" element={<ProductDetail />} />
-
             {/* Admin */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/produtos/novo" element={<RequireAuth><AdminProductForm /></RequireAuth>} />
@@ -117,7 +107,14 @@ const App = () => (
             <Route path="/admin/linhas/:id/editar" element={<RequireAuth><AdminLineForm /></RequireAuth>} />
             <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth>} />
 
-            <Route path="*" element={<NotFound />} />
+            {/* Linhas de produtos e seções de menu (ex: /termografia) — a lista
+                vem da tabela product_lines (cadastrável em /admin), não de
+                rotas fixas. Boroscópios usa URLs soltas (/linha-t,
+                /linha-t/:produto) por compatibilidade; seções novas nascem
+                aninhadas (/termografia/linha-d, .../linha-d/:produto).
+                SlugRouter decide o que renderizar a partir da profundidade e
+                do path inteiro, incluindo o 404 quando nada bate. */}
+            <Route path="*" element={<SlugRouter />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

@@ -198,12 +198,21 @@ const AdminLineForm = () => {
 
     setSaving(true);
 
+    // Boroscópios mantém URL solta (/linha-t) por compatibilidade com as
+    // linhas que já existiam antes do sistema de seções. Qualquer seção
+    // nova (Termografia em diante) já nasce com URL aninhada por seção e
+    // por selo+nome (/termografia/linha-d/inspecao-eletrica), refletindo a
+    // hierarquia menu > linha > variação na própria URL.
+    const badgeSlug = toSlug(line.badge.trim());
+    const nameSlug = toSlug(line.name.trim());
+    const path = sectionSlug === 'boroscopios' ? `/${slug}` : `/${sectionSlug}/${badgeSlug}/${nameSlug}`;
+
     const payload = {
       id: slug,
       badge: line.badge.trim(),
       name: line.name.trim(),
       category,
-      path: `/${slug}`,
+      path,
       section_slug: sectionSlug,
       section_name: line.section_name.trim(),
       icon_name: line.icon_name,
@@ -349,9 +358,13 @@ const AdminLineForm = () => {
                 placeholder={line.name ? toSlug(line.name) : 'gerado-automaticamente-do-nome'}
               />
               <p className="text-xs text-primary-foreground/30 mt-1">
-                URL: <span className="text-cyan">/{line.id || (line.name ? toSlug(line.name) : '...')}</span>
+                URL: <span className="text-cyan">
+                  {toSlug(line.section_name) && toSlug(line.section_name) !== 'boroscopios'
+                    ? `/${toSlug(line.section_name)}/${toSlug(line.badge) || 'selo'}/${toSlug(line.name) || 'nome'}`
+                    : `/${line.id || (line.name ? toSlug(line.name) : '...')}`}
+                </span>
                 {isEdit && line.id !== lineId && (
-                  <span className="ml-2 text-amber-400">⚠ Alterar o slug muda a URL da linha e quebra links existentes</span>
+                  <span className="ml-2 text-amber-400">⚠ Alterar o slug muda o identificador interno da linha (não a URL, se a seção for aninhada)</span>
                 )}
               </p>
             </div>
