@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { ICON_OPTIONS } from '@/lib/iconMap';
 import { ACCENT_OPTIONS } from '@/lib/accentColors';
-import { useProductLines, groupLinesBySection } from '@/hooks/useProductLines';
+import { useProductLines, groupLinesBySection, invalidateLinesCache } from '@/hooks/useProductLines';
 import type { DbProductLine } from '@/types/database';
 import { ArrowLeft, Loader2, Save, Upload, X, ImageIcon } from 'lucide-react';
 
@@ -179,6 +179,7 @@ const AdminLineForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (saving) return; // evita clique duplo disparar dois INSERTs
     setError('');
 
     if (!line.name.trim()) { setError('O nome da linha é obrigatório.'); return; }
@@ -228,7 +229,15 @@ const AdminLineForm = () => {
         : await supabase.from('product_lines').insert(payload);
 
     if (saveError) {
-      setError(`Erro ao salvar: ${saveError.message}`);
+      if (saveError.code === '23505') {
+        setError(
+          saveError.message.includes('product_lines_category_key')
+            ? `Já existe uma linha usando a categoria "${category}". Mude o nome e/ou o selo pra gerar uma categoria diferente, ou edite a linha existente em vez de criar outra.`
+            : `Já existe uma linha com o slug "${slug}" (URL /${slug}). Mude o "Slug personalizado" ou o nome da linha para um valor diferente.`
+        );
+      } else {
+        setError(`Erro ao salvar: ${saveError.message}`);
+      }
       setSaving(false);
       return;
     }
@@ -237,6 +246,7 @@ const AdminLineForm = () => {
       await supabase.from('product_lines').delete().eq('id', lineId!);
     }
 
+    invalidateLinesCache();
     setSaving(false);
     navigate('/admin?tab=linhas');
   };

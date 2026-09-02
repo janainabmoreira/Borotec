@@ -228,7 +228,7 @@ const LineProducts = () => {
               <nav className="flex items-center gap-2 text-sm text-primary-foreground/50 mb-6">
                 <Link to="/" className="hover:text-cyan transition-colors">Início</Link>
                 <span>/</span>
-                <Link to="/boroscopios" className="hover:text-cyan transition-colors">Boroscópios</Link>
+                <Link to={`/${line.section_slug}`} className="hover:text-cyan transition-colors">{line.section_name}</Link>
                 <span>/</span>
                 <span className="text-cyan">{line.name}</span>
               </nav>

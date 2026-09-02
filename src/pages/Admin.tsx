@@ -14,7 +14,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { addDays, startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useProductLines } from '@/hooks/useProductLines';
+import { useProductLines, invalidateLinesCache } from '@/hooks/useProductLines';
 import { getAccentClasses } from '@/lib/accentColors';
 import { ICON_MAP } from '@/lib/iconMap';
 
@@ -205,12 +205,14 @@ const LinesTab = () => {
     setDeletingId(id);
     await supabase.from('product_lines').delete().eq('id', id);
     await fetchLines();
+    invalidateLinesCache();
     setDeletingId(null);
   };
 
   const handleToggleActive = async (line: DbProductLine) => {
     await supabase.from('product_lines').update({ active: !line.active }).eq('id', line.id);
     setLines(prev => prev.map(l => l.id === line.id ? { ...l, active: !l.active } : l));
+    invalidateLinesCache();
   };
 
   return (

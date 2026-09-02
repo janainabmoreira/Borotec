@@ -797,7 +797,9 @@ const ProductDetail = () => {
               <nav className="flex items-center gap-2 text-sm text-primary-foreground/50">
                 <Link to="/" className="hover:text-cyan transition-colors">Início</Link>
                 <ChevronRight className="w-4 h-4" />
-                <Link to="/boroscopios" className="hover:text-cyan transition-colors">Boroscópios</Link>
+                <Link to={productLine ? `/${productLine.section_slug}` : '/boroscopios'} className="hover:text-cyan transition-colors">
+                  {productLine?.section_name ?? 'Boroscópios'}
+                </Link>
                 {productLine && (
                   <>
                     <ChevronRight className="w-4 h-4" />

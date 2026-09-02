@@ -78,3 +78,9 @@ export function getLineBySlug(lines: DbProductLine[], slug: string) {
 export function getCachedLines(): DbProductLine[] {
   return cache ?? [];
 }
+
+// Chamado depois de criar/editar uma linha no admin, pra próxima navegação
+// (mesma aba) buscar os dados frescos em vez de reusar o cache antigo.
+export function invalidateLinesCache() {
+  cache = null;
+}
