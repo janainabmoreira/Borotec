@@ -982,20 +982,37 @@ const AdminProductForm = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {(['cable', 'probe', 'camera', 'ip'] as const).map(key => (
-                <div key={key}>
-                  <label className={labelCls}>
-                    {{ cable: 'Cabo máx.', probe: 'Sonda', camera: 'Câmera', ip: 'Proteção IP' }[key]}
-                  </label>
-                  <input
-                    className={inputCls}
-                    value={product[key]}
-                    onChange={e => setP(key, e.target.value)}
-                    placeholder={{ cable: '30m', probe: 'Ø8mm', camera: '1080p', ip: 'IP68' }[key]}
-                  />
-                </div>
-              ))}
+            <div>
+              <p className="text-xs text-primary-foreground/40 mb-2">
+                Specs rápidas do card. O rótulo (linha de cima) é editável — troque se não fizer sentido pra
+                esse produto (ex: numa câmera termográfica, "Sonda" pode virar "Resolução"). Em branco usa o
+                padrão da linha.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {(['cable', 'probe', 'camera', 'ip'] as const).map(key => {
+                  const defaultLabel = { cable: 'Cabo máx.', probe: 'Sonda', camera: 'Câmera', ip: 'Proteção IP' }[key];
+                  return (
+                    <div key={key}>
+                      <input
+                        className="w-full h-5 px-0 mb-1 bg-transparent border-0 border-b border-dashed border-primary-foreground/25 text-xs font-medium text-primary-foreground/50 placeholder:text-primary-foreground/30 focus:outline-none focus:border-cyan transition-colors"
+                        value={product.spec_labels?.[key] ?? ''}
+                        onChange={e => setProduct(prev => ({
+                          ...prev,
+                          spec_labels: { ...(prev.spec_labels ?? {}), [key]: e.target.value },
+                        }))}
+                        placeholder={defaultLabel}
+                        title="Rótulo exibido no card (editável)"
+                      />
+                      <input
+                        className={inputCls}
+                        value={product[key]}
+                        onChange={e => setP(key, e.target.value)}
+                        placeholder={{ cable: '30m', probe: 'Ø8mm', camera: '1080p', ip: 'IP68' }[key]}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="flex items-center gap-2">
@@ -1049,34 +1066,6 @@ const AdminProductForm = () => {
               <p className="text-xs text-primary-foreground/30 mt-1">
                 Aparece no snippet do Google. Ideal: 120–155 caracteres. Se vazio, usa a descrição curta.
               </p>
-            </div>
-          </Section>
-
-          {/* ── Labels dos badges ── */}
-          <Section title="Labels dos Badges do Card">
-            <p className="text-xs text-primary-foreground/40 -mt-1 mb-3">
-              Personalize os rótulos exibidos nos badges de especificação. Deixe em branco para usar o padrão da linha.
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              {([
-                { key: 'probe',  placeholder: 'Sonda'    },
-                { key: 'cable',  placeholder: 'Cabo'     },
-                { key: 'camera', placeholder: 'Câmera'   },
-                { key: 'ip',     placeholder: 'Proteção' },
-              ] as const).map(({ key, placeholder }) => (
-                <div key={key}>
-                  <label className={labelCls}>{placeholder}</label>
-                  <input
-                    className={inputCls}
-                    value={product.spec_labels?.[key] ?? ''}
-                    onChange={e => setProduct(prev => ({
-                      ...prev,
-                      spec_labels: { ...(prev.spec_labels ?? {}), [key]: e.target.value },
-                    }))}
-                    placeholder={placeholder}
-                  />
-                </div>
-              ))}
             </div>
           </Section>
 

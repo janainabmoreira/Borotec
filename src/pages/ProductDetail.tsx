@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -622,7 +622,12 @@ type Tab = typeof TABS[number];
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 const ProductDetail = () => {
-  const { productId } = useParams();
+  // Derivado do path inteiro, não de um :param nomeado — esta página é
+  // alcançada por várias formas de rota (/produtos/:id, /tubulacoes/:id, e o
+  // catch-all genérico usado por linhas soltas e aninhadas), e em todas
+  // elas o ID do produto é sempre o último segmento da URL.
+  const { pathname } = useLocation();
+  const productId = pathname.replace(/\/$/, '').split('/').pop();
   const navigate = useNavigate();
   const { openWhatsApp } = useWhatsAppMessage();
   const [activeTab, setActiveTab] = useState<Tab>('Especificações Técnicas');
