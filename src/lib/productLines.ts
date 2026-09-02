@@ -1,19 +1,12 @@
-// Canonical URL for each product line. This is the single source of truth for
-// where a product "lives" on the site — product cards, search results, and
-// ProductDetail's own canonical tag should all resolve to the same URL.
-// Mirrors scripts/lineMap.mjs (build-time script, kept separate since it can't
-// import from src/) — keep both in sync.
-export const CATEGORY_TO_LINE: Record<string, string> = {
-  'Linha T - Tubulações': '/linha-t',
-  'Linha R - Acesso Autônomo': '/linha-r',
-  'Linha M - Máquinas e Motores': '/linha-m',
-  'Linha E - Aplicações Especiais': '/linha-e',
-  'Linha P - Poços e Subaquático': '/linha-p',
-  'Linha TC - Altura e Difícil Acesso': '/linha-tc',
-  'Linha H - Hospitalar': '/linha-h',
-};
+// Resolve a URL canônica de um produto a partir da lista de linhas
+// carregada via useProductLines() — product cards, resultados de busca e
+// o canonical do ProductDetail devem todos resolver para a mesma URL.
+// Linhas agora vêm do banco (tabela product_lines), não de um mapa fixo
+// no código — por isso recebe `lines` como parâmetro em vez de importar
+// um Record estático.
+import type { DbProductLine } from '@/types/database';
 
-export function getProductPath(category: string, id: string): string {
-  const line = CATEGORY_TO_LINE[category];
-  return line ? `${line}/${id}` : `/produtos/${id}`;
+export function getProductPath(lines: DbProductLine[], category: string, id: string): string {
+  const line = lines.find((l) => l.category === category);
+  return line ? `${line.path}/${id}` : `/produtos/${id}`;
 }

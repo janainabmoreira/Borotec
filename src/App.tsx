@@ -10,7 +10,7 @@ import { HelmetProvider } from "react-helmet-async";
 import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
 import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
-import Categories from "./pages/Categories";
+import CategoryIndex from "./pages/CategoryIndex";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import About from "./pages/About";
@@ -22,13 +22,8 @@ import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 import AdminProductForm from "./pages/AdminProductForm";
 import AdminBlogForm from "./pages/AdminBlogForm";
-import LineTubulacoes from "./pages/LineTubulacoes";
-import LineRobo from "./pages/LineRobo";
-import LineMaquinas from "./pages/LineMaquinas";
-import LineEspeciais from "./pages/LineEspeciais";
-import LinePocos from "./pages/LinePocos";
-import LineTelescopia from "./pages/LineTelescopia";
-import LineHospitalar from "./pages/LineHospitalar";
+import AdminLineForm from "./pages/AdminLineForm";
+import SlugRouter from "./pages/SlugRouter";
 import { supabase } from "@/lib/supabase";
 
 const queryClient = new QueryClient();
@@ -87,7 +82,7 @@ const App = () => (
           <GTMRouteTracker />
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/boroscopios" element={<Categories />} />
+            <Route path="/boroscopios" element={<CategoryIndex sectionSlug="boroscopios" />} />
             <Route path="/categorias" element={<Navigate to="/boroscopios" replace />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:postId" element={<BlogPost />} />
@@ -96,26 +91,21 @@ const App = () => (
             <Route path="/privacidade" element={<PrivacyPolicy />} />
             <Route path="/busca" element={<Search />} />
 
-            {/* Linhas de produtos */}
-            <Route path="/linha-t" element={<LineTubulacoes />} />
-            <Route path="/linha-t/:productId" element={<ProductDetail />} />
+            {/* Alias legado — os produtos antigos sob /tubulacoes continuam acessíveis */}
             <Route path="/tubulacoes" element={<Navigate to="/linha-t" replace />} />
             <Route path="/tubulacoes/:productId" element={<ProductDetail />} />
-            <Route path="/linha-r" element={<LineRobo />} />
-            <Route path="/linha-r/:productId" element={<ProductDetail />} />
-            <Route path="/linha-m" element={<LineMaquinas />} />
-            <Route path="/linha-m/:productId" element={<ProductDetail />} />
-            <Route path="/linha-e" element={<LineEspeciais />} />
-            <Route path="/linha-e/:productId" element={<ProductDetail />} />
-            <Route path="/linha-p" element={<LinePocos />} />
-            <Route path="/linha-p/:productId" element={<ProductDetail />} />
-            <Route path="/linha-tc" element={<LineTelescopia />} />
-            <Route path="/linha-tc/:productId" element={<ProductDetail />} />
-            <Route path="/linha-h" element={<LineHospitalar />} />
-            <Route path="/linha-h/:productId" element={<ProductDetail />} />
 
             {/* Produto genérico */}
             <Route path="/produtos/:productId" element={<ProductDetail />} />
+
+            {/* Linhas de produtos e seções de menu novas (ex: /termografia) — a
+                lista vem da tabela product_lines (cadastrável em /admin), não
+                de rotas fixas. Segmentos estáticos (acima) sempre têm
+                prioridade sobre :lineSlug no React Router v6, então isso não
+                conflita com nenhuma rota fixa. SlugRouter decide se o slug é
+                uma seção (renderiza CategoryIndex) ou uma linha (LineProducts). */}
+            <Route path="/:lineSlug" element={<SlugRouter />} />
+            <Route path="/:lineSlug/:productId" element={<ProductDetail />} />
 
             {/* Admin */}
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -123,6 +113,8 @@ const App = () => (
             <Route path="/admin/produtos/:productId/editar" element={<RequireAuth><AdminProductForm /></RequireAuth>} />
             <Route path="/admin/blog/novo" element={<RequireAuth><AdminBlogForm /></RequireAuth>} />
             <Route path="/admin/blog/:postId/editar" element={<RequireAuth><AdminBlogForm /></RequireAuth>} />
+            <Route path="/admin/linhas/nova" element={<RequireAuth><AdminLineForm /></RequireAuth>} />
+            <Route path="/admin/linhas/:id/editar" element={<RequireAuth><AdminLineForm /></RequireAuth>} />
             <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth>} />
 
             <Route path="*" element={<NotFound />} />

@@ -10,6 +10,7 @@ import { useUTMCapture } from '@/hooks/useUTMCapture';
 import { useGclidCapture } from '@/hooks/useGclidCapture';
 import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { useProductLines } from '@/hooks/useProductLines';
 import { ICON_MAP } from '@/lib/iconMap';
 import {
   ArrowLeft, Plus, Check, MessageCircle, ChevronRight,
@@ -20,18 +21,6 @@ import {
 } from 'lucide-react';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
-
-// ── Category → breadcrumb mapping ────────────────────────────────────────────
-
-const categoryBreadcrumb: Record<string, { label: string; path: string }> = {
-  'Linha T - Tubulações':               { label: 'Tubulações e Dutos',       path: '/linha-t'    },
-  'Linha R - Acesso Autônomo':          { label: 'Acesso Autônomo',           path: '/linha-r'    },
-  'Linha M - Máquinas e Motores':       { label: 'Máquinas e Motores',        path: '/linha-m'    },
-  'Linha E - Aplicações Especiais':     { label: 'Aplicações Especiais',      path: '/linha-e'    },
-  'Linha P - Poços e Subaquático':      { label: 'Poços e Subaquático',       path: '/linha-p'    },
-  'Linha TC - Altura e Difícil Acesso': { label: 'Altura e Difícil Acesso',   path: '/linha-tc'   },
-  'Linha H - Hospitalar': { label: 'Hospitalar', path: '/linha-h' },
-};
 
 // ── Icon thumbnails ───────────────────────────────────────────────────────────
 
@@ -647,6 +636,7 @@ const ProductDetail = () => {
   const [dbDetail, setDbDetail] = useState<typeof productDetailsMap[string] | null>(null);
   const [loadingDb, setLoadingDb] = useState(!!productId && !!isSupabaseConfigured);
   const [notFound, setNotFound] = useState(false);
+  const { lines } = useProductLines();
   usePrerenderSignal(!loadingDb);
 
   // Always try Supabase first — DB product overrides any static version with same ID
@@ -736,7 +726,8 @@ const ProductDetail = () => {
   // /produtos/:id still works as an alias for active products (no redirect —
   // by design, so it doesn't need updating in .htaccess every time a product
   // is added/removed); it just isn't the URL search engines should index.
-  const linePath = categoryBreadcrumb[product.category]?.path;
+  const productLine = lines.find((l) => l.category === product.category);
+  const linePath = productLine?.path;
   const productUrl = linePath
     ? `https://borotec.com.br${linePath}/${product.id}`
     : `https://borotec.com.br/produtos/${product.id}`;
@@ -807,11 +798,11 @@ const ProductDetail = () => {
                 <Link to="/" className="hover:text-cyan transition-colors">Início</Link>
                 <ChevronRight className="w-4 h-4" />
                 <Link to="/boroscopios" className="hover:text-cyan transition-colors">Boroscópios</Link>
-                {categoryBreadcrumb[product.category] && (
+                {productLine && (
                   <>
                     <ChevronRight className="w-4 h-4" />
-                    <Link to={categoryBreadcrumb[product.category].path} className="hover:text-cyan transition-colors">
-                      {categoryBreadcrumb[product.category].label}
+                    <Link to={productLine.path} className="hover:text-cyan transition-colors">
+                      {productLine.name}
                     </Link>
                   </>
                 )}

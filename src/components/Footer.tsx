@@ -1,22 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Linkedin, Youtube, Clock, MapPin, Phone, Mail } from 'lucide-react';
 import { getWhatsAppUrl } from '@/config/whatsapp';
+import { useProductLines } from '@/hooks/useProductLines';
 
 const quickLinks = [
   { label: 'Início',       to: '/' },
   { label: 'Sobre Nós',    to: '/sobre' },
   { label: 'Blog',         to: '/blog' },
   { label: 'Boroscópios',  to: '/boroscopios' },
-];
-
-const productLines = [
-  { label: 'Linha T — Tubulações',      to: '/linha-t'  },
-  { label: 'Linha R — Robôs',           to: '/linha-r'  },
-  { label: 'Linha M — Máquinas',        to: '/linha-m'  },
-  { label: 'Linha E — Especiais',       to: '/linha-e'  },
-  { label: 'Linha P — Poços',           to: '/linha-p'  },
-  { label: 'Linha TC — Telescopia',     to: '/linha-tc' },
-  { label: 'Linha H — Hospitalar',      to: '/linha-h'  },
 ];
 
 const navLink = "font-body text-xs text-primary-foreground/60 hover:text-cyan transition-colors inline-flex items-center gap-1.5 group";
@@ -51,6 +42,8 @@ const IconBadge = ({ children }: { children: React.ReactNode }) => (
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { lines } = useProductLines();
+  const productLines = lines.map((l) => ({ label: `${l.badge} — ${l.name}`, to: l.path }));
 
   return (
     <footer className="bg-charcoal text-primary-foreground relative overflow-hidden">

@@ -1,28 +1,32 @@
 import { supabase } from '@/lib/supabase';
+import { getCachedLines } from '@/hooks/useProductLines';
 
 const WHATSAPP_NUMBER = '5511932876195';
 const STORAGE_KEY = 'borotec_utms';
 const SESSION_KEY = 'brt_sid';
 
+// Tipos conhecidos continuam com autocomplete; `string & {}` permite também
+// qualquer slug de linha (ex: 'termografia') sem perder isso — uma linha
+// criada pelo admin não existe como literal no código, então o tipo não
+// pode ser um union fechado.
 export type WhatsAppType =
   | 'flutuante' | 'hero' | 'contato' | 'geral' | 'produto' | 'carrinho'
-  | 'linha-t' | 'linha-r' | 'linha-m' | 'linha-e' | 'linha-p' | 'linha-tc' | 'linha-h';
+  | (string & {});
 
-const GTM_EVENT: Record<WhatsAppType, string> = {
-  flutuante:  'Botao_Whatsapp_flutuante',
-  hero:       'Botao_Whatsapp_hero',
-  geral:      'Botao_Whatsapp_cta',
-  produto:    'Botao_Whatsapp_produto',
-  contato:    'Botao_Whatsapp_contato',
-  carrinho:   'Botao_Whatsapp_carrinho',
-  'linha-t':  'Botao_Whatsapp_linha_t',
-  'linha-r':  'Botao_Whatsapp_linha_r',
-  'linha-m':  'Botao_Whatsapp_linha_m',
-  'linha-e':  'Botao_Whatsapp_linha_e',
-  'linha-p':  'Botao_Whatsapp_linha_p',
-  'linha-tc': 'Botao_Whatsapp_linha_tc',
-  'linha-h':  'Botao_Whatsapp_linha_h',
+const KNOWN_GTM_EVENT: Record<string, string> = {
+  flutuante: 'Botao_Whatsapp_flutuante',
+  hero:      'Botao_Whatsapp_hero',
+  geral:     'Botao_Whatsapp_cta',
+  produto:   'Botao_Whatsapp_produto',
+  contato:   'Botao_Whatsapp_contato',
+  carrinho:  'Botao_Whatsapp_carrinho',
 };
+
+function gtmEventFor(tipo: string): string {
+  if (KNOWN_GTM_EVENT[tipo]) return KNOWN_GTM_EVENT[tipo];
+  const slug = tipo.replace(/^linha-/, '').replace(/-/g, '_');
+  return `Botao_Whatsapp_linha_${slug}`;
+}
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -88,18 +92,16 @@ function pathToTitle(path: string): string {
     '/blog': 'Blog',
     '/sobre': 'Sobre',
     '/busca': 'Busca',
-    '/tubulacoes': 'Linha T - Tubulações',
-    '/linha-r': 'Linha R - Robôs',
-    '/linha-m': 'Linha M - Máquinas',
-    '/linha-e': 'Linha E - Especiais',
-    '/linha-p': 'Linha P - Poços',
-    '/linha-tc': 'Linha TC - Telescopia',
-    '/linha-h': 'Linha H - Hospitalar',
   };
   if (map[path]) return map[path];
   if (path.startsWith('/produtos/')) return `Produto: ${path.split('/')[2]}`;
-  const lineProductMatch = path.match(/^\/(linha-t|linha-r|linha-m|linha-e|linha-p|linha-tc|linha-h|tubulacoes)\/(.+)$/);
-  if (lineProductMatch) return `Produto: ${lineProductMatch[2]}`;
+
+  const segments = path.split('/').filter(Boolean);
+  if (segments.length >= 1) {
+    const line = getCachedLines().find(l => l.path === `/${segments[0]}`);
+    if (line) return segments.length >= 2 ? `Produto: ${segments[1]}` : line.name;
+  }
+
   if (path.startsWith('/blog/')) return `Blog: ${path.split('/')[2].replace(/-/g, ' ')}`;
   return path;
 }
@@ -107,7 +109,7 @@ function pathToTitle(path: string): string {
 function trackClick(tipo: WhatsAppType) {
   // GTM
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ event: GTM_EVENT[tipo], whatsapp_button: tipo });
+  window.dataLayer.push({ event: gtmEventFor(tipo), whatsapp_button: tipo });
 
   // Supabase
   const utms = getUtms();

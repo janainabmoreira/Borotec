@@ -1,23 +1,26 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Wrench } from 'lucide-react';
 import { AnimateOnScroll } from '@/hooks/useScrollAnimation';
-import { IconTubulacao, IconRobo, IconMaquina, IconEspecial, IconPoco, IconAltura, IconHospital } from '@/components/LineIcons';
-
-/* ---------- dados das linhas ---------- */
-
-const applications = [
-  { label: 'Tubulações e Dutos',       badge: 'Linha T',  description: 'Boroscópios e endoscópios para tubulações industriais de todos os diâmetros, da inspeção de esgoto a oleodutos.',         path: '/linha-t',  Icon: IconTubulacao, bar: 'from-cyan/60'        },
-  { label: 'Acesso Autônomo em Dutos', badge: 'Linha R',  description: 'Robôs de inspeção autopropelidos para grandes tubulações e ambientes de difícil acesso.',                                 path: '/linha-r',  Icon: IconRobo,      bar: 'from-blue-400/60'  },
-  { label: 'Máquinas e Motores',       badge: 'Linha M',  description: 'Endoscópios industriais para inspeção interna de motores, turbinas, compressores e válvulas.',                            path: '/linha-m',  Icon: IconMaquina,   bar: 'from-accent/60'    },
-  { label: 'Aplicações Especiais',     badge: 'Linha E',  description: 'Medição 3D, termografia, UV, ATEX para área classificada e operação em alta temperatura.',                                path: '/linha-e',  Icon: IconEspecial,  bar: 'from-violet-400/60'},
-  { label: 'Poços e Subaquático',      badge: 'Linha P',  description: 'Sistemas de câmera para inspeção em poços artesianos, poços de petróleo e ambientes subaquáticos.',                      path: '/linha-p',  Icon: IconPoco,      bar: 'from-emerald-400/60'},
-  { label: 'Altura e Difícil Alcance', badge: 'Linha TC', description: 'Câmeras telescópicas para inspeção de estruturas em altura, coberturas e locais inacessíveis.',                          path: '/linha-tc', Icon: IconAltura,    bar: 'from-orange-400/60'},
-  { label: 'Vias aéreas e equipamentos médicos', badge: 'Linha H', description: 'Videolaringoscópios, boroscópios e câmeras flexíveis para procedimentos clínicos, intubação de vias aéreas, inspeção de equipamentos hospitalares e manutenção médica.', path: '/linha-h', Icon: IconHospital, bar: 'from-emerald-400/60'},
-];
+import { useProductLines } from '@/hooks/useProductLines';
+import { ICON_MAP } from '@/lib/iconMap';
+import { getAccentClasses } from '@/lib/accentColors';
 
 /* ---------- componente ---------- */
 
-const FeaturedProductsSection = () => (
+const FeaturedProductsSection = () => {
+  const { lines } = useProductLines();
+  // Só a seção "Boroscópios" aparece na Home por enquanto — seções novas
+  // (Termografia, etc.) ganham seu próprio destaque quando fizer sentido.
+  const applications = lines.filter((l) => l.section_slug === 'boroscopios').map((l) => ({
+    label: l.name,
+    badge: l.badge,
+    description: l.card_description,
+    path: l.path,
+    Icon: ICON_MAP[l.icon_name] ?? Wrench,
+    bar: getAccentClasses(l.accent).barFrom,
+  }));
+
+  return (
   <section className="relative py-20 md:py-28 bg-background overflow-hidden">
     <div className="pointer-events-none absolute inset-0">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[1px] bg-gradient-to-r from-transparent via-border to-transparent" />
@@ -79,6 +82,7 @@ const FeaturedProductsSection = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default FeaturedProductsSection;

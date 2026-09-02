@@ -22,7 +22,7 @@ import { useEffect } from 'react';
  * 2. usePrerenderSignal(ready) — for pages that fetch from Supabase before
  *    they have anything real to show (ProductDetail, BlogPost: no <Helmet>
  *    at all until loaded) or where the visible content — not just <Helmet> —
- *    depends on the fetch (Blog, LineTubulacoes, etc.: <Helmet> is static,
+ *    depends on the fetch (Blog, LineProducts, etc.: <Helmet> is static,
  *    but the list of posts/products isn't). Pass `!loading`. The fetch delay
  *    is long enough relative to Helmet's own commit that the same race
  *    doesn't apply here.

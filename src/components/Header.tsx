@@ -1,37 +1,28 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown, Search } from 'lucide-react';
-import { IconTubulacao, IconRobo, IconMaquina, IconEspecial, IconPoco, IconAltura, IconHospital } from '@/components/LineIcons';
+import { Menu, X, ChevronDown, Search, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import logo from '@/assets/logo-borotec.webp';
 import { blogPosts } from '@/data/blog';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { CATEGORY_TO_LINE, getProductPath } from '@/lib/productLines';
-
-const categoryToPath = CATEGORY_TO_LINE;
+import { getProductPath } from '@/lib/productLines';
+import { useProductLines, groupLinesBySection } from '@/hooks/useProductLines';
+import { ICON_MAP } from '@/lib/iconMap';
 
 type DbProduct = { id: string; name: string; category: string; image_url: string | null };
-
-const navApplications = [
-  { label: 'Tubulações e dutos',       badge: 'Linha T',  description: 'Boroscópios e endoscópios para tubulações industriais de todos os diâmetros', path: '/linha-t',  icon: IconTubulacao },
-  { label: 'Acesso autônomo em dutos', badge: 'Linha R',  description: 'Robôs de inspeção para tubulações de grande porte e difícil acesso',           path: '/linha-r',  icon: IconRobo      },
-  { label: 'Máquinas e motores',       badge: 'Linha M',  description: 'Endoscópios industriais para motores, compressores e equipamentos mecânicos',    path: '/linha-m',  icon: IconMaquina   },
-  { label: 'Aplicações especiais',     badge: 'Linha E',  description: 'Medição 3D, termografia, UV, área classificada e alta temperatura',              path: '/linha-e',  icon: IconEspecial  },
-  { label: 'Poços e subaquático',      badge: 'Linha P',  description: 'Inspeção em poços artesianos, poços de petróleo e aplicações subaquáticas',      path: '/linha-p',  icon: IconPoco      },
-  { label: 'Altura e difícil alcance', badge: 'Linha TC', description: 'Câmeras telescópicas para inspeção em altura e locais de difícil alcance',       path: '/linha-tc', icon: IconAltura    },
-  { label: 'Vias aéreas e equipamentos médicos', badge: 'Linha H', description: 'Videolaringoscópios, boroscópios e câmeras flexíveis para intubação de vias aéreas, procedimentos clínicos e inspeção de equipamentos hospitalares.', path: '/linha-h', icon: IconHospital },
-];
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
-  const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
+  const [openSection, setOpenSection] = useState<string | null>(null);
+  const [openMobileSection, setOpenMobileSection] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [dbProducts, setDbProducts] = useState<DbProduct[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const { lines } = useProductLines();
+  const sections = groupLinesBySection(lines);
 
   // Busca produtos no Supabase quando o usuário digita
   useEffect(() => {
@@ -94,15 +85,15 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { label: 'Início', path: '/' },
-    { label: 'Boroscópios', path: '/boroscopios' },
+  const trailingLinks = [
     { label: 'Blog', path: '/blog' },
     { label: 'Sobre', path: '/sobre' },
     { label: 'Contato', path: '/contato' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
+  const isSectionActive = (slug: string) =>
+    location.pathname === `/${slug}` || sections.find(s => s.slug === slug)?.lines.some(l => location.pathname.startsWith(l.path));
 
   return (
     <>
@@ -120,77 +111,79 @@ const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              {navLinks.slice(0, 2).map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`font-body text-sm font-medium transition-all duration-300 hover:text-accent ${
-                    isActive(link.path) ? 'text-accent' : 'text-primary-foreground/90'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-
-              {/* Applications Mega-menu */}
-              <div
-                className="relative"
-                onMouseEnter={() => setIsCategoriesOpen(true)}
-                onMouseLeave={() => setIsCategoriesOpen(false)}
+              <Link
+                to="/"
+                className={`font-body text-sm font-medium transition-all duration-300 hover:text-accent ${
+                  isActive('/') ? 'text-accent' : 'text-primary-foreground/90'
+                }`}
               >
-                <button className={`font-body text-sm font-medium transition-all duration-300 hover:text-accent flex items-center gap-1 ${
-                  location.pathname.startsWith('/linha') || location.pathname === '/boroscopios'
-                    ? 'text-accent' : 'text-primary-foreground/90'
-                }`}>
-                  Aplicações
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isCategoriesOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {isCategoriesOpen && (
-                  <div className="absolute top-full left-0 pt-2 w-[440px] z-50">
-                    <div className="bg-charcoal border border-border/50 rounded-xl shadow-2xl overflow-hidden">
-                      <div className="px-4 py-2.5 border-b border-border/30">
-                        <p className="text-xs uppercase tracking-widest text-cyan font-semibold font-body">O que você precisa inspecionar?</p>
-                      </div>
-                      <div className="py-1">
-                        {navApplications.map((app) => {
-                          const Icon = app.icon;
-                          return (
-                          <Link
-                            key={app.path}
-                            to={app.path}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-cyan/5 transition-colors group"
-                          >
-                            <div className="w-8 h-8 rounded-lg bg-cyan/10 flex items-center justify-center shrink-0 text-cyan group-hover:bg-cyan/20 transition-colors">
-                              <Icon className="w-4 h-4" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-0.5">
-                                <span className="text-sm font-semibold text-primary-foreground group-hover:text-cyan transition-colors font-heading leading-tight">
-                                  {app.label}
-                                </span>
-                                <span className="text-[10px] font-medium px-1.5 py-0.5 bg-accent/20 text-accent rounded font-body whitespace-nowrap">
-                                  {app.badge}
-                                </span>
-                              </div>
-                              <p className="text-xs text-primary-foreground/50 font-body leading-relaxed">
-                                {app.description}
-                              </p>
-                            </div>
+                Início
+              </Link>
+
+              {/* Um mega-menu por seção do menu (Boroscópios, Termografia, ...) */}
+              {sections.map((section) => (
+                <div
+                  key={section.slug}
+                  className="relative"
+                  onMouseEnter={() => setOpenSection(section.slug)}
+                  onMouseLeave={() => setOpenSection(null)}
+                >
+                  <Link
+                    to={`/${section.slug}`}
+                    className={`font-body text-sm font-medium transition-all duration-300 hover:text-accent flex items-center gap-1 ${
+                      isSectionActive(section.slug) ? 'text-accent' : 'text-primary-foreground/90'
+                    }`}
+                  >
+                    {section.name}
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openSection === section.slug ? 'rotate-180' : ''}`} />
+                  </Link>
+                  {openSection === section.slug && (
+                    <div className="absolute top-full left-0 pt-2 w-[440px] z-50">
+                      <div className="bg-charcoal border border-border/50 rounded-xl shadow-2xl overflow-hidden">
+                        <div className="px-4 py-2.5 border-b border-border/30">
+                          <p className="text-xs uppercase tracking-widest text-cyan font-semibold font-body">O que você precisa inspecionar?</p>
+                        </div>
+                        <div className="py-1">
+                          {section.lines.map((line) => {
+                            const Icon = ICON_MAP[line.icon_name] ?? Wrench;
+                            return (
+                              <Link
+                                key={line.path}
+                                to={line.path}
+                                className="flex items-center gap-3 px-4 py-3 hover:bg-cyan/5 transition-colors group"
+                              >
+                                <div className="w-8 h-8 rounded-lg bg-cyan/10 flex items-center justify-center shrink-0 text-cyan group-hover:bg-cyan/20 transition-colors">
+                                  <Icon className="w-4 h-4" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-0.5">
+                                    <span className="text-sm font-semibold text-primary-foreground group-hover:text-cyan transition-colors font-heading leading-tight">
+                                      {line.name}
+                                    </span>
+                                    <span className="text-[10px] font-medium px-1.5 py-0.5 bg-accent/20 text-accent rounded font-body whitespace-nowrap">
+                                      {line.badge}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-primary-foreground/50 font-body leading-relaxed">
+                                    {line.menu_description || line.card_description}
+                                  </p>
+                                </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                        <div className="border-t border-border/30 px-4 py-2.5">
+                          <Link to={`/${section.slug}`} className="text-xs text-cyan hover:text-cyan/70 font-body font-medium transition-colors">
+                            Ver todas as linhas de {section.name} →
                           </Link>
-                          );
-                        })}
-                      </div>
-                      <div className="border-t border-border/30 px-4 py-2.5">
-                        <Link to="/boroscopios" className="text-xs text-cyan hover:text-cyan/70 font-body font-medium transition-colors">
-                          Ver todas as aplicações →
-                        </Link>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              ))}
 
-              {navLinks.slice(2).map((link) => (
+              {trailingLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -250,7 +243,7 @@ const Header = () => {
                           <div>
                             <p className="px-4 py-2 text-[10px] text-primary-foreground/40 uppercase tracking-wide font-body border-b border-border/20">Produtos</p>
                             {dbProducts.map((p) => {
-                              const base = categoryToPath[p.category] ?? '/boroscopios';
+                              const base = lines.find((l) => l.category === p.category)?.path ?? '/boroscopios';
                               return (
                                 <Link
                                   key={p.id}
@@ -320,46 +313,54 @@ const Header = () => {
           {isMenuOpen && (
             <nav className="md:hidden pb-6 animate-fade-in bg-charcoal/95 backdrop-blur-md -mx-4 px-4 rounded-b-2xl">
               <div className="flex flex-col gap-4 pt-4">
-                {navLinks.slice(0, 2).map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`font-body text-lg font-medium transition-colors hover:text-accent ${
-                      isActive(link.path) ? 'text-accent' : 'text-primary-foreground'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
+                <Link
+                  to="/"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`font-body text-lg font-medium transition-colors hover:text-accent ${
+                    isActive('/') ? 'text-accent' : 'text-primary-foreground'
+                  }`}
+                >
+                  Início
+                </Link>
+
+                {/* Uma seção colapsável por item de menu */}
+                {sections.map((section) => (
+                  <div key={section.slug}>
+                    <div className="flex items-center justify-between gap-2">
+                      <Link
+                        to={`/${section.slug}`}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="font-body text-lg font-medium transition-colors hover:text-accent text-primary-foreground"
+                      >
+                        {section.name}
+                      </Link>
+                      <button
+                        onClick={() => setOpenMobileSection(openMobileSection === section.slug ? null : section.slug)}
+                        className="p-1 text-primary-foreground/60 hover:text-accent transition-colors"
+                        aria-label={`Expandir ${section.name}`}
+                      >
+                        <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${openMobileSection === section.slug ? 'rotate-180' : ''}`} />
+                      </button>
+                    </div>
+                    {openMobileSection === section.slug && (
+                      <div className="ml-4 mt-2 flex flex-col gap-2 border-l-2 border-cyan/30 pl-4">
+                        {section.lines.map((line) => (
+                          <Link
+                            key={line.path}
+                            to={line.path}
+                            onClick={() => { setIsMenuOpen(false); setOpenMobileSection(null); }}
+                            className="text-sm text-primary-foreground/80 hover:text-cyan transition-colors py-1"
+                          >
+                            {line.name}
+                            <span className="ml-1.5 text-[10px] text-accent font-medium">{line.badge}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
 
-                {/* Mobile Categories */}
-                <div>
-                  <button
-                    onClick={() => setIsMobileCategoriesOpen(!isMobileCategoriesOpen)}
-                    className="font-body text-lg font-medium transition-colors hover:text-accent text-primary-foreground flex items-center gap-2 w-full"
-                  >
-                    Aplicações
-                    <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${isMobileCategoriesOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {isMobileCategoriesOpen && (
-                    <div className="ml-4 mt-2 flex flex-col gap-2 border-l-2 border-cyan/30 pl-4">
-                      {navApplications.map((app) => (
-                        <Link
-                          key={app.path}
-                          to={app.path}
-                          onClick={() => { setIsMenuOpen(false); setIsMobileCategoriesOpen(false); }}
-                          className="text-sm text-primary-foreground/80 hover:text-cyan transition-colors py-1"
-                        >
-                          {app.label}
-                          <span className="ml-1.5 text-[10px] text-accent font-medium">{app.badge}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {navLinks.slice(2).map((link) => (
+                {trailingLinks.map((link) => (
                   <Link
                     key={link.path}
                     to={link.path}
@@ -405,7 +406,7 @@ const Header = () => {
                               {dbProducts.map((p) => (
                                 <Link
                                   key={p.id}
-                                  to={getProductPath(p.category, p.id)}
+                                  to={getProductPath(lines, p.category, p.id)}
                                   onClick={handleResultClick}
                                   className="flex items-center gap-3 px-4 py-2 hover:bg-primary-foreground/10 transition-colors"
                                 >

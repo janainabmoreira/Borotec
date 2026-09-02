@@ -81,3 +81,27 @@ export type DbProductDetails = {
   faqs: Array<{ question: string; answer: string }>;
   videos: Array<{ title: string; duration: string; url?: string }>;
 };
+
+export type DbProductLine = {
+  id: string;
+  badge: string;
+  name: string;
+  category: string;
+  path: string;
+  section_slug: string;
+  section_name: string;
+  icon_name: string;
+  accent: string;
+  image_url: string | null;
+  card_description: string;
+  menu_description: string | null;
+  hero_description: string;
+  seo_title: string | null;
+  seo_description: string | null;
+  filter_labels: { probe?: string; cable?: string; camera?: string; ip?: string };
+  card_labels: { probe?: string; cable?: string; camera?: string; ip?: string };
+  sort_order: number;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+};

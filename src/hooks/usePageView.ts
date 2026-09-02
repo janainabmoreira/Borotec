@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { getCachedLines } from '@/hooks/useProductLines';
 
 const getSessionId = () => {
   const key = 'brt_sid';
@@ -21,18 +22,16 @@ const pathToTitle = (path: string): string => {
     '/blog': 'Blog',
     '/sobre': 'Sobre',
     '/busca': 'Busca',
-    '/linha-t': 'Linha T - Tubulações',
-    '/linha-r': 'Linha R - Robôs',
-    '/linha-m': 'Linha M - Máquinas',
-    '/linha-e': 'Linha E - Especiais',
-    '/linha-p': 'Linha P - Poços',
-    '/linha-tc': 'Linha TC - Telescopia',
-    '/linha-h': 'Linha H - Hospitalar',
   };
   if (map[path]) return map[path];
   if (path.startsWith('/produtos/')) return `Produto: ${path.split('/')[2]}`;
-  const lineProductMatch = path.match(/^\/(linha-t|linha-r|linha-m|linha-e|linha-p|linha-tc|linha-h|tubulacoes)\/(.+)$/);
-  if (lineProductMatch) return `Produto: ${lineProductMatch[2]}`;
+
+  const segments = path.split('/').filter(Boolean);
+  if (segments.length >= 1) {
+    const line = getCachedLines().find(l => l.path === `/${segments[0]}`);
+    if (line) return segments.length >= 2 ? `Produto: ${segments[1]}` : line.name;
+  }
+
   if (path.startsWith('/blog/')) return `Blog: ${path.split('/')[2].replace(/-/g, ' ')}`;
   return path;
 };

@@ -1,65 +1,52 @@
-﻿import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useMemo } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import {
-  Plus, Check, Camera, Monitor, Droplets, Plug2,
+  Camera, Plug2, Monitor, Droplets, Wrench,
   ChevronDown, ChevronUp, MessageCircle, SlidersHorizontal, X, Loader2,
 } from 'lucide-react';
-import { IconMaquina } from '@/components/LineIcons';
 import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
-import { useLineProducts, type SpecLabels } from '@/hooks/useLineProducts';
+import { useLineProducts, type LineProduct } from '@/hooks/useLineProducts';
+import { useProductLines } from '@/hooks/useProductLines';
 import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
-// ── Types ─────────────────────────────────────────────────────────────────────
+import { ICON_MAP } from '@/lib/iconMap';
+import { getAccentClasses } from '@/lib/accentColors';
+import NotFound from '@/pages/NotFound';
 
-type MaquinasProduct = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  probe: string;
-  cable: string;
-  camera: string;
-  ip: string;
-  specLabels?: SpecLabels;
-};
+// ── Config ────────────────────────────────────────────────────────────────────
 
-type FilterKey = keyof Omit<MaquinasProduct, 'id' | 'name' | 'description' | 'image' | 'specLabels'>;
+type FilterKey = 'probe' | 'cable' | 'camera' | 'ip';
 type FilterState = Record<FilterKey, string[]>;
 
-// ── Dados dos produtos ────────────────────────────────────────────────────────
+const FILTER_KEYS: FilterKey[] = ['probe', 'cable', 'camera', 'ip'];
+const FILTER_ICON: Record<FilterKey, typeof Camera> = { probe: Camera, cable: Plug2, camera: Monitor, ip: Droplets };
 
-// ── Configuração dos filtros ──────────────────────────────────────────────────
+const emptyFilters: FilterState = { probe: [], cable: [], camera: [], ip: [] };
 
-const filterConfig: { key: FilterKey; label: string; options: string[] }[] = [
-  { key: 'probe',  label: 'Diâmetro da sonda', options: ['Ø4mm', 'Ø6mm', 'Ø8mm'] },
-  { key: 'cable',  label: 'Comprimento',        options: ['1m', '1.5m']             },
-  { key: 'camera', label: 'Resolução',           options: ['HD', '1080p']            },
-  { key: 'ip',     label: 'Proteção IP',         options: ['IP67']                   },
-];
+// ── H1 — destaca a(s) última(s) palavra(s) do nome em gradiente ───────────────
 
-const emptyFilters: FilterState = {
-  probe: [], cable: [], camera: [], ip: [],
-};
-
-// ── Specs exibidos no card ────────────────────────────────────────────────────
-
-const cardSpecs = [
-  { icon: Camera,   key: 'probe'  as FilterKey, label: 'Sonda'   },
-  { icon: Plug2,    key: 'cable'  as FilterKey, label: 'Cabo'    },
-  { icon: Monitor,  key: 'camera' as FilterKey, label: 'Câmera'  },
-  { icon: Droplets, key: 'ip'     as FilterKey, label: 'Proteção' },
-];
+function splitHeroTitle(name: string): [string, string] {
+  const words = name.trim().split(/\s+/);
+  if (words.length <= 1) return ['', name];
+  return [words.slice(0, -1).join(' ') + ' ', words[words.length - 1]];
+}
 
 // ── Card ──────────────────────────────────────────────────────────────────────
 
-const ProductCard = ({ product }: { product: MaquinasProduct }) => {
+const ProductCard = ({
+  product, linePath, badge, accent, cardLabels,
+}: {
+  product: LineProduct; linePath: string; badge: string;
+  accent: ReturnType<typeof getAccentClasses>; cardLabels: Record<FilterKey, string>;
+}) => {
+  const cardSpecs = FILTER_KEYS.map((key) => ({ key, icon: FILTER_ICON[key], label: cardLabels[key] }));
 
   return (
     <div className="group bg-card rounded-2xl overflow-hidden border border-border shadow-card hover:border-accent/40 hover:-translate-y-1 transition-all duration-300">
-      <Link to={`/linha-m/${product.id}`} className="block relative overflow-hidden aspect-[4/3] bg-secondary">
+      <Link to={`${linePath}/${product.id}`} className="block relative overflow-hidden aspect-[4/3] bg-secondary">
         <img
           src={product.image}
           alt={product.name}
@@ -67,14 +54,14 @@ const ProductCard = ({ product }: { product: MaquinasProduct }) => {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute top-3 left-3">
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-500/90 backdrop-blur-sm text-white text-[10px] font-bold font-heading rounded-full uppercase tracking-wide">
-            <IconMaquina className="w-3 h-3" /> Linha M
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 ${accent.badgeBg} backdrop-blur-sm ${accent.badgeText} text-[10px] font-bold font-heading rounded-full uppercase tracking-wide`}>
+            {badge}
           </span>
         </div>
       </Link>
 
       <div className="p-5">
-        <Link to={`/linha-m/${product.id}`}>
+        <Link to={`${linePath}/${product.id}`}>
           <h3 className="font-heading font-bold text-base text-foreground mb-2 group-hover:text-accent transition-colors">
             {product.name}
           </h3>
@@ -83,18 +70,15 @@ const ProductCard = ({ product }: { product: MaquinasProduct }) => {
           {product.description}
         </p>
 
-        {/* Specs */}
         <div className="grid grid-cols-2 gap-2 mb-4">
           {cardSpecs.map(({ icon: Icon, key, label: defaultLabel }) => {
             const label = product.specLabels?.[key] || defaultLabel;
-            const val = product[key];
-            const display = Array.isArray(val) ? val[0] : val;
             return (
               <div key={key} className="flex items-center gap-1.5 bg-secondary/60 rounded-lg px-2.5 py-1.5">
                 <Icon className="w-3 h-3 text-cyan shrink-0" />
                 <div className="min-w-0">
                   <p className="text-[9px] text-foreground/40 font-body uppercase tracking-wide leading-none">{label}</p>
-                  <p className="text-[11px] font-semibold font-body text-foreground truncate">{display}</p>
+                  <p className="text-[11px] font-semibold font-body text-foreground truncate">{product[key]}</p>
                 </div>
               </div>
             );
@@ -103,9 +87,7 @@ const ProductCard = ({ product }: { product: MaquinasProduct }) => {
 
         <div className="flex gap-2">
           <Button variant="cta" size="sm" className="flex-1 text-xs" asChild>
-            <Link to={`/linha-m/${product.id}`}>
-              Ver detalhes
-            </Link>
+            <Link to={`${linePath}/${product.id}`}>Ver detalhes</Link>
           </Button>
         </div>
       </div>
@@ -164,10 +146,15 @@ const FilterGroup = ({
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-const LineMaquinas = () => {
+const LineProducts = () => {
+  const { lineSlug } = useParams<{ lineSlug: string }>();
   const { openWhatsApp } = useWhatsAppMessage();
-  const { products, loading } = useLineProducts('Linha M - Máquinas e Motores');
-  usePrerenderSignal(!loading);
+  const { lines, loading: loadingLines } = useProductLines();
+  const line = lines.find((l) => l.id === lineSlug);
+
+  const { products, loading: loadingProducts } = useLineProducts(line?.category ?? '__none__');
+  usePrerenderSignal(!loadingLines && (!!line ? !loadingProducts : true));
+
   const [filters, setFilters] = useState<FilterState>(emptyFilters);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
@@ -181,32 +168,50 @@ const LineMaquinas = () => {
   };
 
   const clearFilters = () => setFilters(emptyFilters);
-
   const activeCount = Object.values(filters).flat().length;
 
-  const dynamicFilterConfig = useMemo(() => filterConfig.map(fc => ({
-    ...fc,
-    options: Array.from(new Set(products.map(p => p[fc.key]).filter(Boolean))).sort(),
-  })), [products]);
+  const dynamicFilterConfig = useMemo(() => {
+    const filterLabels = line?.filter_labels ?? {};
+    return FILTER_KEYS.map((key) => ({
+      key,
+      label: filterLabels[key] || { probe: 'Sonda', cable: 'Cabo', camera: 'Câmera', ip: 'Proteção' }[key],
+      options: Array.from(new Set(products.map(p => p[key]).filter(Boolean))).sort(),
+    }));
+  }, [products, line]);
 
-  const filtered = useMemo(() => products.filter(p => {
-    return filterConfig.every(({ key }) => {
+  const filtered = useMemo(() => products.filter(p =>
+    dynamicFilterConfig.every(({ key }) => {
       const sel = filters[key];
-      if (sel.length === 0) return true;
-      const val = p[key];
-      return sel.includes(val as string);
-    });
-  }), [products, filters]);
+      return sel.length === 0 || sel.includes(p[key]);
+    })
+  ), [filters, products, dynamicFilterConfig]);
+
+  if (!loadingLines && !line) {
+    return <NotFound />;
+  }
+
+  if (!line) {
+    return (
+      <div className="min-h-screen bg-charcoal flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-cyan animate-spin" />
+      </div>
+    );
+  }
+
+  const IconComponent = ICON_MAP[line.icon_name] ?? Wrench;
+  const accent = getAccentClasses(line.accent);
+  const cardLabels = { ...{ probe: 'Sonda', cable: 'Cabo', camera: 'Câmera', ip: 'Proteção' }, ...line.card_labels };
+  const [heroTitleStart, heroTitleEnd] = splitHeroTitle(line.name);
 
   return (
     <>
       <Helmet>
-        <title>Boroscópios para Máquinas e Motores | Linha M | BOROTEC Industrial</title>
-        <meta name="description" content="Videoscópios e boroscópios industriais para inspeção de máquinas, motores, turbinas e compressores. Sondas de Ø4mm a Ø8mm, câmera até 1080p, IP67." />
-        <link rel="canonical" href="https://borotec.com.br/linha-m" />
-        <meta property="og:title" content="Boroscópios para Máquinas e Motores | BOROTEC Industrial" />
-        <meta property="og:description" content="Equipamentos de inspeção visual para manutenção preditiva de máquinas e motores industriais." />
-        <meta property="og:url" content="https://borotec.com.br/linha-m" />
+        <title>{line.seo_title || `${line.name} | ${line.badge} | BOROTEC Industrial`}</title>
+        <meta name="description" content={line.seo_description || line.hero_description} />
+        <link rel="canonical" href={`https://borotec.com.br${line.path}`} />
+        <meta property="og:title" content={line.seo_title || `${line.name} | BOROTEC Industrial`} />
+        <meta property="og:description" content={line.seo_description || line.hero_description} />
+        <meta property="og:url" content={`https://borotec.com.br${line.path}`} />
         <meta property="og:type" content="website" />
       </Helmet>
 
@@ -216,7 +221,7 @@ const LineMaquinas = () => {
         <main className="pt-20">
           {/* Hero */}
           <section className="relative bg-charcoal py-12 md:py-20 overflow-hidden">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
+            <div className={`absolute top-0 right-0 w-96 h-96 ${accent.blurBg} rounded-full blur-3xl`} />
             <div className="absolute bottom-0 left-0 w-80 h-80 bg-cyan/5 rounded-full blur-3xl" />
 
             <div className="relative container-wide mx-auto px-4 md:px-8">
@@ -225,32 +230,31 @@ const LineMaquinas = () => {
                 <span>/</span>
                 <Link to="/boroscopios" className="hover:text-cyan transition-colors">Boroscópios</Link>
                 <span>/</span>
-                <span className="text-cyan">Máquinas e Motores</span>
+                <span className="text-cyan">{line.name}</span>
               </nav>
 
               <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-cyan/20 rounded-xl flex items-center justify-center">
-                      <IconMaquina className="w-5 h-5 text-cyan" />
+                    <div className={`w-10 h-10 ${accent.iconBg} rounded-xl flex items-center justify-center`}>
+                      <IconComponent className={`w-5 h-5 ${accent.iconText}`} />
                     </div>
-                    <span className="inline-flex items-center px-3 py-1 bg-purple-500/15 text-purple-400 text-xs font-semibold font-body rounded-full">
-                      Linha M
+                    <span className={`inline-flex items-center px-3 py-1 ${accent.pillBg} ${accent.pillText} text-xs font-semibold font-body rounded-full`}>
+                      {line.badge}
                     </span>
                   </div>
                   <h1 className="font-heading text-3xl md:text-5xl font-black text-primary-foreground mb-3">
-                    Máquinas e{' '}
-                    <span className="text-gradient">Motores</span>
+                    {heroTitleStart}<span className="text-gradient">{heroTitleEnd}</span>
                   </h1>
                   <p className="font-body text-base text-primary-foreground/60 max-w-2xl">
-                    Videoscópios e boroscópios industriais para inspeção interna de motores, turbinas, compressores e equipamentos de alta precisão. Sondas ultra-slim com câmeras HD e Full HD.
+                    {line.hero_description}
                   </p>
                 </div>
                 <Button
                   variant="whatsapp"
                   size="lg"
                   className="shrink-0 whatsapp-btn"
-                  onClick={() => { openWhatsApp('linha-m'); window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'Botao_WhatsApp_M' }); }}
+                  onClick={() => { openWhatsApp(line.id); window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: `Botao_WhatsApp_${line.badge.replace('Linha ', '')}` }); }}
                 >
                   <MessageCircle className="w-5 h-5" />
                   Falar com o Especialista
@@ -269,48 +273,52 @@ const LineMaquinas = () => {
               <p className="font-body text-sm text-foreground/60">
                 <span className="font-semibold text-foreground">{filtered.length}</span> produto{filtered.length !== 1 ? 's' : ''}
               </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowMobileFilters(true)}
-                className="flex items-center gap-2"
-              >
-                <SlidersHorizontal className="w-4 h-4" />
-                Filtros
-                {activeCount > 0 && (
-                  <span className="w-5 h-5 bg-accent text-white text-xs font-bold rounded-full flex items-center justify-center">
-                    {activeCount}
-                  </span>
-                )}
-              </Button>
+              {dynamicFilterConfig.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowMobileFilters(true)}
+                  className="flex items-center gap-2"
+                >
+                  <SlidersHorizontal className="w-4 h-4" />
+                  Filtros
+                  {activeCount > 0 && (
+                    <span className="w-5 h-5 bg-accent text-white text-xs font-bold rounded-full flex items-center justify-center">
+                      {activeCount}
+                    </span>
+                  )}
+                </Button>
+              )}
             </div>
 
             <div className="flex gap-8">
               {/* Sidebar */}
-              <aside className="hidden lg:block w-56 shrink-0">
-                <div className="sticky top-24 bg-card border border-border rounded-2xl p-5">
-                  <div className="flex items-center justify-between mb-5">
-                    <h2 className="font-heading font-bold text-sm text-foreground flex items-center gap-2">
-                      <SlidersHorizontal className="w-4 h-4 text-accent" />
-                      Filtros
-                    </h2>
-                    {activeCount > 0 && (
-                      <button onClick={clearFilters} className="text-xs text-accent hover:underline font-body">
-                        Limpar ({activeCount})
-                      </button>
-                    )}
+              {dynamicFilterConfig.length > 0 && (
+                <aside className="hidden lg:block w-56 shrink-0">
+                  <div className="sticky top-24 bg-card border border-border rounded-2xl p-5">
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="font-heading font-bold text-sm text-foreground flex items-center gap-2">
+                        <SlidersHorizontal className="w-4 h-4 text-accent" />
+                        Filtros
+                      </h2>
+                      {activeCount > 0 && (
+                        <button onClick={clearFilters} className="text-xs text-accent hover:underline font-body">
+                          Limpar ({activeCount})
+                        </button>
+                      )}
+                    </div>
+                    {dynamicFilterConfig.map(({ key, label, options }) => (
+                      <FilterGroup
+                        key={key}
+                        label={label}
+                        options={options}
+                        selected={filters[key]}
+                        onChange={(v) => toggleFilter(key, v)}
+                      />
+                    ))}
                   </div>
-                  {dynamicFilterConfig.map(({ key, label, options }) => (
-                    <FilterGroup
-                      key={key}
-                      label={label}
-                      options={options}
-                      selected={filters[key]}
-                      onChange={(v) => toggleFilter(key, v)}
-                    />
-                  ))}
-                </div>
-              </aside>
+                </aside>
+              )}
 
               {/* Grid */}
               <div className="flex-1 min-w-0">
@@ -321,7 +329,7 @@ const LineMaquinas = () => {
                   </p>
                   {activeCount > 0 && (
                     <div className="flex items-center gap-2 flex-wrap">
-                      {filterConfig.map(({ key, label }) =>
+                      {dynamicFilterConfig.map(({ key }) =>
                         filters[key].map(val => (
                           <button
                             key={`${key}-${val}`}
@@ -336,25 +344,31 @@ const LineMaquinas = () => {
                   )}
                 </div>
 
-                {loading ? (
-                  <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 text-cyan animate-spin" /></div>
+                {loadingProducts ? (
+                  <div className="flex justify-center py-20">
+                    <Loader2 className="w-8 h-8 text-cyan animate-spin" />
+                  </div>
                 ) : filtered.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filtered.map(p => (
-                      <ProductCard key={p.id} product={p} />
+                      <ProductCard key={p.id} product={p} linePath={line.path} badge={line.badge} accent={accent} cardLabels={cardLabels} />
                     ))}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
                     <p className="font-heading font-bold text-lg text-foreground/50 mb-2">
-                      Nenhum produto com esses filtros
+                      {products.length === 0 ? 'Nenhum produto cadastrado nesta linha ainda' : 'Nenhum produto com esses filtros'}
                     </p>
-                    <p className="font-body text-sm text-foreground/30 mb-6">
-                      Tente remover algumas seleções.
-                    </p>
-                    <Button variant="outline" size="sm" onClick={clearFilters}>
-                      Limpar filtros
-                    </Button>
+                    {products.length > 0 && (
+                      <>
+                        <p className="font-body text-sm text-foreground/30 mb-6">
+                          Tente remover algumas seleções.
+                        </p>
+                        <Button variant="outline" size="sm" onClick={clearFilters}>
+                          Limpar filtros
+                        </Button>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -405,7 +419,4 @@ const LineMaquinas = () => {
   );
 };
 
-export default LineMaquinas;
-
-
-
+export default LineProducts;

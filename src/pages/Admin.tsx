@@ -2,20 +2,23 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import logoBorotec from '@/assets/logo-borotec-DJfYTfhm.png';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import type { DbProduct, DbBlogPost, DbLead } from '@/types/database';
+import type { DbProduct, DbBlogPost, DbLead, DbProductLine } from '@/types/database';
 import {
   Plus, Pencil, Trash2, LogOut, Package, Loader2,
   ToggleLeft, ToggleRight, ExternalLink, BookOpen,
   Users, ChevronDown, ChevronUp, Download, Mail, Phone, Building2,
   BarChart2, Eye, Globe, TrendingUp, RefreshCw, MapPin, Clock, MessageCircle, Send,
-  CalendarIcon,
+  CalendarIcon, Layers, Wrench,
 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { addDays, startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useProductLines } from '@/hooks/useProductLines';
+import { getAccentClasses } from '@/lib/accentColors';
+import { ICON_MAP } from '@/lib/iconMap';
 
-type Tab = 'produtos' | 'blog' | 'leads' | 'analytics';
+type Tab = 'produtos' | 'blog' | 'leads' | 'analytics' | 'linhas';
 
 type PageView = {
   id: string;
@@ -70,28 +73,17 @@ const ProductsTab = () => {
     setProducts(prev => prev.map(p => p.id === product.id ? { ...p, active: !p.active } : p));
   };
 
-  const categoryColor: Record<string, string> = {
-    'Linha T - Tubulações': 'bg-cyan/15 text-cyan',
-    'Linha R - Acesso Autônomo': 'bg-blue-500/15 text-blue-400',
-    'Linha M - Máquinas e Motores': 'bg-purple-500/15 text-purple-400',
-    'Linha E - Aplicações Especiais': 'bg-yellow-500/15 text-yellow-400',
-    'Linha P - Poços e Subaquático': 'bg-teal-500/15 text-teal-400',
-    'Linha TC - Altura e Difícil Acesso': 'bg-orange-500/15 text-orange-400',
-    'Linha H - Hospitalar': 'bg-emerald-500/15 text-emerald-400',
-  };
+  const { lines } = useProductLines();
 
-  const categorySlug: Record<string, string> = {
-    'Linha T - Tubulações':               '/linha-t',
-    'Linha R - Acesso Autônomo':          '/linha-r',
-    'Linha M - Máquinas e Motores':       '/linha-m',
-    'Linha E - Aplicações Especiais':     '/linha-e',
-    'Linha P - Poços e Subaquático':      '/linha-p',
-    'Linha TC - Altura e Difícil Acesso': '/linha-tc',
-    'Linha H - Hospitalar': '/linha-h',
+  const categoryColorClass = (category: string) => {
+    const line = lines.find(l => l.category === category);
+    if (!line) return 'bg-primary-foreground/10 text-primary-foreground/60';
+    const accent = getAccentClasses(line.accent);
+    return `${accent.pillBg} ${accent.pillText}`;
   };
 
   const productUrl = (p: { category: string; id: string }) =>
-    `${categorySlug[p.category] ?? '/produtos'}/${p.id}`;
+    `${lines.find(l => l.category === p.category)?.path ?? '/produtos'}/${p.id}`;
 
   return (
     <div>
@@ -153,7 +145,7 @@ const ProductsTab = () => {
                     </div>
                   </td>
                   <td className="px-4 py-3 hidden md:table-cell">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${categoryColor[p.category] ?? 'bg-primary-foreground/10 text-primary-foreground/60'}`}>
+                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${categoryColorClass(p.category)}`}>
                       {p.category.split(' - ')[0]}
                     </span>
                   </td>
@@ -186,6 +178,134 @@ const ProductsTab = () => {
                   </td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ---- Lines tab ----
+const LinesTab = () => {
+  const [lines, setLines] = useState<DbProductLine[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const fetchLines = async () => {
+    const { data } = await supabase.from('product_lines').select('*').order('sort_order', { ascending: true });
+    setLines(data ?? []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchLines(); }, []);
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Excluir a linha "${name}"? Produtos já cadastrados nela ficam sem linha até você reatribuí-los. Esta ação não pode ser desfeita.`)) return;
+    setDeletingId(id);
+    await supabase.from('product_lines').delete().eq('id', id);
+    await fetchLines();
+    setDeletingId(null);
+  };
+
+  const handleToggleActive = async (line: DbProductLine) => {
+    await supabase.from('product_lines').update({ active: !line.active }).eq('id', line.id);
+    setLines(prev => prev.map(l => l.id === line.id ? { ...l, active: !l.active } : l));
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="font-heading text-2xl font-bold text-primary-foreground flex items-center gap-2">
+            <Layers className="w-6 h-6 text-accent" />
+            Linhas de Produto
+          </h1>
+          <p className="text-primary-foreground/50 text-sm mt-1">
+            {lines.length} linha{lines.length !== 1 ? 's' : ''} cadastrada{lines.length !== 1 ? 's' : ''} — aparecem na Home, em /boroscopios, no menu "Aplicações" e no rodapé.
+          </p>
+        </div>
+        <Link to="/admin/linhas/nova"
+          className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent/90 text-white font-semibold text-sm rounded-lg transition-colors">
+          <Plus className="w-4 h-4" />
+          Nova Linha
+        </Link>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-cyan" /></div>
+      ) : lines.length === 0 ? (
+        <div className="text-center py-20 border border-dashed border-primary-foreground/10 rounded-2xl">
+          <Layers className="w-10 h-10 text-primary-foreground/20 mx-auto mb-3" />
+          <p className="text-primary-foreground/40 text-sm">Nenhuma linha cadastrada ainda.</p>
+          <Link to="/admin/linhas/nova" className="inline-flex items-center gap-2 mt-4 text-sm text-accent hover:underline">
+            <Plus className="w-4 h-4" /> Adicionar primeira linha
+          </Link>
+        </div>
+      ) : (
+        <div className="bg-navy-dark/40 border border-primary-foreground/10 rounded-2xl overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-primary-foreground/10 text-primary-foreground/40 text-xs uppercase tracking-wide">
+                <th className="text-left px-4 py-3 font-medium">Linha</th>
+                <th className="text-left px-4 py-3 font-medium hidden md:table-cell">Categoria de produto</th>
+                <th className="text-left px-4 py-3 font-medium hidden lg:table-cell">URL</th>
+                <th className="text-center px-4 py-3 font-medium">Ativa</th>
+                <th className="text-right px-4 py-3 font-medium">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lines.map((l) => {
+                const Icon = ICON_MAP[l.icon_name] ?? Wrench;
+                const accent = getAccentClasses(l.accent);
+                return (
+                  <tr key={l.id} className="border-b border-primary-foreground/5 hover:bg-primary-foreground/3 transition-colors">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        {l.image_url ? (
+                          <img src={l.image_url} alt={l.name} className="w-10 h-10 rounded-lg object-cover bg-charcoal flex-shrink-0" />
+                        ) : (
+                          <div className={`w-10 h-10 rounded-lg ${accent.iconBg} flex items-center justify-center flex-shrink-0`}>
+                            <Icon className={`w-5 h-5 ${accent.iconText}`} />
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-medium text-primary-foreground leading-tight">{l.badge} <span className="text-primary-foreground/50 font-normal">{l.name}</span></p>
+                          <p className="text-primary-foreground/40 text-xs font-mono">{l.id}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 hidden md:table-cell">
+                      <span className="text-primary-foreground/50 font-mono text-xs">{l.category}</span>
+                    </td>
+                    <td className="px-4 py-3 hidden lg:table-cell">
+                      <span className="text-primary-foreground/50 font-mono text-xs">{l.path}</span>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <button onClick={() => handleToggleActive(l)} title={l.active ? 'Desativar' : 'Ativar'}
+                        className="text-primary-foreground/40 hover:text-cyan transition-colors">
+                        {l.active ? <ToggleRight className="w-6 h-6 text-cyan" /> : <ToggleLeft className="w-6 h-6" />}
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link to={l.path} target="_blank"
+                          className="p-1.5 text-primary-foreground/40 hover:text-emerald-400 transition-colors" title="Ver linha no site">
+                          <ExternalLink className="w-4 h-4" />
+                        </Link>
+                        <Link to={`/admin/linhas/${l.id}/editar`}
+                          className="p-1.5 text-primary-foreground/40 hover:text-cyan transition-colors" title="Editar">
+                          <Pencil className="w-4 h-4" />
+                        </Link>
+                        <button onClick={() => handleDelete(l.id, l.name)} disabled={deletingId === l.id}
+                          className="p-1.5 text-primary-foreground/40 hover:text-red-400 transition-colors disabled:opacity-40" title="Excluir">
+                          {deletingId === l.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -1324,6 +1444,7 @@ async function fetchAllRows<T>(table: string, select: string, sinceIso: string):
 }
 
 const AnalyticsTab = () => {
+  const { lines } = useProductLines();
   const [views, setViews] = useState<PageView[]>([]);
   const [waClicks, setWaClicks] = useState<WaClick[]>([]);
   const [loading, setLoading] = useState(true);
@@ -2362,10 +2483,7 @@ const AnalyticsTab = () => {
           const btnLabels: Record<string, string> = {
             flutuante: 'Botão Flutuante', produto: 'Página de Produto',
             hero: 'Hero / Banner', contato: 'Contato', geral: 'CTA Geral',
-            'linha-m': 'Linha Máquinas', 'linha-p': 'Linha Poços',
-            'linha-r': 'Linha Robô', 'linha-t': 'Linha Tubulações',
-            'linha-e': 'Linha Especiais', 'linha-tc': 'Linha Telescopia',
-            'linha-h': 'Linha Hospitalar',
+            ...Object.fromEntries(lines.map(l => [l.id, `Linha ${l.name}`])),
           };
           const byBtn = new Map<string, { count: number; pages: Map<string, number>; sources: Map<string, number> }>();
           filteredWa.forEach(c => {
@@ -2885,7 +3003,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const rawTab = searchParams.get('tab') as Tab;
-  const tab: Tab = ['produtos', 'blog', 'leads', 'analytics'].includes(rawTab) ? rawTab : 'produtos';
+  const tab: Tab = ['produtos', 'linhas', 'blog', 'leads', 'analytics'].includes(rawTab) ? rawTab : 'produtos';
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -2940,6 +3058,17 @@ const Admin = () => {
             Produtos
           </button>
           <button
+            onClick={() => setSearchParams({ tab: 'linhas' })}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              tab === 'linhas'
+                ? 'bg-charcoal text-primary-foreground shadow-sm'
+                : 'text-primary-foreground/50 hover:text-primary-foreground'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            Linhas
+          </button>
+          <button
             onClick={() => setSearchParams({ tab: 'blog' })}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               tab === 'blog'
@@ -2975,6 +3104,7 @@ const Admin = () => {
         </div>
 
         {tab === 'produtos' && <ProductsTab />}
+        {tab === 'linhas' && <LinesTab />}
         {tab === 'blog' && <BlogTab />}
         {tab === 'leads' && <LeadsTab />}
         {tab === 'analytics' && <AnalyticsTab />}

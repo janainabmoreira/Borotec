@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { ICON_OPTIONS } from '@/lib/iconMap';
+import { useProductLines } from '@/hooks/useProductLines';
 import type { DbProduct, DbProductDetails } from '@/types/database';
 import {
   ArrowLeft, Loader2, Save, Plus, Trash2, ChevronDown, ChevronUp,
@@ -14,18 +15,8 @@ type FaqRow = DbProductDetails['faqs'][0];
 const DEFAULT_ACC_COLUMNS = ['Modelo', 'Diâm. Sonda', 'Rigidez', 'Diâm. Cabo', 'Câmera', 'Revestimento', 'Comprimento'];
 type VideoRow = DbProductDetails['videos'][0];
 
-const CATEGORIES = [
-  'Linha T - Tubulações',
-  'Linha R - Acesso Autônomo',
-  'Linha M - Máquinas e Motores',
-  'Linha E - Aplicações Especiais',
-  'Linha P - Poços e Subaquático',
-  'Linha TC - Altura e Difícil Acesso',
-  'Linha H - Hospitalar',
-];
-
 const emptyProduct: Omit<DbProduct, 'created_at' | 'updated_at'> = {
-  id: '', name: '', description: '', category: CATEGORIES[0],
+  id: '', name: '', description: '', category: '',
   image_url: '', gallery: [], cable: '', probe: '', camera: '', ip: '', active: true,
   seo_title: '', seo_description: '',
   spec_labels: null,
@@ -667,12 +658,20 @@ const AdminProductForm = () => {
   const [loading, setLoading] = useState(isEdit);
   const [error, setError] = useState('');
   const slugEditedRef = useRef(isEdit);
+  const { lines } = useProductLines();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) navigate('/admin/login');
     });
   }, [navigate]);
+
+  // Categoria padrão do produto novo assim que as linhas carregarem
+  useEffect(() => {
+    if (!isEdit && !product.category && lines.length > 0) {
+      setProduct(prev => ({ ...prev, category: lines[0].category }));
+    }
+  }, [isEdit, lines, product.category]);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -937,7 +936,7 @@ const AdminProductForm = () => {
                   value={product.category}
                   onChange={e => setP('category', e.target.value)}
                 >
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  {lines.map(l => <option key={l.id} value={l.category}>{l.category}</option>)}
                 </select>
               </div>
             </div>
