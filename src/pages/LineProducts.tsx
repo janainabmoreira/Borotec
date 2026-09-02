@@ -108,18 +108,18 @@ const FilterGroup = ({
     <div className="border-b border-border/40 pb-4 mb-4 last:border-b-0 last:mb-0 last:pb-0">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full mb-3 group"
+        className="flex items-center justify-between w-full mb-3 group text-left"
       >
-        <span className="font-heading font-semibold text-sm text-foreground">{label}</span>
+        <span className="font-heading font-semibold text-sm text-foreground text-left">{label}</span>
         {open
-          ? <ChevronUp className="w-4 h-4 text-foreground/40 group-hover:text-foreground transition-colors" />
-          : <ChevronDown className="w-4 h-4 text-foreground/40 group-hover:text-foreground transition-colors" />}
+          ? <ChevronUp className="w-4 h-4 text-foreground/40 group-hover:text-foreground transition-colors shrink-0" />
+          : <ChevronDown className="w-4 h-4 text-foreground/40 group-hover:text-foreground transition-colors shrink-0" />}
       </button>
       {open && (
         <div className="flex flex-col gap-2">
           {options.map(opt => (
-            <label key={opt} className="flex items-center gap-2.5 cursor-pointer group/check">
-              <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-all ${
+            <label key={opt} className="flex items-start gap-2.5 cursor-pointer group/check">
+              <div className={`w-4 h-4 mt-0.5 rounded border flex items-center justify-center shrink-0 transition-all ${
                 selected.includes(opt)
                   ? 'bg-cyan border-cyan'
                   : 'border-border/60 group-hover/check:border-cyan/50'
@@ -131,7 +131,7 @@ const FilterGroup = ({
                 )}
               </div>
               <input type="checkbox" className="sr-only" checked={selected.includes(opt)} onChange={() => onChange(opt)} />
-              <span className={`font-body text-sm transition-colors ${
+              <span className={`font-body text-sm leading-snug transition-colors ${
                 selected.includes(opt) ? 'text-foreground font-medium' : 'text-foreground/60 group-hover/check:text-foreground'
               }`}>
                 {opt}
