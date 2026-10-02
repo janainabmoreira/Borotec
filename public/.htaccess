@@ -32,6 +32,11 @@
   # foram recrawleados nessa categoria, mas são igualmente órfãos.
   RewriteRule ^produtos/(sk3208|sk3210|sk3328|sk3408|sk3608|sk3610|sk3808|sk3828|y-series|dz-series|k-series-3d|k-series-ex|k-series-ht|k-series-thermal|k-series-uv|trolley-73mm|fb20p-camera|fb20p-tablet|fb20p-system|p-series|k-series|la-series|hj-series)/?$ - [G,L]
 
+  # Linha P reorganizada (02/10/2026): o BT-8200 de visão dupla virou a versão
+  # Compacta do BT-8300. Só funciona se a pasta antiga for apagada do servidor
+  # (mod_dir responde antes destas regras quando a pasta existe).
+  RewriteRule ^linha-p/camera-inspecao-poco-artesiano-visao-dupla-bt-8200/?$ /linha-p/camera-inspecao-poco-profundo-bt-8300/ [R=301,L]
+
   # Bloqueia acesso a arquivos sensíveis
   RewriteRule ^\.env          - [F,L]
   RewriteRule ^\.git          - [F,L]

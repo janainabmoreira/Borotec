@@ -639,6 +639,72 @@ const TextWithLinks = ({ text }: { text: string }) => {
   return <>{parts}</>;
 };
 
+// ── Texto de introdução ──────────────────────────────────────────────────────
+// Blocos separados por linha em branco. Um bloco cujas linhas começam com "|"
+// é uma tabela Markdown (a linha "|---|" é ignorada); um bloco que começa com
+// "### " é um subtítulo; o resto é parágrafo. Links funcionam em todos.
+
+type IntroBlock =
+  | { kind: 'p'; text: string }
+  | { kind: 'h'; text: string }
+  | { kind: 'table'; head: string[]; rows: string[][] };
+
+const splitRow = (line: string) =>
+  line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
+
+function parseIntro(text: string): IntroBlock[] {
+  return text.replace(/\r\n/g, '\n').split(/\n\s*\n/).map(b => b.trim()).filter(Boolean).map((block): IntroBlock => {
+    const lines = block.split('\n');
+    if (lines.every(l => l.trim().startsWith('|'))) {
+      const rows = lines.filter(l => !/^\|?\s*:?-{2,}/.test(l.trim())).map(splitRow);
+      return { kind: 'table', head: rows[0] ?? [], rows: rows.slice(1) };
+    }
+    if (block.startsWith('### ')) return { kind: 'h', text: block.slice(4) };
+    return { kind: 'p', text: block };
+  });
+}
+
+const IntroText = ({ text }: { text: string }) => (
+  <div className="space-y-4">
+    {parseIntro(text).map((b, i) => {
+      if (b.kind === 'h') {
+        return <h3 key={i} className="font-heading font-bold text-base text-primary-foreground pt-2"><TextWithLinks text={b.text} /></h3>;
+      }
+      if (b.kind === 'p') {
+        return (
+          <p key={i} className="text-sm text-primary-foreground/60 leading-relaxed border-l-2 border-cyan pl-4">
+            <TextWithLinks text={b.text} />
+          </p>
+        );
+      }
+      return (
+        <div key={i} className="overflow-x-auto rounded-xl border border-primary-foreground/10">
+          <table className="w-full text-sm font-body">
+            <thead className="bg-primary-foreground/5">
+              <tr>
+                {b.head.map((c, ci) => (
+                  <th key={ci} className="text-left font-semibold text-primary-foreground px-4 py-2.5 whitespace-nowrap"><TextWithLinks text={c} /></th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {b.rows.map((r, ri) => (
+                <tr key={ri} className="border-t border-primary-foreground/10">
+                  {r.map((c, ci) => (
+                    <td key={ci} className={`px-4 py-2.5 align-top ${ci === 0 ? 'font-semibold text-primary-foreground whitespace-nowrap' : 'text-primary-foreground/70'}`}>
+                      <TextWithLinks text={c} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    })}
+  </div>
+);
+
 // ── Outros modelos da linha ──────────────────────────────────────────────────
 // Links internos entre os produtos da mesma linha, montados a partir dos
 // mesmos 4 campos do card da página da linha.
@@ -1098,11 +1164,7 @@ const ProductDetail = () => {
               {/* Especificações Técnicas */}
               {activeTab === 'Especificações Técnicas' && detail && (
                 <div className="space-y-6">
-                  {detail.specsDescription && (
-                    <p className="text-sm text-primary-foreground/60 leading-relaxed border-l-2 border-cyan pl-4">
-                      <TextWithLinks text={detail.specsDescription} />
-                    </p>
-                  )}
+                  {detail.specsDescription && <IntroText text={detail.specsDescription} />}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <SpecTable groups={detail.specs.left} />
                     <SpecTable groups={detail.specs.right} />

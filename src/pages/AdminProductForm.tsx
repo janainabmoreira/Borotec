@@ -1211,7 +1211,7 @@ const AdminProductForm = () => {
             <div className="mb-4">
               <label className="block text-sm font-medium text-primary-foreground/70 mb-1">
                 Texto introdutório (aparece acima das especificações)
-                <span className="ml-1 font-normal text-primary-foreground/35">· links: [texto](/endereço)</span>
+                <span className="ml-1 font-normal text-primary-foreground/35">· links: [texto](/endereço) · tabela: linhas começando com | · subtítulo: ### · separe blocos com linha em branco</span>
               </label>
               <textarea
                 rows={3}
