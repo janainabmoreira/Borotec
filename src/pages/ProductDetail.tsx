@@ -11,6 +11,8 @@ import { useGclidCapture } from '@/hooks/useGclidCapture';
 import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useProductLines } from '@/hooks/useProductLines';
+import { useLineProducts, type LineProduct } from '@/hooks/useLineProducts';
+import type { DbProductLine } from '@/types/database';
 import { ICON_MAP } from '@/lib/iconMap';
 import {
   ArrowLeft, Plus, Check, MessageCircle, ChevronRight,
@@ -616,6 +618,54 @@ const VideoCard = ({ title, duration, url }: { title: string; duration: string; 
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
 
+// ── Outros modelos da linha ──────────────────────────────────────────────────
+// Links internos entre os produtos da mesma linha, montados a partir dos
+// mesmos 4 campos do card da página da linha.
+
+const CARD_KEYS = ['probe', 'cable', 'camera', 'ip'] as const;
+const DEFAULT_CARD_LABELS = { probe: 'Sonda', cable: 'Cabo', camera: 'Câmera', ip: 'Proteção' };
+
+const OtherLineModels = ({ line, products }: { line: DbProductLine; products: LineProduct[] }) => {
+  if (products.length === 0) return null;
+  const lineLabels = { ...DEFAULT_CARD_LABELS, ...line.card_labels };
+
+  return (
+    <section className="section-padding bg-charcoal border-t border-primary-foreground/10">
+      <div className="container-wide mx-auto">
+        <h2 className="font-heading text-2xl md:text-3xl font-bold text-primary-foreground mb-2">
+          Outros modelos da {line.badge}
+        </h2>
+        <p className="font-body text-sm text-primary-foreground/50 mb-8">
+          Compare com os demais equipamentos da <Link to={line.path} className="text-cyan hover:underline">{line.badge} – {line.name}</Link>.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {products.map(p => (
+            <Link key={p.id} to={`${line.path}/${p.id}`}
+              className="group block p-5 bg-primary-foreground/5 border border-primary-foreground/10 rounded-2xl hover:border-accent/40 transition-colors">
+              <h3 className="font-heading font-bold text-base text-primary-foreground group-hover:text-accent transition-colors mb-4">
+                {p.name}
+              </h3>
+              <dl className="grid grid-cols-2 gap-2 mb-4">
+                {CARD_KEYS.filter(k => p[k]).map(k => (
+                  <div key={k} className="bg-primary-foreground/5 rounded-lg px-2.5 py-1.5 min-w-0">
+                    <dt className="text-[9px] text-primary-foreground/40 font-body uppercase tracking-wide leading-none">
+                      {p.specLabels?.[k] || lineLabels[k]}
+                    </dt>
+                    <dd className="text-[11px] font-semibold font-body text-primary-foreground truncate">{p[k]}</dd>
+                  </div>
+                ))}
+              </dl>
+              <span className="inline-flex items-center gap-1 text-sm text-cyan font-body">
+                Ver modelo <ChevronRight className="w-4 h-4" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const TABS = ['Especificações Técnicas', 'Acessórios e Opcionais', 'Aplicações', 'FAQ', 'Vídeos'] as const;
 type Tab = typeof TABS[number];
 
@@ -642,7 +692,11 @@ const ProductDetail = () => {
   const [loadingDb, setLoadingDb] = useState(!!productId && !!isSupabaseConfigured);
   const [notFound, setNotFound] = useState(false);
   const { lines } = useProductLines();
-  usePrerenderSignal(!loadingDb);
+  // Fica aqui (e não dentro de OtherLineModels) para o prerender esperar a
+  // lista: os links entre modelos precisam estar no HTML gerado.
+  const { products: lineProducts, loading: loadingLineProducts } =
+    useLineProducts(dbProduct?.category ?? '__none__');
+  usePrerenderSignal(!loadingDb && (!dbProduct || !loadingLineProducts));
 
   // Always try Supabase first — DB product overrides any static version with same ID
   useEffect(() => {
@@ -1096,6 +1150,10 @@ const ProductDetail = () => {
 
             </div>
           </section>
+
+          {productLine && (
+            <OtherLineModels line={productLine} products={lineProducts.filter(p => p.id !== product.id)} />
+          )}
         </main>
 
         <Footer />

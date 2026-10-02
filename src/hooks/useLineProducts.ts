@@ -19,13 +19,14 @@ export type LineProduct = {
 
 export function useLineProducts(category: string) {
   const [products, setProducts] = useState<LineProduct[]>([]);
-  const [loading, setLoading] = useState(isSupabaseConfigured);
+  // Categoria cujo fetch já terminou. Comparar com a atual (em vez de um
+  // boolean) evita reportar "carregado" no mesmo render em que a categoria
+  // muda — o prerender tiraria o snapshot antes da lista nova chegar.
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
+  const loading = isSupabaseConfigured && loadedFor !== category;
 
   useEffect(() => {
-    if (!isSupabaseConfigured) {
-      setLoading(false);
-      return;
-    }
+    if (!isSupabaseConfigured) return;
 
     let cancelled = false;
     (async () => {
@@ -37,7 +38,7 @@ export function useLineProducts(category: string) {
         .order('created_at', { ascending: true });
 
       if (error || !data) {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) { setProducts([]); setLoadedFor(category); }
         return;
       }
 
@@ -69,7 +70,7 @@ export function useLineProducts(category: string) {
         specLabels: (p.spec_labels as SpecLabels | null) ?? undefined,
         specFilters: filtersById[p.id] ?? [],
       })));
-      setLoading(false);
+      setLoadedFor(category);
     })();
 
     return () => { cancelled = true; };
