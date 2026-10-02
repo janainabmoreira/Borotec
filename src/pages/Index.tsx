@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useUTMCapture } from '@/hooks/useUTMCapture';
-import { usePrerenderReady } from '@/hooks/usePrerenderSignal';
+import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
+import { useProductLines } from '@/hooks/useProductLines';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import DifferentialsSection from '@/components/DifferentialsSection';
@@ -62,11 +64,16 @@ const localBusinessSchema = {
 
 const Index = () => {
   useUTMCapture();
-  const onPrerenderReady = usePrerenderReady();
+  // O snapshot do prerender espera o <Helmet> gravar as tags E as linhas
+  // chegarem do Supabase — os cards de todas as abas de "O que você precisa
+  // inspecionar?" precisam estar no HTML para o Google ver os links.
+  const [helmetReady, setHelmetReady] = useState(false);
+  const { loading: loadingLines } = useProductLines();
+  usePrerenderSignal(helmetReady && !loadingLines);
 
   return (
     <>
-      <Helmet onChangeClientState={onPrerenderReady}>
+      <Helmet onChangeClientState={() => setHelmetReady(true)}>
         <title>BOROTEC | Boroscópios, Videoscópios e Robôs de Inspeção Industrial</title>
         <meta name="description" content="Boroscópios, videoscópios e robôs para inspeção industrial sem desmontagem. Sondas até 130m, câmera HD, gravação em vídeo, tela LCD, IP68 à prova d'água. Inspeção de tubulações, dutos, motores e poços. +20 anos. Todo o Brasil." />
         <link rel="canonical" href="https://borotec.com.br/" />

@@ -2,14 +2,14 @@ import {
   Camera, Plug2, Lightbulb, Video, Battery, Monitor, FileVideo,
   Thermometer, Waves, Eye, ScanSearch, Droplets, Shield, Zap,
   Wrench, Ruler, Activity, Package, Pipette, Bot, Cpu, Sparkles,
-  Drill, Telescope, Stethoscope, Factory, Aperture, Crosshair, Waypoints, Cog, type LucideIcon,
+  Drill, Telescope, Stethoscope, Factory, Aperture, Crosshair, Waypoints, Cog, Cylinder, type LucideIcon,
 } from 'lucide-react';
 
 export const ICON_MAP: Record<string, LucideIcon> = {
   Camera, Plug2, Lightbulb, Video, Battery, Monitor, FileVideo,
   Thermometer, Waves, Eye, ScanSearch, Droplets, Shield, Zap,
   Wrench, Ruler, Activity, Package, Pipette, Bot, Cpu, Sparkles,
-  Drill, Telescope, Stethoscope, Factory, Aperture, Crosshair, Waypoints, Cog,
+  Drill, Telescope, Stethoscope, Factory, Aperture, Crosshair, Waypoints, Cog, Cylinder,
 };
 
 export const ICON_OPTIONS: { value: string; label: string }[] = [
@@ -43,4 +43,5 @@ export const ICON_OPTIONS: { value: string; label: string }[] = [
   { value: 'Crosshair',   label: 'Mira / Precisão'     },
   { value: 'Waypoints',   label: 'Percurso / Dutos'    },
   { value: 'Cog',         label: 'Engrenagem / Máquinas' },
+  { value: 'Cylinder',    label: 'Cilindro / Tubulação' },
 ];
