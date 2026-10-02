@@ -618,6 +618,27 @@ const VideoCard = ({ title, duration, url }: { title: string; duration: string; 
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
 
+// ── Texto com links ──────────────────────────────────────────────────────────
+// O texto de introdução vem do admin como texto puro; trechos no formato
+// [texto](/endereço) viram link (interno via <Link>, externo em nova aba).
+
+const LINK_RE = /\[([^\]]+)\]\(([^)\s]+)\)/g;
+
+const TextWithLinks = ({ text }: { text: string }) => {
+  const parts: React.ReactNode[] = [];
+  let last = 0;
+  for (const m of text.matchAll(LINK_RE)) {
+    const [whole, label, href] = m;
+    parts.push(text.slice(last, m.index));
+    parts.push(href.startsWith('/')
+      ? <Link key={m.index} to={href} className="text-cyan hover:underline">{label}</Link>
+      : <a key={m.index} href={href} target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline">{label}</a>);
+    last = m.index! + whole.length;
+  }
+  parts.push(text.slice(last));
+  return <>{parts}</>;
+};
+
 // ── Outros modelos da linha ──────────────────────────────────────────────────
 // Links internos entre os produtos da mesma linha, montados a partir dos
 // mesmos 4 campos do card da página da linha.
@@ -1079,7 +1100,7 @@ const ProductDetail = () => {
                 <div className="space-y-6">
                   {detail.specsDescription && (
                     <p className="text-sm text-primary-foreground/60 leading-relaxed border-l-2 border-cyan pl-4">
-                      {detail.specsDescription}
+                      <TextWithLinks text={detail.specsDescription} />
                     </p>
                   )}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
