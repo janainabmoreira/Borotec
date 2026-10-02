@@ -153,7 +153,7 @@ const Header = () => {
                                 className="flex items-center gap-3 px-4 py-3 hover:bg-cyan/5 transition-colors group"
                               >
                                 <div className="w-8 h-8 rounded-lg bg-cyan/10 flex items-center justify-center shrink-0 text-cyan group-hover:bg-cyan/20 transition-colors">
-                                  <Icon className="w-4 h-4" />
+                                  <Icon className="w-4 h-4" aria-hidden="true" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 mb-0.5">
