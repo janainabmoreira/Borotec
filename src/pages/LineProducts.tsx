@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
@@ -14,17 +14,56 @@ import { useProductLines } from '@/hooks/useProductLines';
 import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import { ICON_MAP } from '@/lib/iconMap';
 import { getAccentClasses } from '@/lib/accentColors';
+import { MAX_SPEC_FILTERS, naturalSort, specFilterKey } from '@/lib/specFilters';
 import NotFound from '@/pages/NotFound';
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
 type FilterKey = 'probe' | 'cable' | 'camera' | 'ip';
-type FilterState = Record<FilterKey, string[]>;
+// Chave do grupo: um FilterKey (modo antigo) ou o label normalizado da spec.
+type FilterState = Record<string, string[]>;
+type FilterGroupConfig = {
+  key: string;
+  label: string;
+  options: string[];
+  valueOf: (p: LineProduct) => string | undefined;
+};
 
 const FILTER_KEYS: FilterKey[] = ['probe', 'cable', 'camera', 'ip'];
 const FILTER_ICON: Record<FilterKey, typeof Camera> = { probe: Camera, cable: Plug2, camera: Monitor, ip: Droplets };
+const DEFAULT_FILTER_LABELS: Record<FilterKey, string> = { probe: 'Sonda', cable: 'Cabo', camera: 'Câmera', ip: 'Proteção' };
 
-const emptyFilters: FilterState = { probe: [], cable: [], camera: [], ip: [] };
+const emptyFilters: FilterState = {};
+
+// Linhas cujos produtos têm specs marcadas como filtro usam essas specs;
+// as demais continuam nos 4 campos fixos até serem migradas no admin.
+function buildFilterConfig(products: LineProduct[], filterLabels: Partial<Record<FilterKey, string>>): FilterGroupConfig[] {
+  const usesSpecs = products.some(p => p.specFilters.length > 0);
+
+  if (!usesSpecs) {
+    return FILTER_KEYS.map((key) => ({
+      key,
+      label: filterLabels[key] || DEFAULT_FILTER_LABELS[key],
+      options: naturalSort(Array.from(new Set(products.map(p => p[key]).filter(Boolean)))),
+      valueOf: (p) => p[key],
+    }));
+  }
+
+  // Grupos na ordem em que aparecem nos produtos; o label exibido é o primeiro visto.
+  const groups = new Map<string, { label: string; values: Set<string> }>();
+  products.forEach(p => p.specFilters.forEach(({ label, value }) => {
+    const key = specFilterKey(label);
+    if (!groups.has(key)) groups.set(key, { label, values: new Set() });
+    groups.get(key)!.values.add(value);
+  }));
+
+  return Array.from(groups.entries()).slice(0, MAX_SPEC_FILTERS).map(([key, g]) => ({
+    key,
+    label: g.label,
+    options: naturalSort(Array.from(g.values)),
+    valueOf: (p) => p.specFilters.find(f => specFilterKey(f.label) === key)?.value,
+  }));
+}
 
 // ── H1 — destaca a(s) última(s) palavra(s) do nome em gradiente ───────────────
 
@@ -162,31 +201,34 @@ const LineProducts = () => {
   const [filters, setFilters] = useState<FilterState>(emptyFilters);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  const toggleFilter = (key: FilterKey, value: string) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: prev[key].includes(value)
-        ? prev[key].filter(v => v !== value)
-        : [...prev[key], value],
-    }));
+  // As chaves de filtro mudam de uma linha pra outra; sem isso uma seleção
+  // da linha anterior esconderia todos os produtos da nova.
+  useEffect(() => { setFilters(emptyFilters); }, [line?.id]);
+
+  const toggleFilter = (key: string, value: string) => {
+    setFilters(prev => {
+      const current = prev[key] ?? [];
+      return {
+        ...prev,
+        [key]: current.includes(value) ? current.filter(v => v !== value) : [...current, value],
+      };
+    });
   };
 
   const clearFilters = () => setFilters(emptyFilters);
   const activeCount = Object.values(filters).flat().length;
 
-  const dynamicFilterConfig = useMemo(() => {
-    const filterLabels = line?.filter_labels ?? {};
-    return FILTER_KEYS.map((key) => ({
-      key,
-      label: filterLabels[key] || { probe: 'Sonda', cable: 'Cabo', camera: 'Câmera', ip: 'Proteção' }[key],
-      options: Array.from(new Set(products.map(p => p[key]).filter(Boolean))).sort(),
-    }));
-  }, [products, line]);
+  const dynamicFilterConfig = useMemo(
+    () => buildFilterConfig(products, line?.filter_labels ?? {}),
+    [products, line],
+  );
 
   const filtered = useMemo(() => products.filter(p =>
-    dynamicFilterConfig.every(({ key }) => {
-      const sel = filters[key];
-      return sel.length === 0 || sel.includes(p[key]);
+    dynamicFilterConfig.every(({ key, valueOf }) => {
+      const sel = filters[key] ?? [];
+      if (sel.length === 0) return true;
+      const v = valueOf(p);
+      return v !== undefined && sel.includes(v);
     })
   ), [filters, products, dynamicFilterConfig]);
 
@@ -204,7 +246,7 @@ const LineProducts = () => {
 
   const IconComponent = ICON_MAP[line.icon_name] ?? Wrench;
   const accent = getAccentClasses(line.accent);
-  const cardLabels = { ...{ probe: 'Sonda', cable: 'Cabo', camera: 'Câmera', ip: 'Proteção' }, ...line.card_labels };
+  const cardLabels = { ...DEFAULT_FILTER_LABELS, ...line.card_labels };
   const [heroTitleStart, heroTitleEnd] = splitHeroTitle(line.name);
 
   return (
@@ -316,7 +358,7 @@ const LineProducts = () => {
                         key={key}
                         label={label}
                         options={options}
-                        selected={filters[key]}
+                        selected={filters[key] ?? []}
                         onChange={(v) => toggleFilter(key, v)}
                       />
                     ))}
@@ -334,7 +376,7 @@ const LineProducts = () => {
                   {activeCount > 0 && (
                     <div className="flex items-center gap-2 flex-wrap">
                       {dynamicFilterConfig.map(({ key }) =>
-                        filters[key].map(val => (
+                        (filters[key] ?? []).map(val => (
                           <button
                             key={`${key}-${val}`}
                             onClick={() => toggleFilter(key, val)}
@@ -402,7 +444,7 @@ const LineProducts = () => {
                 key={key}
                 label={label}
                 options={options}
-                selected={filters[key]}
+                selected={filters[key] ?? []}
                 onChange={(v) => toggleFilter(key, v)}
               />
             ))}

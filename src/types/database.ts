@@ -59,12 +59,12 @@ export type DbProductDetails = {
   specs_left: Array<{
     title: string;
     icon_name: string;
-    rows: Array<{ label: string; value: string; highlight?: string }>;
+    rows: Array<{ label: string; value: string; highlight?: string; filter?: boolean; filter_value?: string }>;
   }>;
   specs_right: Array<{
     title: string;
     icon_name: string;
-    rows: Array<{ label: string; value: string; highlight?: string }>;
+    rows: Array<{ label: string; value: string; highlight?: string; filter?: boolean; filter_value?: string }>;
   }>;
   accessories: Array<{
     model: string;

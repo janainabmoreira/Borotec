@@ -4,9 +4,10 @@ import { supabase } from '@/lib/supabase';
 import { ICON_OPTIONS } from '@/lib/iconMap';
 import { useProductLines } from '@/hooks/useProductLines';
 import type { DbProduct, DbProductDetails } from '@/types/database';
+import { MAX_SPEC_FILTERS, specFilterKey, type SpecCategory } from '@/lib/specFilters';
 import {
   ArrowLeft, Loader2, Save, Plus, Trash2, ChevronDown, ChevronUp,
-  Upload, X, ImageIcon,
+  Upload, X, ImageIcon, SlidersHorizontal,
 } from 'lucide-react';
 
 type FeatureRow = DbProductDetails['features'][0];
@@ -272,6 +273,8 @@ type SpecRowDraft = {
   value: string;
   highlight: boolean;
   enabled: boolean;
+  filter: boolean;
+  filterValue: string;
 };
 
 type SpecCatDraft = {
@@ -410,7 +413,7 @@ const SPEC_CATALOG: Record<string, { icon: string; fields: { key: string; label:
   },
 };
 
-type DbSpecRow  = { label: string; value: string; highlight?: string };
+type DbSpecRow  = { label: string; value: string; highlight?: string; filter?: boolean; filter_value?: string };
 type DbSpecCat  = { title: string; icon_name: string; rows: DbSpecRow[] };
 
 const draftToSpecs = (cats: SpecCatDraft[], col: 'left' | 'right'): DbSpecCat[] =>
@@ -421,7 +424,12 @@ const draftToSpecs = (cats: SpecCatDraft[], col: 'left' | 'right'): DbSpecCat[] 
       icon_name: c.icon_name,
       rows: c.rows
         .filter(r => r.enabled && r.value.trim())
-        .map(r => ({ label: r.label, value: r.value, ...(r.highlight ? { highlight: 'accent' } : {}) })),
+        .map(r => ({
+          label: r.label, value: r.value,
+          ...(r.highlight ? { highlight: 'accent' } : {}),
+          ...(r.filter ? { filter: true } : {}),
+          ...(r.filter && r.filterValue.trim() ? { filter_value: r.filterValue.trim() } : {}),
+        })),
     }))
     .filter(c => c.rows.length > 0);
 
@@ -436,13 +444,13 @@ const specsToCatDraft = (left: DbSpecCat[], right: DbSpecCat[]): SpecCatDraft[] 
       const rows: SpecRowDraft[] = (c.rows ?? []).map((r, ri) => {
         const key = labelToKey[r.label] ?? `custom_${ri}`;
         dbRowKeys.add(key);
-        return { key, label: r.label, value: r.value, highlight: r.highlight === 'accent', enabled: true };
+        return { key, label: r.label, value: r.value, highlight: r.highlight === 'accent', enabled: true, filter: !!r.filter, filterValue: r.filter_value ?? '' };
       });
 
       // Add missing catalog fields as disabled placeholders
       catalog?.fields.forEach(f => {
         if (!dbRowKeys.has(f.key))
-          rows.push({ key: f.key, label: f.label, value: '', highlight: false, enabled: false });
+          rows.push({ key: f.key, label: f.label, value: '', highlight: false, enabled: false, filter: false, filterValue: '' });
       });
 
       return { uid: `${column}_${ci}`, title: c.title, icon_name: c.icon_name ?? 'Wrench', column, rows };
@@ -450,9 +458,19 @@ const specsToCatDraft = (left: DbSpecCat[], right: DbSpecCat[]): SpecCatDraft[] 
   return [...fromSide(left, 'left'), ...fromSide(right, 'right')];
 };
 
-const SpecBuilder = ({ value, onChange }: { value: SpecCatDraft[]; onChange: (v: SpecCatDraft[]) => void }) => {
+const SpecBuilder = ({ value, onChange, lineFilterLabels }: {
+  value: SpecCatDraft[]; onChange: (v: SpecCatDraft[]) => void;
+  // Nomes de filtro já usados por outros produtos da mesma linha.
+  lineFilterLabels: string[];
+}) => {
   const [showCatalog, setShowCatalog] = useState(false);
   const addedTitles = new Set(value.map(c => c.title));
+
+  const markedFilters = value.flatMap(c => c.rows).filter(r => r.enabled && r.filter && r.value.trim());
+  // Label que só este produto usa vira um grupo de filtro separado na página da linha.
+  const unmatchedLabels = lineFilterLabels.length === 0 ? [] : markedFilters
+    .map(r => r.label.trim())
+    .filter(l => l && !lineFilterLabels.some(x => specFilterKey(x) === specFilterKey(l)));
 
   const addFromCatalog = (title: string) => {
     const cat = SPEC_CATALOG[title];
@@ -464,7 +482,7 @@ const SpecBuilder = ({ value, onChange }: { value: SpecCatDraft[]; onChange: (v:
       title,
       icon_name: cat.icon,
       column: leftCount <= rightCount ? 'left' : 'right',
-      rows: cat.fields.map(f => ({ key: f.key, label: f.label, value: '', highlight: false, enabled: true })),
+      rows: cat.fields.map(f => ({ key: f.key, label: f.label, value: '', highlight: false, enabled: true, filter: false, filterValue: '' })),
     };
     onChange([...value, newCat]);
     setShowCatalog(false);
@@ -476,7 +494,7 @@ const SpecBuilder = ({ value, onChange }: { value: SpecCatDraft[]; onChange: (v:
       title: 'Nova Categoria',
       icon_name: 'Wrench',
       column: 'left',
-      rows: [{ key: `r_${Date.now()}`, label: '', value: '', highlight: false, enabled: true }],
+      rows: [{ key: `r_${Date.now()}`, label: '', value: '', highlight: false, enabled: true, filter: false, filterValue: '' }],
     }]);
     setShowCatalog(false);
   };
@@ -493,7 +511,7 @@ const SpecBuilder = ({ value, onChange }: { value: SpecCatDraft[]; onChange: (v:
 
   const addCustomRow = (uid: string) =>
     onChange(value.map(c => c.uid !== uid ? c : {
-      ...c, rows: [...c.rows, { key: `r_${Date.now()}`, label: '', value: '', highlight: false, enabled: true }],
+      ...c, rows: [...c.rows, { key: `r_${Date.now()}`, label: '', value: '', highlight: false, enabled: true, filter: false, filterValue: '' }],
     }));
 
   const removeRow = (uid: string, rkey: string) =>
@@ -554,6 +572,7 @@ const SpecBuilder = ({ value, onChange }: { value: SpecCatDraft[]; onChange: (v:
                   <input
                     className="w-44 h-7 px-2 rounded bg-charcoal/80 border border-primary-foreground/15 text-primary-foreground/70 text-xs focus:outline-none focus:border-cyan flex-shrink-0"
                     placeholder="Nome do campo"
+                    list="spec-filter-labels"
                     value={row.label}
                     onChange={e => updateRow(cat.uid, row.key, { label: e.target.value })}
                   />
@@ -567,6 +586,21 @@ const SpecBuilder = ({ value, onChange }: { value: SpecCatDraft[]; onChange: (v:
                   onChange={e => updateRow(cat.uid, row.key, { value: e.target.value })}
                   placeholder="Valor..."
                 />
+                {row.filter && row.enabled && (
+                  <input
+                    className="w-28 h-7 px-2 rounded bg-charcoal/80 border border-cyan/30 text-cyan text-xs focus:outline-none focus:border-cyan flex-shrink-0"
+                    title="Valor curto que aparece no filtro (vazio = usa o valor da especificação)"
+                    placeholder="Valor no filtro"
+                    value={row.filterValue}
+                    onChange={e => updateRow(cat.uid, row.key, { filterValue: e.target.value })}
+                  />
+                )}
+                <button type="button" title="Usar como filtro na página da linha"
+                  disabled={!row.enabled}
+                  onClick={() => updateRow(cat.uid, row.key, { filter: !row.filter })}
+                  className={`h-7 w-7 flex items-center justify-center rounded flex-shrink-0 transition-colors disabled:cursor-not-allowed ${row.filter ? 'bg-cyan/15 text-cyan' : 'text-primary-foreground/20 hover:text-primary-foreground/50'}`}>
+                  <SlidersHorizontal className="w-3.5 h-3.5" />
+                </button>
                 <button type="button" title="Marcar como destaque (negrito laranja)"
                   onClick={() => updateRow(cat.uid, row.key, { highlight: !row.highlight })}
                   className={`h-7 w-7 flex items-center justify-center rounded text-sm flex-shrink-0 transition-colors ${row.highlight ? 'bg-accent/15 text-accent' : 'text-primary-foreground/20 hover:text-primary-foreground/50'}`}>
@@ -625,9 +659,31 @@ const SpecBuilder = ({ value, onChange }: { value: SpecCatDraft[]; onChange: (v:
         </button>
       )}
 
+      <datalist id="spec-filter-labels">
+        {lineFilterLabels.map(l => <option key={l} value={l} />)}
+      </datalist>
+
       {value.length > 0 && (
         <p className="text-[11px] text-primary-foreground/25">
-          ★ = destaque (valor em laranja na página do produto) · Esq/Dir = qual coluna na página
+          ★ = destaque (valor em laranja na página do produto) · <SlidersHorizontal className="inline w-3 h-3 -mt-0.5" /> = usar como filtro na página da linha (o nome do campo vira o nome do filtro; o campo azul é o valor curto que aparece no filtro — vazio usa o valor da especificação) · Esq/Dir = qual coluna na página
+        </p>
+      )}
+
+      {lineFilterLabels.length > 0 && (
+        <p className="text-[11px] text-primary-foreground/40">
+          Filtros já usados nesta linha: <span className="text-cyan/80">{lineFilterLabels.join(' · ')}</span>
+        </p>
+      )}
+
+      {markedFilters.length > MAX_SPEC_FILTERS && (
+        <p className="text-xs text-amber-400">
+          {markedFilters.length} campos marcados como filtro — a página da linha mostra no máximo {MAX_SPEC_FILTERS}.
+        </p>
+      )}
+
+      {unmatchedLabels.length > 0 && (
+        <p className="text-xs text-amber-400">
+          Nenhum outro produto da linha usa {unmatchedLabels.map(l => `"${l}"`).join(', ')} como filtro — se for o mesmo dado com outro nome, use o nome igual ao dos outros produtos para cair no mesmo filtro.
         </p>
       )}
     </div>
@@ -659,6 +715,31 @@ const AdminProductForm = () => {
   const [error, setError] = useState('');
   const slugEditedRef = useRef(isEdit);
   const { lines } = useProductLines();
+  const [lineFilterLabels, setLineFilterLabels] = useState<string[]>([]);
+
+  // Nomes de filtro usados pelos outros produtos da linha, para sugerir o
+  // mesmo nome — nomes diferentes viram grupos de filtro separados.
+  useEffect(() => {
+    if (!product.category) { setLineFilterLabels([]); return; }
+    let cancelled = false;
+    (async () => {
+      const { data: siblings } = await supabase
+        .from('products').select('id').eq('category', product.category).neq('id', productId ?? '');
+      const ids = (siblings ?? []).map(p => p.id);
+      if (ids.length === 0) { if (!cancelled) setLineFilterLabels([]); return; }
+      const { data: details } = await supabase
+        .from('product_details').select('specs_left, specs_right').in('product_id', ids);
+      const byKey = new Map<string, string>();
+      (details ?? []).forEach(d => {
+        [...((d.specs_left ?? []) as SpecCategory[]), ...((d.specs_right ?? []) as SpecCategory[])]
+          .flatMap(c => c.rows ?? [])
+          .filter(r => r.filter && r.label?.trim())
+          .forEach(r => { const k = specFilterKey(r.label); if (!byKey.has(k)) byKey.set(k, r.label.trim()); });
+      });
+      if (!cancelled) setLineFilterLabels(Array.from(byKey.values()));
+    })();
+    return () => { cancelled = true; };
+  }, [product.category, productId]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -1139,7 +1220,7 @@ const AdminProductForm = () => {
                 onChange={e => setD('specs_description', e.target.value)}
               />
             </div>
-            <SpecBuilder value={specCats} onChange={setSpecCats} />
+            <SpecBuilder value={specCats} onChange={setSpecCats} lineFilterLabels={lineFilterLabels} />
           </Section>
 
           {/* ── Acessórios ── */}
