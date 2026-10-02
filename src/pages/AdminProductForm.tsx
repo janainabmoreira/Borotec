@@ -1227,7 +1227,7 @@ const AdminProductForm = () => {
           <Section title="Acessórios">
             {/* Bullet list */}
             <div>
-              <label className={labelCls}>Lista de acessórios inclusos (um por linha)</label>
+              <label className={labelCls}>Acessórios e Opcionais (um por linha)</label>
               <textarea
                 className={`${inputCls} h-28 resize-y py-2`}
                 value={details.accessories_list.join('\n')}

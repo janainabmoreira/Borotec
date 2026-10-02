@@ -482,7 +482,7 @@ const AccessoriesTable = ({
     <div className="flex items-center gap-3">
       <div className="w-1 h-5 bg-accent rounded-full" />
       <h3 className="font-heading font-bold text-base text-primary-foreground">
-        Acessórios e modelos compatíveis
+        Acessórios e Opcionais
       </h3>
     </div>
 
@@ -616,7 +616,7 @@ const VideoCard = ({ title, duration, url }: { title: string; duration: string; 
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
 
-const TABS = ['Especificações Técnicas', 'Acessórios Compatíveis', 'Aplicações', 'FAQ', 'Vídeos'] as const;
+const TABS = ['Especificações Técnicas', 'Acessórios e Opcionais', 'Aplicações', 'FAQ', 'Vídeos'] as const;
 type Tab = typeof TABS[number];
 
 // ── Page ─────────────────────────────────────────────────────────────────────
@@ -1047,8 +1047,8 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              {/* Acessórios Compatíveis */}
-              {activeTab === 'Acessórios Compatíveis' && (
+              {/* Acessórios e Opcionais */}
+              {activeTab === 'Acessórios e Opcionais' && (
                 (detail?.accessoriesTable?.some(t => t.rows.length > 0) || detail?.accessories?.length || detail?.accessoriesList?.length)
                   ? <AccessoriesTable tables={detail.accessoriesTable} rows={detail.accessories ?? []} list={detail.accessoriesList} tip={detail.accessoriesTip ?? ''} />
                   : <p className="font-body text-primary-foreground/40 text-sm">Lista disponível mediante solicitação.</p>
