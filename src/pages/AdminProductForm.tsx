@@ -1017,7 +1017,8 @@ const AdminProductForm = () => {
                   value={product.category}
                   onChange={e => setP('category', e.target.value)}
                 >
-                  {lines.map(l => <option key={l.id} value={l.category}>{l.category}</option>)}
+                  {/* Mostra selo + nome (o texto de `category` é só a chave que liga produto e linha) */}
+                  {lines.map(l => <option key={l.id} value={l.category}>{l.badge} – {l.name}</option>)}
                 </select>
               </div>
             </div>
