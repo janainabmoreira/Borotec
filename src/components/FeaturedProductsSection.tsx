@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/components/Link';
 import { ArrowRight, Wrench } from 'lucide-react';
 import { AnimateOnScroll } from '@/hooks/useScrollAnimation';
 import { useProductLines, groupLinesBySection, type ProductSection } from '@/hooks/useProductLines';

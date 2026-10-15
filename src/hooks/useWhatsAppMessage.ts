@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { getCachedLines } from '@/hooks/useProductLines';
+import { stripSlash } from '@/lib/urls';
 
 const WHATSAPP_NUMBER = '5511932876195';
 const STORAGE_KEY = 'borotec_utms';
@@ -113,7 +114,7 @@ function trackClick(tipo: WhatsAppType) {
 
   // Supabase
   const utms = getUtms();
-  const path = window.location.pathname;
+  const path = stripSlash(window.location.pathname);
   supabase.from('whatsapp_clicks').insert({
     path,
     page_title: pathToTitle(path),

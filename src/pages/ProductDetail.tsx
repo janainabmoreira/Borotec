@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Link } from '@/components/Link';
+import { absoluteUrl } from '@/lib/urls';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -821,8 +823,8 @@ const ProductDetail = () => {
   const productLine = lines.find((l) => l.category === product.category);
   const linePath = productLine?.path;
   const productUrl = linePath
-    ? `https://borotec.com.br${linePath}/${product.id}`
-    : `https://borotec.com.br/produtos/${product.id}`;
+    ? absoluteUrl(`${linePath}/${product.id}`)
+    : absoluteUrl(`/produtos/${product.id}`);
   const absoluteImage = product.image?.startsWith('http')
     ? product.image
     : `https://borotec.com.br${product.image}`;

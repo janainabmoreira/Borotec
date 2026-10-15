@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@/components/Link';
 import { Helmet } from 'react-helmet-async';
 import { usePrerenderReady } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
@@ -23,7 +23,7 @@ const PrivacyPolicy = () => {
       <Helmet onChangeClientState={onPrerenderReady}>
         <title>Política de Privacidade | BOROTEC Industrial</title>
         <meta name="description" content="Política de Privacidade da BOROTEC Industrial. Saiba como coletamos, usamos e protegemos seus dados pessoais conforme a LGPD." />
-        <link rel="canonical" href="https://borotec.com.br/privacidade" />
+        <link rel="canonical" href="https://borotec.com.br/privacidade/" />
         <meta name="robots" content="noindex, follow" />
       </Helmet>
 

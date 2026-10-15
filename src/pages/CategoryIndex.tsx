@@ -3,7 +3,8 @@ import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ArrowRight, Wrench, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/components/Link';
+import { absoluteUrl } from '@/lib/urls';
 import { useProductLines } from '@/hooks/useProductLines';
 import { ICON_MAP } from '@/lib/iconMap';
 import { getAccentClasses } from '@/lib/accentColors';
@@ -30,10 +31,10 @@ const CategoryIndex = ({ sectionSlug }: { sectionSlug: string }) => {
       <Helmet>
         <title>{title}</title>
         <meta name="description" content={description} />
-        <link rel="canonical" href={`https://borotec.com.br/${sectionSlug}`} />
+        <link rel="canonical" href={absoluteUrl(`/${sectionSlug}`)} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-        <meta property="og:url" content={`https://borotec.com.br/${sectionSlug}`} />
+        <meta property="og:url" content={absoluteUrl(`/${sectionSlug}`)} />
         <meta property="og:type" content="website" />
         {isBoroscopios && (
           <>

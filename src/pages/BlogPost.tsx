@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { Link } from '@/components/Link';
+import { absoluteUrl } from '@/lib/urls';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -78,7 +80,7 @@ const BlogPost = () => {
 
   // All useMemo before early return (Rules of Hooks)
   const postUrl = useMemo(() =>
-    post ? `https://borotec.com.br/blog/${post.id}` : '', [post]);
+    post ? absoluteUrl(`/blog/${post.id}`) : '', [post]);
 
   const currentIndex = useMemo(() =>
     allPosts.findIndex((p) => p.id === postId), [allPosts, postId]);
@@ -254,7 +256,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://borotec.com.br/' },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://borotec.com.br/blog' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://borotec.com.br/blog/' },
       { '@type': 'ListItem', position: 3, name: post.title, item: postUrl },
     ],
   };

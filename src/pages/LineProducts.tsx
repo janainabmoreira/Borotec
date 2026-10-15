@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { Link } from '@/components/Link';
+import { absoluteUrl } from '@/lib/urls';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -254,10 +256,10 @@ const LineProducts = () => {
       <Helmet>
         <title>{line.seo_title || `${line.name} | ${line.badge} | BOROTEC Industrial`}</title>
         <meta name="description" content={line.seo_description || line.hero_description} />
-        <link rel="canonical" href={`https://borotec.com.br${line.path}`} />
+        <link rel="canonical" href={absoluteUrl(line.path)} />
         <meta property="og:title" content={line.seo_title || `${line.name} | BOROTEC Industrial`} />
         <meta property="og:description" content={line.seo_description || line.hero_description} />
-        <meta property="og:url" content={`https://borotec.com.br${line.path}`} />
+        <meta property="og:url" content={absoluteUrl(line.path)} />
         <meta property="og:type" content="website" />
       </Helmet>
 

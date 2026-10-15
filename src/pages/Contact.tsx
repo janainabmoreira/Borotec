@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/components/Link';
 import { useGclidCapture } from '@/hooks/useGclidCapture';
 import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
 import { Helmet } from 'react-helmet-async';
@@ -179,10 +179,10 @@ const Contact = () => {
       <Helmet onChangeClientState={onPrerenderReady}>
         <title>Fale Conosco | BOROTEC Industrial</title>
         <meta name="description" content="Entre em contato com a BOROTEC Industrial. Solicite orçamento de equipamentos de inspeção industrial por formulário, e-mail ou WhatsApp." />
-        <link rel="canonical" href="https://borotec.com.br/contato" />
+        <link rel="canonical" href="https://borotec.com.br/contato/" />
         <meta property="og:title" content="Fale Conosco | BOROTEC Industrial" />
         <meta property="og:description" content="Entre em contato com a BOROTEC Industrial para orçamentos e informações sobre equipamentos de inspeção industrial." />
-        <meta property="og:url" content="https://borotec.com.br/contato" />
+        <meta property="og:url" content="https://borotec.com.br/contato/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
         <meta property="og:image:width" content="1200" />

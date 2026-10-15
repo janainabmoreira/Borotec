@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@/components/Link';
 import { Linkedin, Youtube, Clock, MapPin, Phone, Mail } from 'lucide-react';
 import { getWhatsAppUrl } from '@/config/whatsapp';
 import { useProductLines, groupLinesBySection } from '@/hooks/useProductLines';

@@ -132,7 +132,9 @@ export async function fetchBuildRoutes({ supabaseUrl, supabaseAnonKey }) {
 
 function buildResult(routes, products, blogPosts, sitemapMeta) {
   const sitemapEntries = Array.from(routes).map((path) => ({
-    loc: `https://borotec.com.br${path}`,
+    // Com barra final — mesma regra de src/lib/urls.ts (o Apache redireciona
+    // /rota → /rota/, então essa é a URL final de cada página).
+    loc: `https://borotec.com.br${path.endsWith('/') ? path : `${path}/`}`,
     ...(sitemapMeta.get(path) ?? { lastmod: TODAY, changefreq: 'monthly', priority: '0.5' }),
   }));
   return { routes: Array.from(routes), products, blogPosts, sitemapEntries };

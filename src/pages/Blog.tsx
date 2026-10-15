@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { Link } from '@/components/Link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -74,10 +75,10 @@ const Blog = () => {
       <Helmet>
         <title>Blog de Inspeção Industrial | BOROTEC</title>
         <meta name="description" content="Artigos, guias e novidades sobre boroscopia, inspeção visual remota, metrologia óptica e manutenção industrial. Conteúdo técnico da BOROTEC." />
-        <link rel="canonical" href="https://borotec.com.br/blog" />
+        <link rel="canonical" href="https://borotec.com.br/blog/" />
         <meta property="og:title" content="Blog de Inspeção Industrial | BOROTEC" />
         <meta property="og:description" content="Artigos técnicos sobre boroscopia, inspeção visual remota e manutenção industrial." />
-        <meta property="og:url" content="https://borotec.com.br/blog" />
+        <meta property="og:url" content="https://borotec.com.br/blog/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
         <meta property="og:image:width" content="1200" />

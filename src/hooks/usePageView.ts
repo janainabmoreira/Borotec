@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { getCachedLines } from '@/hooks/useProductLines';
+import { stripSlash } from '@/lib/urls';
 
 const getSessionId = () => {
   const key = 'brt_sid';
@@ -67,7 +68,8 @@ export const usePageView = () => {
   const lastPath = useRef<string>('');
 
   useEffect(() => {
-    const path = location.pathname;
+    // Sem barra final: /linha-t e /linha-t/ contam como a mesma página.
+    const path = stripSlash(location.pathname);
     if (path.startsWith('/admin') || path === lastPath.current) return;
     lastPath.current = path;
 

@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Link } from '@/components/Link';
+import { stripSlash } from '@/lib/urls';
 import { Menu, X, ChevronDown, Search, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import logo from '@/assets/logo-borotec.webp';
@@ -91,9 +93,10 @@ const Header = () => {
     { label: 'Contato', path: '/contato' },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const currentPath = stripSlash(location.pathname);
+  const isActive = (path: string) => currentPath === path;
   const isSectionActive = (slug: string) =>
-    location.pathname === `/${slug}` || sections.find(s => s.slug === slug)?.lines.some(l => location.pathname.startsWith(l.path));
+    currentPath === `/${slug}` || sections.find(s => s.slug === slug)?.lines.some(l => currentPath.startsWith(l.path));
 
   return (
     <>
