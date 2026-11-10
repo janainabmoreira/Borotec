@@ -92,6 +92,7 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq lftp
           lftp -e "
+            set cmd:fail-exit yes;
             set ftp:ssl-allow no;
             set ftp:passive-mode true;
             set net:timeout 20;
