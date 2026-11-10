@@ -2,6 +2,16 @@
   RewriteEngine On
   RewriteBase /
 
+  # Pastas antigas que ainda existem fisicamente em /www. Ficam ANTES de
+  # qualquer regra com "RewriteCond %{REQUEST_FILENAME} -d", para o 301 sair
+  # mesmo com a pasta lá (e em um salto só, já para https sem www). Aceitam
+  # com e sem barra final, e /index.html.
+  RewriteRule ^categorias(/|/index\.html)?$ https://borotec.com.br/boroscopios/ [R=301,L]
+  RewriteRule ^(camera-termografica-portatil|linha-d-camera-termografica-inspecao-eletrica)(/|/index\.html)?$ https://borotec.com.br/termografia/linha-d/inspecao-eletrica/ [R=301,L]
+  # Linha P reorganizada (02/10/2026): o BT-8200 de visão dupla virou a versão
+  # Compacta do BT-8300.
+  RewriteRule ^linha-p/camera-inspecao-poco-artesiano-visao-dupla-bt-8200(/|/index\.html)?$ https://borotec.com.br/linha-p/camera-inspecao-poco-profundo-bt-8300/ [R=301,L]
+
   # Consolida em https://borotec.com.br (sem www) em um único salto.
   # Quando o destino é uma pasta sem barra final (toda rota pré-renderizada é
   # uma pasta), já redireciona com a barra — senão o mod_dir daria um segundo
@@ -15,17 +25,12 @@
   RewriteCond %{HTTP_HOST} ^www\.borotec\.com\.br$ [NC]
   RewriteRule ^(.*)$ https://borotec.com.br/$1 [L,R=301]
 
-  # NOTE: tried to avoid the trailing-slash redirect Apache does for
-  # directory requests (every prerendered route is a real folder,
-  # dist/linha-t/:id/index.html) — neither DirectorySlash Off (caused a 403,
-  # since Options -Indexes then blocks the directory listing Apache falls
-  # back to) nor an explicit RewriteRule to serve index.html directly worked:
-  # on this host, mod_dir's redirect fires before .htaccess rewrite rules
-  # ever get a chance to run for a request that maps to an existing
-  # directory. Leaving this as Apache's default behavior — a single, clean
-  # 301 to the trailing-slash URL isn't a real SEO problem (unlike the
-  # canonical-always-points-home bug this project actually fixes), just not
-  # perfectly optimized.
+  # NOTE: pedir uma pasta sem barra final (https://borotec.com.br/linha-t)
+  # ainda gera o 301 do mod_dir para /linha-t/ — DirectorySlash Off dá 403
+  # aqui (Options -Indexes). Os links do site já usam a barra final, então
+  # isso só afeta URLs digitadas. Regras de REDIRECT deste arquivo rodam
+  # antes desse 301 (visto em 10/11/2026: http://www…/linha-t recebeu o 301
+  # da regra acima, não o do mod_dir).
 
   # URLs antigas (pré-migração para Supabase, confirmadas no Search Console)
 
@@ -33,14 +38,6 @@
   # mais: 410 Gone para tudo abaixo deles. Os produtos vivem em
   # /<linha>/<produto>/; os aliases também saíram do App.tsx (10/11/2026).
   RewriteRule ^(produtos|tubulacoes)(/.*)?$ - [G,L]
-
-  # /categorias era o nome antigo do índice de boroscópios
-  RewriteRule ^categorias/?$ https://borotec.com.br/boroscopios/ [R=301,L]
-
-  # Linha P reorganizada (02/10/2026): o BT-8200 de visão dupla virou a versão
-  # Compacta do BT-8300. Só funciona se a pasta antiga for apagada do servidor
-  # (mod_dir responde antes destas regras quando a pasta existe).
-  RewriteRule ^linha-p/camera-inspecao-poco-artesiano-visao-dupla-bt-8200/?$ /linha-p/camera-inspecao-poco-profundo-bt-8300/ [R=301,L]
 
   # Bloqueia acesso a arquivos sensíveis
   RewriteRule ^\.env          - [F,L]
