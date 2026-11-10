@@ -71,6 +71,14 @@ export const STATIC_SEO: Record<string, SeoEntry> = {
   },
 };
 
+// Title automático (linha/produto sem seo_title no admin, posts do blog):
+// "Base | BOROTEC" quando cabe em 60 caracteres; senão só a base, para o
+// Google não cortar o texto que importa.
+export function withBrand(base: string): string {
+  const branded = `${base} | BOROTEC`;
+  return branded.length <= 60 ? branded : base;
+}
+
 // Seção cadastrada no admin que ainda não tem entrada em STATIC_SEO.
 export function sectionSeoFallback(sectionName: string): SeoEntry {
   return {

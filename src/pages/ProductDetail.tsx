@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from '@/components/Link';
 import { absoluteUrl } from '@/lib/urls';
+import { pushFormSubmit } from '@/lib/tracking';
 import Seo from '@/seo/Seo';
+import { withBrand } from '@/seo/routes';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -70,7 +72,10 @@ const ManualModal = ({ productName, manualUrl, onClose }: { productName: string;
       utm_term: utms.utm_term || null,
       utm_content: utms.utm_content || null,
       gclid: gclid || null,
-    }).then(() => {});
+    }).then(({ error }) => {
+      // Lead do catálogo só conta como envio se o registro foi gravado.
+      if (!error) pushFormSubmit('catalogo');
+    });
 
     if (manualUrl) {
       window.open(manualUrl, '_blank');
@@ -236,7 +241,8 @@ const QuoteModal = ({ productName, productId, onClose }: { productName: string; 
           phone: form.phone || 'Não informado',
           company: form.company || 'Não informada',
           produto: productName,
-          produto_url: `https://borotec.com.br/produtos/${productId}`,
+          // URL real da página do produto (/produtos/* passa a responder 410).
+          produto_url: absoluteUrl(window.location.pathname),
           origem: utms.utm_source || 'direto',
           utm_medium: utms.utm_medium || null,
           utm_campaign: utms.utm_campaign || null,
@@ -261,8 +267,7 @@ const QuoteModal = ({ productName, productId, onClose }: { productName: string; 
         gclid: gclid || null,
       }).then(() => {});
 
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: 'Formulario_orcamento_produto' });
+      pushFormSubmit('orcamento_produto', 'Formulario_orcamento_produto');
 
       setSubmitted(true);
     } catch {
@@ -714,9 +719,8 @@ type Tab = typeof TABS[number];
 
 const ProductDetail = () => {
   // Derivado do path inteiro, não de um :param nomeado — esta página é
-  // alcançada por várias formas de rota (/produtos/:id, /tubulacoes/:id, e o
-  // catch-all genérico usado por linhas soltas e aninhadas), e em todas
-  // elas o ID do produto é sempre o último segmento da URL.
+  // alcançada pelo catch-all genérico (SlugRouter), usado por linhas soltas
+  // e aninhadas, e o ID do produto é sempre o último segmento da URL.
   const { pathname } = useLocation();
   const productId = pathname.replace(/\/$/, '').split('/').pop();
   const navigate = useNavigate();
@@ -830,13 +834,11 @@ const ProductDetail = () => {
   const absoluteImage = product.image?.startsWith('http')
     ? product.image
     : `https://borotec.com.br${product.image}`;
-  const metaTitle = product.seoTitle || `${product.name} | BOROTEC Industrial`;
+  const metaTitle = product.seoTitle || withBrand(product.name);
   const metaDescription = (product.seoDescription || `${product.description} Solicite orçamento.`).slice(0, 160);
 
   const handleWhatsApp = () => {
     openWhatsApp('produto', product.name);
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: 'Botao_Whatsapp_produto' });
   };
 
   const productSchema = {
@@ -849,15 +851,8 @@ const ProductDetail = () => {
     brand: { '@type': 'Brand', name: 'BOROTEC Industrial' },
     category: product.category,
     url: productUrl,
-    offers: {
-      '@type': 'Offer',
-      url: productUrl,
-      availability: 'https://schema.org/InStock',
-      price: '0',
-      priceCurrency: 'BRL',
-      priceValidUntil: '2027-12-31',
-      seller: { '@type': 'Organization', name: 'BOROTEC Industrial', url: 'https://borotec.com.br' },
-    },
+    // Sem `offers`: preço é sob orçamento, e um Offer com price "0" informava
+    // ao Google um preço falso.
   };
 
   // FAQPage espelha a aba "FAQ" desta página; só gera o schema se houver perguntas.
@@ -1015,7 +1010,7 @@ const ProductDetail = () => {
                                     : 'border-primary-foreground/10 hover:border-primary-foreground/30'
                                 }`}
                               >
-                                <img src={src} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+                                <img src={src} alt={`${product.name} — imagem ${i + 1} de ${gallery.length}`} className="w-full h-full object-cover" />
                               </button>
                             ))}
                           </div>

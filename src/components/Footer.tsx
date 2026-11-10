@@ -1,6 +1,6 @@
 import { Link } from '@/components/Link';
 import { Linkedin, Youtube, Clock, MapPin, Phone, Mail } from 'lucide-react';
-import { getWhatsAppUrl } from '@/config/whatsapp';
+import { useWhatsAppMessage, WHATSAPP_FALLBACK_URL } from '@/hooks/useWhatsAppMessage';
 import { useProductLines, groupLinesBySection } from '@/hooks/useProductLines';
 
 const quickLinks = [
@@ -42,6 +42,7 @@ const IconBadge = ({ children }: { children: React.ReactNode }) => (
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { lines } = useProductLines();
+  const { openWhatsApp } = useWhatsAppMessage();
   const sections = groupLinesBySection(lines).map((s) => ({ label: s.name, to: `/${s.slug}` }));
 
   return (
@@ -65,8 +66,8 @@ const Footer = () => {
               />
             </Link>
             <p className="font-body text-xs text-primary-foreground/55 leading-relaxed">
-              Especialistas em boroscópios e videoscópios industriais há mais de 20 anos.
-              Atendimento personalizado para inspeção de tubulações, motores e dutos em todo o Brasil.
+              Especialistas em boroscópios, videoscópios, câmeras termográficas e detectores de gás há mais de 20 anos.
+              Atendimento personalizado para inspeção industrial em todo o Brasil.
             </p>
             <div className="flex gap-2">
               <a href="https://www.linkedin.com/company/borotec-industrial" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn BOROTEC"
@@ -134,11 +135,12 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2.5">
                 <IconBadge><Phone className="w-3.5 h-3.5 text-cyan" /></IconBadge>
-                <a href={getWhatsAppUrl()}
+                <a href={WHATSAPP_FALLBACK_URL}
+                  onClick={(e) => { e.preventDefault(); openWhatsApp('rodape'); }}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Contato pelo WhatsApp"
-                  className="font-body text-xs text-primary-foreground/60 hover:text-cyan transition-colors">
+                  className="whatsapp-btn whatsapp-rodape font-body text-xs text-primary-foreground/60 hover:text-cyan transition-colors">
                   (11) 93287-6195
                 </a>
               </li>

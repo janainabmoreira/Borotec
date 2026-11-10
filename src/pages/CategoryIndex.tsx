@@ -94,7 +94,7 @@ const CategoryIndex = ({ sectionSlug }: { sectionSlug: string }) => {
                             <>
                               <img
                                 src={line.image_url}
-                                alt={`${line.badge} — ${line.name}`}
+                                alt={`${line.section_name} — ${line.badge}: ${line.name}`}
                                 loading="lazy"
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                               />

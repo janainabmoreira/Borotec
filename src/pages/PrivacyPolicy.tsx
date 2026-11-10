@@ -3,7 +3,7 @@ import Seo from '@/seo/Seo';
 import { STATIC_SEO } from '@/seo/routes';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { getWhatsAppUrl } from '@/config/whatsapp';
+import { useWhatsAppMessage, WHATSAPP_FALLBACK_URL } from '@/hooks/useWhatsAppMessage';
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="mb-10">
@@ -17,6 +17,7 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 );
 
 const PrivacyPolicy = () => {
+  const { openWhatsApp } = useWhatsAppMessage();
   return (
     <>
       <Seo
@@ -159,7 +160,7 @@ const PrivacyPolicy = () => {
                     <strong className="text-primary-foreground">E-mail:</strong>{' '}
                     <a href="mailto:contato@borotec.com.br" className="text-cyan hover:underline">contato@borotec.com.br</a><br />
                     <strong className="text-primary-foreground">WhatsApp:</strong>{' '}
-                    <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" aria-label="Contato pelo WhatsApp" className="text-cyan hover:underline">(11) 93287-6195</a>
+                    <a href={WHATSAPP_FALLBACK_URL} onClick={(e) => { e.preventDefault(); openWhatsApp('privacidade'); }} target="_blank" rel="noopener noreferrer" aria-label="Contato pelo WhatsApp" className="whatsapp-btn whatsapp-privacidade text-cyan hover:underline">(11) 93287-6195</a>
                   </p>
                 </Section>
 

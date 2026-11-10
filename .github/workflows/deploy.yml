@@ -48,24 +48,16 @@ jobs:
           [[ "$DIR" != */ ]] && DIR="${DIR}/"
           echo "dir=$DIR" >> "$GITHUB_OUTPUT"
 
-      - name: Debug FTP credentials (temporary — no secret values printed)
+      - name: List orphan folders on server (read-only)
+        # Só lista — nunca apaga. Pastas antigas no servidor sem rota no build
+        # atual (ver scripts/ftp-orphans.sh). Não bloqueia o deploy.
+        continue-on-error: true
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        run: |
-          echo "server length: ${#FTP_SERVER}"
-          echo "username length: ${#FTP_USERNAME}"
-          echo "password length: ${#FTP_PASSWORD}"
-          echo "server has leading/trailing space: $([[ "$FTP_SERVER" != $(echo "$FTP_SERVER" | xargs) ]] && echo yes || echo no)"
-          echo "username has leading/trailing space: $([[ "$FTP_USERNAME" != $(echo "$FTP_USERNAME" | xargs) ]] && echo yes || echo no)"
-          echo "password has leading/trailing space: $([[ "$FTP_PASSWORD" != $(echo "$FTP_PASSWORD" | xargs) ]] && echo yes || echo no)"
-          echo "--- trying plain curl FTP login (independent of lftp) ---"
-          curl -v --connect-timeout 15 --user "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" 2>&1 | grep -Ev "^\* " || true
-          echo "--- nomes na pasta de login do FTP ---"
-          curl -sS --connect-timeout 15 --list-only --user "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" | tr -d '\r' | head -40 || true
-          echo "--- nomes em /www (caminho absoluto) ---"
-          curl -sS --connect-timeout 15 --list-only --user "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/%2Fwww/" | tr -d '\r' | head -40 || true
+          FTP_DIR: ${{ steps.ftp-dir.outputs.dir }}
+        run: bash scripts/ftp-orphans.sh
 
       - name: Deploy dist/ via FTP (curl)
         # History: SamKirkland/FTP-Deploy-Action failed with "550 assets: No

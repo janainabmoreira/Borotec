@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from '@/components/Link';
 import { useGclidCapture } from '@/hooks/useGclidCapture';
 import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
+import { pushFormSubmit } from '@/lib/tracking';
 import Seo from '@/seo/Seo';
 import { STATIC_SEO } from '@/seo/routes';
 import Header from '@/components/Header';
@@ -74,8 +75,6 @@ const Contact = () => {
 
     setIsSubmitting(true);
 
-    (window as any).dataLayer = (window as any).dataLayer || [];
-    (window as any).dataLayer.push({ event: 'Formulario_contato' });
     trackFormEvent('submit_attempt');
 
     try {
@@ -105,6 +104,7 @@ const Contact = () => {
 
       sessionStorage.setItem(COOLDOWN_KEY, Date.now().toString());
       trackFormEvent('submit_success');
+      pushFormSubmit('contato', 'Formulario_contato');
 
       // Salva lead no Supabase (falha silenciosa — não bloqueia o usuário)
       supabase.from('leads').insert({
@@ -142,8 +142,6 @@ const Contact = () => {
 
   const handleWhatsApp = () => {
     openWhatsApp('contato');
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: 'Botao_Whatsapp_contato' });
   };
 
   const contactInfo = [

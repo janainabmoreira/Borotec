@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Link } from '@/components/Link';
 import Seo from '@/seo/Seo';
+import { withBrand } from '@/seo/routes';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -255,7 +256,7 @@ const LineProducts = () => {
     <>
       <Seo
         path={line.path}
-        title={line.seo_title || `${line.name} | ${line.badge} | BOROTEC Industrial`}
+        title={line.seo_title || withBrand(`${line.name} | ${line.badge}`)}
         description={line.seo_description || line.hero_description}
         ogImage={line.image_url || undefined}
         ogImageAlt={line.image_url ? `${line.badge} — ${line.name}` : undefined}
@@ -304,8 +305,8 @@ const LineProducts = () => {
                 <Button
                   variant="whatsapp"
                   size="lg"
-                  className="shrink-0 whatsapp-btn"
-                  onClick={() => { openWhatsApp(line.id); window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: `Botao_WhatsApp_${line.badge.replace('Linha ', '')}` }); }}
+                  className="shrink-0 whatsapp-btn whatsapp-linha"
+                  onClick={() => { openWhatsApp(line.id); }}
                 >
                   <MessageCircle className="w-5 h-5" />
                   Falar com o Especialista

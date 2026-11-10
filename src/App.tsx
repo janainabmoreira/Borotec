@@ -9,7 +9,6 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 import { HelmetProvider } from "react-helmet-async";
 import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
 import Index from "./pages/Index";
-import ProductDetail from "./pages/ProductDetail";
 import CategoryIndex from "./pages/CategoryIndex";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -90,12 +89,8 @@ const App = () => (
             <Route path="/privacidade" element={<PrivacyPolicy />} />
             <Route path="/busca" element={<Search />} />
 
-            {/* Alias legado — os produtos antigos sob /tubulacoes continuam acessíveis */}
-            <Route path="/tubulacoes" element={<Navigate to="/linha-t" replace />} />
-            <Route path="/tubulacoes/:productId" element={<ProductDetail />} />
-
-            {/* Produto genérico */}
-            <Route path="/produtos/:productId" element={<ProductDetail />} />
+            {/* /produtos/* e /tubulacoes/* foram desativados (410 no .htaccess);
+                todo produto vive em /<linha>/<produto>/. */}
 
             {/* Admin */}
             <Route path="/admin/login" element={<AdminLogin />} />

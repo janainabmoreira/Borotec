@@ -33,13 +33,21 @@ const ROUTE_TIMEOUT_MS = 30000;
 const MAX_ATTEMPTS = 3;
 const SITE_URL = "https://borotec.com.br";
 
-// Cópia intocada do index.html gerado pelo Vite (sem nenhuma tag de rota).
-// Serve de base para renderizar TODAS as rotas — antes, o prerender da home
-// sobrescrevia dist/index.html e as rotas seguintes partiam de um HTML que já
-// tinha o <head> da home, que vazava para o snapshot quando o Helmet perdia
-// a corrida. Também é o fallback SPA do .htaccess para rotas novas que ainda
-// não foram pré-renderizadas (em vez de servir a home pré-renderizada).
+// Base de renderização: cópia intocada do index.html gerado pelo Vite (sem
+// nenhuma tag de rota). Antes, o prerender da home sobrescrevia
+// dist/index.html e as rotas seguintes partiam de um HTML que já tinha o
+// <head> da home, que vazava para o snapshot quando o Helmet perdia a corrida.
+// Arquivo temporário: apagado no fim.
+const RENDER_SHELL_FILE = "prerender-shell.tmp.html"; // sem "." inicial: o express do prerenderer não serve dotfiles no fallback
+
+// Publicado: a mesma base + <meta robots noindex>. É o ErrorDocument 404 do
+// .htaccess (rotas sem pasta própria). NUNCA serve de base de renderização —
+// o Helmet não remove tags estáticas, e toda página herdaria o noindex.
 const SHELL_FILE = "app-shell.html";
+const NOINDEX_META = '<meta name="robots" content="noindex, follow">';
+
+// Única rota indexável que pode (e deve) sair com noindex.
+const NOINDEX_ROUTES = new Set(["/privacidade"]);
 
 function routeOutputPath(route) {
   const clean = route === "/" ? "" : route;
@@ -61,6 +69,8 @@ function validateHtml(route, html) {
   if (ogUrl !== expectedCanonical(route)) problems.push(`og:url=${ogUrl ?? "(none)"}`);
   const relative = relativeHrefs(html);
   if (relative.length) problems.push(`href relativo: ${relative.slice(0, 5).join(", ")}`);
+  const noindex = /<meta[^>]*name="robots"[^>]*content="[^"]*noindex/i.test(html);
+  if (noindex !== NOINDEX_ROUTES.has(route)) problems.push(noindex ? "noindex indevido" : "noindex ausente");
   return problems;
 }
 
@@ -107,12 +117,19 @@ async function main() {
 
   const indexFile = path.join(distDir, "index.html");
   const shellFile = path.join(distDir, SHELL_FILE);
+  const renderShellFile = path.join(distDir, RENDER_SHELL_FILE);
   const indexHtml = fs.readFileSync(indexFile, "utf8");
+  let baseHtml;
   if (!indexHtml.includes("data-rh=")) {
-    fs.writeFileSync(shellFile, indexHtml);
-  } else if (!fs.existsSync(shellFile)) {
+    baseHtml = indexHtml;
+  } else if (fs.existsSync(shellFile)) {
+    // Prerender rodando de novo sobre um dist já pré-renderizado: a base é o
+    // app-shell publicado, sem o noindex.
+    baseHtml = fs.readFileSync(shellFile, "utf8").replace(NOINDEX_META, "");
+  } else {
     throw new Error("dist/index.html já está pré-renderizado e não há app-shell.html — rode `npm run build` (vite build + prerender) do zero.");
   }
+  fs.writeFileSync(renderShellFile, baseHtml);
 
   const renderer = new PuppeteerRenderer({
     headless: true,
@@ -125,7 +142,7 @@ async function main() {
 
   const prerenderer = new Prerenderer({
     staticDir: distDir,
-    indexPath: SHELL_FILE,
+    indexPath: RENDER_SHELL_FILE,
     routes,
     renderer,
   });
@@ -169,6 +186,11 @@ async function main() {
   }
 
   await prerenderer.destroy();
+
+  // app-shell.html publicado = base + noindex (página de 404 do .htaccess).
+  if (!baseHtml.includes("<head>")) throw new Error("base HTML sem <head> — não dá para inserir o noindex no app-shell.html");
+  fs.writeFileSync(shellFile, baseHtml.replace("<head>", `<head>\n    ${NOINDEX_META}`));
+  fs.rmSync(renderShellFile, { force: true });
 
   console.log(`[prerender] done: ${succeeded} ok, ${failedRoutes.length} failed, ${Date.now() - start}ms total`);
   if (failedRoutes.length > 0) {

@@ -13,21 +13,34 @@ const SESSION_KEY = 'brt_sid';
 // pode ser um union fechado.
 export type WhatsAppType =
   | 'flutuante' | 'hero' | 'contato' | 'geral' | 'produto' | 'carrinho'
+  | 'rodape' | 'privacidade'
   | (string & {});
 
-const KNOWN_GTM_EVENT: Record<string, string> = {
-  flutuante: 'Botao_Whatsapp_flutuante',
-  hero:      'Botao_Whatsapp_hero',
-  geral:     'Botao_Whatsapp_cta',
-  produto:   'Botao_Whatsapp_produto',
-  contato:   'Botao_Whatsapp_contato',
-  carrinho:  'Botao_Whatsapp_carrinho',
+// Link de fallback (sem JS / clique do meio) dos <a> de WhatsApp.
+export const WHATSAPP_FALLBACK_URL = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}`;
+
+// button_type do evento whatsapp_click. Os botões das linhas passam o id da
+// linha como `tipo` (vai assim para o painel do /admin); no dataLayer viram
+// "linha", com o id em line_id.
+const KNOWN_BUTTON_TYPE: Record<string, string> = {
+  flutuante: 'flutuante',
+  hero: 'hero',
+  geral: 'cta',
+  produto: 'produto',
+  contato: 'contato',
+  carrinho: 'carrinho',
+  rodape: 'rodape',
+  privacidade: 'privacidade',
 };
 
-function gtmEventFor(tipo: string): string {
-  if (KNOWN_GTM_EVENT[tipo]) return KNOWN_GTM_EVENT[tipo];
-  const slug = tipo.replace(/^linha-/, '').replace(/-/g, '_');
-  return `Botao_Whatsapp_linha_${slug}`;
+// SKU (id) do produto quando a página atual é a de um produto.
+function getProductSku(): string | undefined {
+  const path = stripSlash(window.location.pathname);
+  const parentPath = path.split('/').slice(0, -1).join('/');
+  if (parentPath && getCachedLines().some((l) => l.path === parentPath)) {
+    return path.split('/').pop();
+  }
+  return undefined;
 }
 
 // Complemento de "quero um orçamento ___" conforme a página atual:
@@ -126,9 +139,18 @@ function pathToTitle(path: string): string {
 }
 
 function trackClick(tipo: WhatsAppType) {
-  // GTM
+  // GTM — evento único para todos os botões, disparado antes de abrir o
+  // WhatsApp. (A conversão do GA4 hoje vem do acionador de clique em
+  // .whatsapp-btn; este evento existe para o GTM poder migrar para ele.)
+  const buttonType = KNOWN_BUTTON_TYPE[tipo] ?? 'linha';
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ event: gtmEventFor(tipo), whatsapp_button: tipo });
+  window.dataLayer.push({
+    event: 'whatsapp_click',
+    button_type: buttonType,
+    page_path: window.location.pathname,
+    product_sku: getProductSku(),
+    ...(buttonType === 'linha' && { line_id: tipo }),
+  });
 
   // Supabase
   const utms = getUtms();

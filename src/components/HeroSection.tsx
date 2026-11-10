@@ -67,8 +67,6 @@ const HeroSection = () => {
                 aria-label="Fale no WhatsApp"
                 onClick={() => {
                   openWhatsApp('hero');
-                  window.dataLayer = window.dataLayer || [];
-                  window.dataLayer.push({ event: 'Botao_Whatsapp_hero' });
                 }}
               >
                 <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />

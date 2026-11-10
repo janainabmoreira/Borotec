@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Link } from '@/components/Link';
 import { absoluteUrl } from '@/lib/urls';
 import Seo from '@/seo/Seo';
+import { withBrand } from '@/seo/routes';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
@@ -264,7 +265,7 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
     <>
       <Seo
         path={`/blog/${post.id}`}
-        title={`${post.title} | BOROTEC Industrial`}
+        title={withBrand(post.title)}
         description={post.excerpt}
         ogTitle={post.title}
         ogType="article"

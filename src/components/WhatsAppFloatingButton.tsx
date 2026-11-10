@@ -6,8 +6,6 @@ const WhatsAppFloatingButton = () => {
 
   const handleClick = () => {
     openWhatsApp('flutuante');
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: 'Botao_Whatsapp_flutuante' });
   };
 
   return (
