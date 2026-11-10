@@ -1,6 +1,6 @@
 import { Link } from '@/components/Link';
-import { Helmet } from 'react-helmet-async';
-import { usePrerenderReady } from '@/hooks/usePrerenderSignal';
+import Seo from '@/seo/Seo';
+import { STATIC_SEO } from '@/seo/routes';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CTASection from '@/components/CTASection';
@@ -8,7 +8,6 @@ import { CheckCircle, Target, Eye, Award } from 'lucide-react';
 import BoroscopeIllustration from '@/components/BoroscopeIllustration';
 
 const About = () => {
-  const onPrerenderReady = usePrerenderReady();
   const values = [
     {
       icon: Target,
@@ -36,23 +35,12 @@ const About = () => {
 
   return (
     <>
-      <Helmet onChangeClientState={onPrerenderReady}>
-        <title>Sobre a BOROTEC | +20 Anos em Metrologia Óptica Industrial</title>
-        <meta name="description" content="Conheça a BOROTEC: empresa brasileira especializada em boroscópios e videoscópios industriais. Mais de 20 anos atendendo a indústria nacional com suporte técnico e soluções em inspeção visual remota." />
-        <link rel="canonical" href="https://borotec.com.br/sobre/" />
-        <meta property="og:title" content="Sobre a BOROTEC | +20 Anos em Inspeção Visual Industrial" />
-        <meta property="og:description" content="Empresa brasileira especializada em boroscópios e videoscópios industriais para inspeção visual remota. Fundada em 2003, com atendimento em todo o Brasil." />
-        <meta property="og:url" content="https://borotec.com.br/sobre/" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:locale" content="pt_BR" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Sobre a BOROTEC | +20 Anos em Inspeção Visual Industrial" />
-        <meta name="twitter:description" content="Empresa brasileira especializada em boroscópios e videoscópios industriais para inspeção visual remota." />
-        <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
-      </Helmet>
+      <Seo
+        path="/sobre"
+        title={STATIC_SEO['/sobre'].title}
+        description={STATIC_SEO['/sobre'].description}
+        breadcrumbs={[{ name: 'Sobre', path: '/sobre' }]}
+      />
     <div className="min-h-screen bg-charcoal">
       <Header />
 

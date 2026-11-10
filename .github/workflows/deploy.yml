@@ -79,6 +79,11 @@ jobs:
         # unrelated content there (e.g. old_site/) is untouched. Means old
         # cache-busted JS/CSS from previous builds will accumulate in
         # assets/ over time — fine for now, worth revisiting later.
+        #
+        # Upload order matters: .htaccess rewrites every route without its own
+        # folder to /app-shell.html, so app-shell.html goes up FIRST and
+        # .htaccess LAST (excluded from the mirror) — otherwise there'd be a
+        # window where those routes 404.
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -87,12 +92,15 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq lftp
           lftp -e "
+            set cmd:fail-exit yes;
             set ftp:ssl-allow no;
             set ftp:passive-mode true;
             set net:timeout 20;
             set net:max-retries 3;
             set mirror:parallel-transfer-count 2;
             open -u \"$FTP_USERNAME\",\"$FTP_PASSWORD\" ftp://$FTP_SERVER;
-            mirror --reverse --verbose ./dist/ \"$FTP_DIR\";
+            put ./dist/app-shell.html -o \"${FTP_DIR}app-shell.html\";
+            mirror --reverse --verbose --exclude-glob .htaccess ./dist/ \"$FTP_DIR\";
+            put ./dist/.htaccess -o \"${FTP_DIR}.htaccess\";
             quit;
           "

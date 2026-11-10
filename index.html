@@ -12,13 +12,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!--
-      Title/description/canonical/OG/Twitter/JSON-LD are intentionally NOT
-      hardcoded here — every route sets its own via <Helmet> (see src/pages/*).
-      react-helmet-async only manages tags it renders; it does not remove
-      static tags baked into this file, so duplicating them here would leave
-      two conflicting <link rel="canonical"> (and duplicate OG/JSON-LD) tags
-      in the final HTML once prerendered — which is exactly the bug that made
-      Google treat every page as a duplicate of the homepage.
+      Description/canonical/OG/Twitter/JSON-LD are intentionally NOT
+      hardcoded here — every route sets its own via the Seo component
+      (src/seo/Seo.tsx + src/seo/routes.ts). react-helmet-async only manages
+      tags it renders; it does not remove static tags baked into this file,
+      so duplicating them here would leave two conflicting canonical links
+      (and duplicate OG/JSON-LD) in the final HTML once prerendered. The
+      title below is only a neutral default that Helmet overwrites.
     -->
     <title>BOROTEC</title>
     <meta name="author" content="BOROTEC" />

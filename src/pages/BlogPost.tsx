@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from '@/components/Link';
 import { absoluteUrl } from '@/lib/urls';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/seo/Seo';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
@@ -48,7 +48,8 @@ const BlogPost = () => {
   const { postId } = useParams();
   const [allPosts, setAllPosts] = useState<DbBlogPost[]>([]);
   const [loading, setLoading] = useState(true);
-  usePrerenderSignal(!loading);
+  // Post encontrado: quem sinaliza o prerender é o <Seo />. Aqui só o 404.
+  usePrerenderSignal(!loading && !allPosts.some((p) => p.id === postId));
 
   useEffect(() => {
     supabase
@@ -251,39 +252,22 @@ const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
       }
     : null;
 
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://borotec.com.br/' },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://borotec.com.br/blog/' },
-      { '@type': 'ListItem', position: 3, name: post.title, item: postUrl },
-    ],
-  };
-
   return (
     <>
-      <Helmet>
-        <title>{post.title} | BOROTEC Industrial</title>
-        <meta name="description" content={post.excerpt} />
-        <link rel="canonical" href={postUrl} />
-        <meta property="og:type" content="article" />
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.excerpt} />
-        <meta property="og:url" content={postUrl} />
-        <meta property="og:image" content={post.image ?? ''} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:locale" content="pt_BR" />
-        <meta property="article:published_time" content={post.date} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={post.title} />
-        <meta name="twitter:description" content={post.excerpt} />
-        <meta name="twitter:image" content={post.image ?? ''} />
-        <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
-        {faqSchema && <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>}
-      </Helmet>
+      <Seo
+        path={`/blog/${post.id}`}
+        title={`${post.title} | BOROTEC Industrial`}
+        description={post.excerpt}
+        ogTitle={post.title}
+        ogType="article"
+        ogImage={post.image || undefined}
+        extraMeta={[{ property: 'article:published_time', content: post.date }]}
+        breadcrumbs={[
+          { name: 'Blog', path: '/blog' },
+          { name: post.title, path: `/blog/${post.id}` },
+        ]}
+        jsonLd={faqSchema ? [articleSchema, faqSchema] : [articleSchema]}
+      />
 
       <div className="min-h-screen bg-charcoal">
         <Header />

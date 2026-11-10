@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Link } from '@/components/Link';
 import { useGclidCapture } from '@/hooks/useGclidCapture';
 import { useWhatsAppMessage } from '@/hooks/useWhatsAppMessage';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/seo/Seo';
+import { STATIC_SEO } from '@/seo/routes';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useUTMCapture } from '@/hooks/useUTMCapture';
-import { usePrerenderReady } from '@/hooks/usePrerenderSignal';
 import { supabase } from '@/lib/supabase';
 
 const WEB3FORMS_ACCESS_KEY = '5925cc10-7d22-4eff-a5eb-242540505331';
@@ -27,7 +27,6 @@ const COOLDOWN_KEY = 'brt_form_last';
 const COOLDOWN_MS  = 60_000; // 1 minuto entre envios
 
 const Contact = () => {
-  const onPrerenderReady = usePrerenderReady();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -176,23 +175,12 @@ const Contact = () => {
 
   return (
     <>
-      <Helmet onChangeClientState={onPrerenderReady}>
-        <title>Fale Conosco | BOROTEC Industrial</title>
-        <meta name="description" content="Entre em contato com a BOROTEC Industrial. Solicite orçamento de equipamentos de inspeção industrial por formulário, e-mail ou WhatsApp." />
-        <link rel="canonical" href="https://borotec.com.br/contato/" />
-        <meta property="og:title" content="Fale Conosco | BOROTEC Industrial" />
-        <meta property="og:description" content="Entre em contato com a BOROTEC Industrial para orçamentos e informações sobre equipamentos de inspeção industrial." />
-        <meta property="og:url" content="https://borotec.com.br/contato/" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:locale" content="pt_BR" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Fale Conosco | BOROTEC Industrial" />
-        <meta name="twitter:description" content="Entre em contato com a BOROTEC Industrial para orçamentos e informações sobre equipamentos de inspeção industrial." />
-        <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
-      </Helmet>
+      <Seo
+        path="/contato"
+        title={STATIC_SEO['/contato'].title}
+        description={STATIC_SEO['/contato'].description}
+        breadcrumbs={[{ name: 'Contato', path: '/contato' }]}
+      />
     <div className="min-h-screen bg-charcoal">
       <Header />
 

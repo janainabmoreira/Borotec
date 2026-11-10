@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/seo/Seo';
+import { STATIC_SEO } from '@/seo/routes';
 import { useSearchParams } from 'react-router-dom';
 import { Link } from '@/components/Link';
 import Header from '@/components/Header';
@@ -8,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, ArrowRight, X, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
 import type { DbBlogPost } from '@/types/database';
 import { blogPosts as staticPosts } from '@/data/blog';
 
@@ -33,7 +33,6 @@ const Blog = () => {
   const selectedCategory = searchParams.get('categoria');
   const [blogPosts, setBlogPosts] = useState<DbBlogPost[]>([]);
   const [loading, setLoading] = useState(true);
-  usePrerenderSignal(!loading);
 
   useEffect(() => {
     supabase
@@ -72,23 +71,14 @@ const Blog = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Blog de Inspeção Industrial | BOROTEC</title>
-        <meta name="description" content="Artigos, guias e novidades sobre boroscopia, inspeção visual remota, metrologia óptica e manutenção industrial. Conteúdo técnico da BOROTEC." />
-        <link rel="canonical" href="https://borotec.com.br/blog/" />
-        <meta property="og:title" content="Blog de Inspeção Industrial | BOROTEC" />
-        <meta property="og:description" content="Artigos técnicos sobre boroscopia, inspeção visual remota e manutenção industrial." />
-        <meta property="og:url" content="https://borotec.com.br/blog/" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:locale" content="pt_BR" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Blog de Inspeção Industrial | BOROTEC" />
-        <meta name="twitter:description" content="Artigos técnicos sobre boroscopia, inspeção visual remota e manutenção industrial." />
-        <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
-      </Helmet>
+      <Seo
+        path="/blog"
+        title={STATIC_SEO['/blog'].title}
+        description={STATIC_SEO['/blog'].description}
+        ogDescription="Artigos técnicos sobre boroscopia, inspeção visual remota e manutenção industrial."
+        breadcrumbs={[{ name: 'Blog', path: '/blog' }]}
+        ready={!loading}
+      />
       <div className="min-h-screen bg-charcoal">
         <Header />
 

@@ -1,10 +1,9 @@
-import { Helmet } from 'react-helmet-async';
-import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
+import Seo from '@/seo/Seo';
+import { STATIC_SEO, sectionSeoFallback } from '@/seo/routes';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ArrowRight, Wrench, Loader2 } from 'lucide-react';
 import { Link } from '@/components/Link';
-import { absoluteUrl } from '@/lib/urls';
 import { useProductLines } from '@/hooks/useProductLines';
 import { ICON_MAP } from '@/lib/iconMap';
 import { getAccentClasses } from '@/lib/accentColors';
@@ -16,39 +15,21 @@ import { getAccentClasses } from '@/lib/accentColors';
 const CategoryIndex = ({ sectionSlug }: { sectionSlug: string }) => {
   const { lines: allLines, loading } = useProductLines();
   const lines = allLines.filter((l) => l.section_slug === sectionSlug);
-  usePrerenderSignal(!loading);
 
   const sectionName = lines[0]?.section_name ?? (sectionSlug === 'boroscopios' ? 'Boroscópios' : sectionSlug);
   const isBoroscopios = sectionSlug === 'boroscopios';
 
-  const title = isBoroscopios ? 'Boroscópios Industriais | BOROTEC Industrial' : `${sectionName} | BOROTEC Industrial`;
-  const description = isBoroscopios
-    ? 'Explore as linhas de boroscópios BOROTEC: Tubulações, Máquinas, Robôs e Especiais (ATEX, 3D, Termografia, UV). Soluções para cada necessidade de inspeção industrial.'
-    : `Explore as linhas de ${sectionName} da BOROTEC Industrial.`;
+  const seo = STATIC_SEO[`/${sectionSlug}`] ?? sectionSeoFallback(sectionName);
 
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={absoluteUrl(`/${sectionSlug}`)} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:url" content={absoluteUrl(`/${sectionSlug}`)} />
-        <meta property="og:type" content="website" />
-        {isBoroscopios && (
-          <>
-            <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
-            <meta property="og:image:width" content="1200" />
-            <meta property="og:image:height" content="630" />
-            <meta property="og:locale" content="pt_BR" />
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta name="twitter:title" content={title} />
-            <meta name="twitter:description" content={description} />
-            <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
-          </>
-        )}
-      </Helmet>
+      <Seo
+        path={`/${sectionSlug}`}
+        title={seo.title}
+        description={seo.description}
+        breadcrumbs={[{ name: seo.breadcrumb ?? sectionName, path: `/${sectionSlug}` }]}
+        ready={!loading}
+      />
 
       <div className="min-h-screen bg-charcoal">
         <Header />
