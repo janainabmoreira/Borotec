@@ -1,6 +1,6 @@
 import { Link } from '@/components/Link';
-import { Helmet } from 'react-helmet-async';
-import { usePrerenderReady } from '@/hooks/usePrerenderSignal';
+import Seo from '@/seo/Seo';
+import { STATIC_SEO } from '@/seo/routes';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getWhatsAppUrl } from '@/config/whatsapp';
@@ -17,15 +17,15 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 );
 
 const PrivacyPolicy = () => {
-  const onPrerenderReady = usePrerenderReady();
   return (
     <>
-      <Helmet onChangeClientState={onPrerenderReady}>
-        <title>Política de Privacidade | BOROTEC Industrial</title>
-        <meta name="description" content="Política de Privacidade da BOROTEC Industrial. Saiba como coletamos, usamos e protegemos seus dados pessoais conforme a LGPD." />
-        <link rel="canonical" href="https://borotec.com.br/privacidade/" />
-        <meta name="robots" content="noindex, follow" />
-      </Helmet>
+      <Seo
+        path="/privacidade"
+        title={STATIC_SEO['/privacidade'].title}
+        description={STATIC_SEO['/privacidade'].description}
+        noindex={STATIC_SEO['/privacidade'].noindex}
+        breadcrumbs={[{ name: 'Política de Privacidade', path: '/privacidade' }]}
+      />
 
       <div className="min-h-screen bg-charcoal">
         <Header />

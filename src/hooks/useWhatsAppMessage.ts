@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { getCachedLines } from '@/hooks/useProductLines';
 import { stripSlash } from '@/lib/urls';
+import { WHATSAPP_INTEREST } from '@/seo/routes';
 
 const WHATSAPP_NUMBER = '5511932876195';
 const STORAGE_KEY = 'borotec_utms';
@@ -29,11 +30,28 @@ function gtmEventFor(tipo: string): string {
   return `Botao_Whatsapp_linha_${slug}`;
 }
 
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return 'Bom dia';
-  if (hour >= 12 && hour < 18) return 'Boa tarde';
-  return 'Boa noite';
+// Complemento de "quero um orçamento ___" conforme a página atual:
+// config fixa (src/seo/routes.ts) → linha/seção do admin → produto → nada.
+function getPageInterest(productName?: string): string | null {
+  if (productName) return `do produto ${productName}`;
+
+  const path = stripSlash(window.location.pathname);
+  if (WHATSAPP_INTEREST[path]) return WHATSAPP_INTEREST[path];
+
+  const lines = getCachedLines();
+  const line = lines.find((l) => l.path === path);
+  if (line) return `da ${line.badge} (${line.name})`;
+
+  const parentPath = path.split('/').slice(0, -1).join('/');
+  if (parentPath && lines.some((l) => l.path === parentPath)) {
+    const h1 = document.querySelector('h1')?.textContent?.trim();
+    if (h1) return `do produto ${h1}`;
+  }
+
+  const section = lines.find((l) => `/${l.section_slug}` === path);
+  if (section) return `de ${section.section_name.toLowerCase()}`;
+
+  return null;
 }
 
 function toFriendlySource(source: string, medium: string): string {
@@ -132,22 +150,20 @@ export function useWhatsAppMessage() {
   const openWhatsApp = (tipo: WhatsAppType, extra?: string) => {
     trackClick(tipo);
 
-    const saudacao = getGreeting();
     const origem = getSource();
 
     let body: string;
 
-    switch (tipo) {
-      case 'produto': {
-        const nome = extra || document.querySelector('h1')?.textContent?.trim() || 'produto';
-        body = `Olá, ${saudacao}! Gostaria de solicitar informações sobre o produto: ${nome}`;
-        break;
-      }
-      case 'carrinho':
-        body = `Olá, ${saudacao}! Gostaria de solicitar um orçamento para os seguintes itens:\n${extra ?? ''}`;
-        break;
-      default:
-        body = `Olá, ${saudacao}! Gostaria de falar com um especialista Borotec.`;
+    if (tipo === 'carrinho') {
+      body = `Olá! Vim pelo site e quero um orçamento dos seguintes itens:\n${extra ?? ''}`;
+    } else {
+      const produto = tipo === 'produto'
+        ? extra || document.querySelector('h1')?.textContent?.trim()
+        : undefined;
+      const interesse = getPageInterest(produto);
+      body = interesse
+        ? `Olá! Vim pelo site e quero um orçamento ${interesse}.`
+        : 'Olá! Vim pelo site e quero um orçamento.';
     }
 
     const msg = `[${origem}] ${body}`;

@@ -1,8 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Link } from '@/components/Link';
-import { absoluteUrl } from '@/lib/urls';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/seo/Seo';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -198,7 +197,8 @@ const LineProducts = () => {
   const line = lines.find((l) => l.path === pathname.replace(/\/$/, ''));
 
   const { products, loading: loadingProducts } = useLineProducts(line?.category ?? '__none__');
-  usePrerenderSignal(!loadingLines && (!!line ? !loadingProducts : true));
+  // Linha existente: o <Seo /> sinaliza o prerender. Aqui só o caso 404.
+  usePrerenderSignal(!loadingLines && !line);
 
   const [filters, setFilters] = useState<FilterState>(emptyFilters);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -253,15 +253,18 @@ const LineProducts = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{line.seo_title || `${line.name} | ${line.badge} | BOROTEC Industrial`}</title>
-        <meta name="description" content={line.seo_description || line.hero_description} />
-        <link rel="canonical" href={absoluteUrl(line.path)} />
-        <meta property="og:title" content={line.seo_title || `${line.name} | BOROTEC Industrial`} />
-        <meta property="og:description" content={line.seo_description || line.hero_description} />
-        <meta property="og:url" content={absoluteUrl(line.path)} />
-        <meta property="og:type" content="website" />
-      </Helmet>
+      <Seo
+        path={line.path}
+        title={line.seo_title || `${line.name} | ${line.badge} | BOROTEC Industrial`}
+        description={line.seo_description || line.hero_description}
+        ogImage={line.image_url || undefined}
+        ogImageAlt={line.image_url ? `${line.badge} — ${line.name}` : undefined}
+        breadcrumbs={[
+          { name: line.section_name, path: `/${line.section_slug}` },
+          { name: line.name, path: line.path },
+        ]}
+        ready={!loadingProducts}
+      />
 
       <div className="min-h-screen bg-background">
         <Header />

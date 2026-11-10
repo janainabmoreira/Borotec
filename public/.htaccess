@@ -45,10 +45,14 @@
   RewriteRule ^package(-lock)?\.json$ - [F,L]
 
   # Rotas do React (SPA fallback)
-  RewriteRule ^index\.html$ - [L]
+  # Fallback = app-shell.html (HTML neutro gerado pelo scripts/prerender.mjs),
+  # NÃO index.html: o index.html da raiz é a home pré-renderizada, e servi-lo
+  # para uma rota sem pasta própria fazia a página sair com title/canonical
+  # da home (foi o que aconteceu com /detector-de-gas/ no build de 15/10).
+  RewriteRule ^(index|app-shell)\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+  RewriteRule . /app-shell.html [L]
 </IfModule>
 
 # Bloqueia User-Agents de scanners/bots maliciosos comuns

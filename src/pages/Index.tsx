@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useUTMCapture } from '@/hooks/useUTMCapture';
-import { usePrerenderSignal } from '@/hooks/usePrerenderSignal';
+import Seo from '@/seo/Seo';
+import { STATIC_SEO } from '@/seo/routes';
 import { useProductLines } from '@/hooks/useProductLines';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -26,6 +25,23 @@ const websiteSchema = {
       urlTemplate: 'https://borotec.com.br/busca?q={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
+  },
+};
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'BOROTEC',
+  url: 'https://borotec.com.br/',
+  logo: 'https://borotec.com.br/assets/logo-borotec.webp',
+  telephone: '+55-11-93287-6195',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Rua Quinze de Novembro, 212',
+    addressLocality: 'São Paulo',
+    addressRegion: 'SP',
+    postalCode: '01013-000',
+    addressCountry: 'BR',
   },
 };
 
@@ -64,34 +80,20 @@ const localBusinessSchema = {
 
 const Index = () => {
   useUTMCapture();
-  // O snapshot do prerender espera o <Helmet> gravar as tags E as linhas
-  // chegarem do Supabase — os cards de todas as abas de "O que você precisa
-  // inspecionar?" precisam estar no HTML para o Google ver os links.
-  const [helmetReady, setHelmetReady] = useState(false);
+  // O snapshot do prerender espera as linhas chegarem do Supabase — os cards
+  // de todas as abas de "O que você precisa inspecionar?" precisam estar no
+  // HTML para o Google ver os links. (O <Seo /> espera o próprio <head>.)
   const { loading: loadingLines } = useProductLines();
-  usePrerenderSignal(helmetReady && !loadingLines);
 
   return (
     <>
-      <Helmet onChangeClientState={() => setHelmetReady(true)}>
-        <title>BOROTEC | Boroscópios, Videoscópios e Robôs de Inspeção Industrial</title>
-        <meta name="description" content="Boroscópios, videoscópios e robôs para inspeção industrial sem desmontagem. Sondas até 130m, câmera HD, gravação em vídeo, tela LCD, IP68 à prova d'água. Inspeção de tubulações, dutos, motores e poços. +20 anos. Todo o Brasil." />
-        <link rel="canonical" href="https://borotec.com.br/" />
-        <meta property="og:title" content="BOROTEC | Boroscópios, Videoscópios e Robôs de Inspeção Industrial" />
-        <meta property="og:description" content="Boroscópios, videoscópios e robôs para inspeção industrial sem desmontagem. Sondas até 130m, câmera HD, gravação em vídeo, tela LCD, IP68 à prova d'água. Inspeção de tubulações, dutos, motores e poços. +20 anos. Todo o Brasil." />
-        <meta property="og:url" content="https://borotec.com.br/" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://borotec.com.br/og-borotec.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:locale" content="pt_BR" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="BOROTEC | Boroscópios, Videoscópios e Robôs de Inspeção Industrial" />
-        <meta name="twitter:description" content="Boroscópios, videoscópios e robôs para inspeção industrial sem desmontagem. Sondas até 130m, câmera HD, gravação em vídeo, tela LCD, IP68 à prova d'água. Inspeção de tubulações, dutos, motores e poços. +20 anos. Todo o Brasil." />
-        <meta name="twitter:image" content="https://borotec.com.br/og-borotec.jpg" />
-        <script type="application/ld+json">{JSON.stringify(websiteSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
-      </Helmet>
+      <Seo
+        path="/"
+        title={STATIC_SEO['/'].title}
+        description={STATIC_SEO['/'].description}
+        jsonLd={[websiteSchema, organizationSchema, localBusinessSchema]}
+        ready={!loadingLines}
+      />
       <div className="min-h-screen">
         <Header />
         <main>

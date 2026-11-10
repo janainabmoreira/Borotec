@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from '@/components/Link';
 import { absoluteUrl } from '@/lib/urls';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/seo/Seo';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -730,8 +730,9 @@ const ProductDetail = () => {
   const [dbDetail, setDbDetail] = useState<typeof productDetailsMap[string] | null>(null);
   const [loadingDb, setLoadingDb] = useState(!!productId && !!isSupabaseConfigured);
   const [notFound, setNotFound] = useState(false);
-  const { lines } = useProductLines();
-  usePrerenderSignal(!loadingDb);
+  const { lines, loading: loadingLines } = useProductLines();
+  // Produto encontrado: quem sinaliza o prerender é o <Seo />. Aqui só o 404.
+  usePrerenderSignal(!loadingDb && (!dbProduct || notFound));
 
   // Always try Supabase first — DB product overrides any static version with same ID
   useEffect(() => {
@@ -822,9 +823,8 @@ const ProductDetail = () => {
   // is added/removed); it just isn't the URL search engines should index.
   const productLine = lines.find((l) => l.category === product.category);
   const linePath = productLine?.path;
-  const productUrl = linePath
-    ? absoluteUrl(`${linePath}/${product.id}`)
-    : absoluteUrl(`/produtos/${product.id}`);
+  const productPath = linePath ? `${linePath}/${product.id}` : `/produtos/${product.id}`;
+  const productUrl = absoluteUrl(productPath);
   const absoluteImage = product.image?.startsWith('http')
     ? product.image
     : `https://borotec.com.br${product.image}`;
@@ -858,28 +858,40 @@ const ProductDetail = () => {
     },
   };
 
+  // FAQPage espelha a aba "FAQ" desta página; só gera o schema se houver perguntas.
+  const faqSchema = detail?.faqs?.length
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: detail.faqs.map((f) => ({
+          '@type': 'Question',
+          name: f.question,
+          acceptedAnswer: { '@type': 'Answer', text: f.answer },
+        })),
+      }
+    : null;
+
   return (
     <>
-      <Helmet>
-        <title>{metaTitle}</title>
-        <meta name="description" content={metaDescription} />
-        <link rel="canonical" href={productUrl} />
-        {/* Open Graph */}
-        <meta property="og:site_name" content="BOROTEC Industrial" />
-        <meta property="og:title" content={metaTitle} />
-        <meta property="og:description" content={metaDescription} />
-        <meta property="og:url" content={productUrl} />
-        <meta property="og:type" content="product" />
-        <meta property="og:image" content={absoluteImage} />
-        <meta property="og:image:alt" content={product.name} />
-        <meta property="og:locale" content="pt_BR" />
-        {/* Twitter / X */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={metaTitle} />
-        <meta name="twitter:description" content={metaDescription} />
-        <meta name="twitter:image" content={absoluteImage} />
-        <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
-      </Helmet>
+      <Seo
+        path={productPath}
+        title={metaTitle}
+        description={metaDescription}
+        ogType="product"
+        ogImage={absoluteImage}
+        ogImageAlt={product.name}
+        breadcrumbs={[
+          ...(productLine
+            ? [
+                { name: productLine.section_name, path: `/${productLine.section_slug}` },
+                { name: productLine.name, path: productLine.path },
+              ]
+            : []),
+          { name: product.name, path: productPath },
+        ]}
+        jsonLd={faqSchema ? [productSchema, faqSchema] : [productSchema]}
+        ready={!loadingLines}
+      />
 
       <div className="min-h-screen bg-charcoal">
         <Header />
