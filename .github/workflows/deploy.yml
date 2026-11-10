@@ -63,49 +63,50 @@ jobs:
           echo "--- trying plain curl FTP login (independent of lftp) ---"
           curl -v --connect-timeout 15 --user "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/" 2>&1 | grep -Ev "^\* " || true
 
-      - name: Deploy dist/ via FTP (lftp)
-        # SamKirkland/FTP-Deploy-Action consistently failed with
-        # "550 assets: No such file or directory" against this host across
-        # several configurations (absolute/relative server-dir, with and
-        # without a pre-existing assets/ folder) — a known, unresolved issue
-        # in that action (see its GitHub issues for "550"). lftp is the
-        # underlying tool most FTP deploy actions wrap anyway; talking to it
-        # directly avoids whatever that wrapper does differently, and its
-        # --verbose output actually shows the FTP commands/responses if this
-        # still needs debugging.
+      - name: Deploy dist/ via FTP (curl)
+        # History: SamKirkland/FTP-Deploy-Action failed with "550 assets: No
+        # such file or directory"; lftp then hung right after the server's
+        # "220 FTP server ready" banner until "max-retries exceeded" (10/11),
+        # while plain curl — same runner, same secrets — logs in, lists and
+        # transfers fine. So uploads go through curl.
         #
-        # Intentionally NOT using --delete on mirror: this only creates/
-        # updates files, it never removes anything already on the server, so
-        # unrelated content there (e.g. old_site/) is untouched. Means old
-        # cache-busted JS/CSS from previous builds will accumulate in
-        # assets/ over time — fine for now, worth revisiting later.
+        # Only creates/updates files, never deletes anything on the server
+        # (old cache-busted assets accumulate in assets/ — fine for now).
         #
         # Upload order matters: .htaccess rewrites every route without its own
         # folder to /app-shell.html, so app-shell.html goes up FIRST and
-        # .htaccess LAST (excluded from the mirror) — otherwise there'd be a
-        # window where those routes 404.
+        # .htaccess LAST. --fail-early stops at the first failed transfer, so
+        # a failed app-shell.html upload never leaves a new .htaccess behind.
+        #
+        # FTP_DIR is used relative to the FTP login dir (the server denies PWD;
+        # "/www/" and "www/" are the same folder there). Safety check: the
+        # target must already contain index.html, otherwise abort — so a wrong
+        # FTP_SERVER_DIR can't silently create a new folder and "deploy" there.
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          # Password goes to lftp via env (--env-password), never inside the
-          # -e command string: lftp parses that string, so a password with
-          # , ; " \ or # got mangled → "530 Login incorrect" even though the
-          # same credentials log in fine with curl (seen 15/10 and 10/11).
-          LFTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_DIR: ${{ steps.ftp-dir.outputs.dir }}
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
-          lftp -e "
-            debug 3;
-            set cmd:fail-exit yes;
-            set ftp:ssl-allow no;
-            set ftp:passive-mode true;
-            set net:timeout 20;
-            set net:max-retries 3;
-            set mirror:parallel-transfer-count 2;
-            open --env-password -u \"$FTP_USERNAME\" ftp://$FTP_SERVER;
-            put ./dist/app-shell.html -o \"${FTP_DIR}app-shell.html\";
-            mirror --reverse --verbose --exclude-glob .htaccess ./dist/ \"$FTP_DIR\";
-            put ./dist/.htaccess -o \"${FTP_DIR}.htaccess\";
-            quit;
-          "
+          set -euo pipefail
+          BASE="ftp://$FTP_SERVER/${FTP_DIR#/}"
+          AUTH=(--user "$FTP_USERNAME:$FTP_PASSWORD" --ftp-pasv --connect-timeout 20 --retry 3 --silent --show-error --fail)
+
+          if ! curl "${AUTH[@]}" --list-only "$BASE" | tr -d '\r' | grep -qx 'index.html'; then
+            echo "::error::FTP_SERVER_DIR não parece ser a raiz do site (sem index.html). Nada foi enviado."
+            exit 1
+          fi
+
+          cfg=$(mktemp)
+          add() {
+            local enc
+            enc=$(printf '%s' "$1" | sed 's/%/%25/g; s/ /%20/g; s/#/%23/g')
+            printf 'upload-file = "dist/%s"\nurl = "%s%s"\n' "$1" "$BASE" "$enc" >> "$cfg"
+          }
+          add app-shell.html
+          while IFS= read -r f; do add "$f"; done < <(cd dist && find . -type f ! -name .htaccess ! -name app-shell.html | sed 's#^\./##' | sort)
+          add .htaccess
+
+          echo "Enviando $(grep -c '^url' "$cfg") arquivos (app-shell.html primeiro, .htaccess por último)..."
+          curl "${AUTH[@]}" --ftp-create-dirs --fail-early -K "$cfg"
+          echo "Upload concluído."
