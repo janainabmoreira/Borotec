@@ -42,6 +42,14 @@ const staticAsDb: DbBlogPost[] = staticPosts.map((p) => ({
   updated_at: p.date,
 }));
 
+// [texto](endereço) do conteúdo do post (vem do admin). Endereço interno sem
+// "/" inicial viraria link relativo à página do post (/blog/x/linha-t) —
+// vira absoluto; externos (https:, mailto:…), âncoras e "/..." ficam iguais.
+const markdownLink = (_: string, text: string, href: string) => {
+  const abs = /^([a-z][a-z0-9+.-]*:|#|\/)/i.test(href) ? href : `/${href}`;
+  return `<a href="${abs}" class="text-cyan hover:underline transition-colors">${text}</a>`;
+};
+
 const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
 const BlogPost = () => {
@@ -149,7 +157,7 @@ const BlogPost = () => {
             .join('');
           const trs = body.map((row) => {
             const tds = row.split('|').filter(Boolean)
-              .map((c) => `<td class="px-4 py-2 text-primary-foreground/70">${c.trim().replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</td>`)
+              .map((c) => `<td class="px-4 py-2 text-primary-foreground/70">${c.trim().replace(/\[(.+?)\]\((.+?)\)/g, markdownLink)}</td>`)
               .join('');
             return `<tr class="border-b border-primary-foreground/5">${tds}</tr>`;
           }).join('');
@@ -158,11 +166,11 @@ const BlogPost = () => {
         if (block.startsWith('**') && block.includes(':**')) {
           return `<p class="text-primary-foreground/80">${block
             .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
-            .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
+            .replace(/\[(.+?)\]\((.+?)\)/g, markdownLink)}</p>`;
         }
         return `<p class="text-primary-foreground/75 leading-relaxed">${block
           .replace(/\*\*(.+?)\*\*/g, '<strong class="text-primary-foreground">$1</strong>')
-          .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-cyan hover:underline transition-colors">$1</a>')}</p>`;
+          .replace(/\[(.+?)\]\((.+?)\)/g, markdownLink)}</p>`;
       })
       .join('\n');
   }, [post]);

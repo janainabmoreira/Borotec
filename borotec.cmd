@@ -38,7 +38,7 @@ goto MENU
 :INSTALL
 echo.
 echo [*] Instalando dependencias...
-cd /d "E:\PROJETOS\Borotec_oficial"
+cd /d "%~dp0"
 npm install
 echo.
 echo [OK] Instalacao concluida.
@@ -51,7 +51,7 @@ echo [*] Iniciando servidor de desenvolvimento...
 echo     Acesse: http://localhost:8080
 echo     Pressione Ctrl+C para parar.
 echo.
-cd /d "E:\PROJETOS\Borotec_oficial"
+cd /d "%~dp0"
 npm run dev
 pause
 goto MENU
@@ -59,7 +59,7 @@ goto MENU
 :BUILD_PROD
 echo.
 echo [*] Gerando build de producao...
-cd /d "E:\PROJETOS\Borotec_oficial"
+cd /d "%~dp0"
 npm run build
 echo.
 echo [OK] Build gerado na pasta /dist
@@ -69,7 +69,7 @@ goto MENU
 :BUILD_DEV
 echo.
 echo [*] Gerando build de desenvolvimento...
-cd /d "E:\PROJETOS\Borotec_oficial"
+cd /d "%~dp0"
 npm run build:dev
 echo.
 echo [OK] Build gerado na pasta /dist
@@ -82,7 +82,7 @@ echo [*] Iniciando preview do build...
 echo     Acesse: http://localhost:4173
 echo     Pressione Ctrl+C para parar.
 echo.
-cd /d "E:\PROJETOS\Borotec_oficial"
+cd /d "%~dp0"
 npm run preview
 pause
 goto MENU
@@ -90,7 +90,7 @@ goto MENU
 :LINT
 echo.
 echo [*] Executando ESLint...
-cd /d "E:\PROJETOS\Borotec_oficial"
+cd /d "%~dp0"
 npm run lint
 echo.
 pause
@@ -99,7 +99,7 @@ goto MENU
 :VSCODE
 echo.
 echo [*] Abrindo projeto no VS Code...
-cd /d "E:\PROJETOS\Borotec_oficial"
+cd /d "%~dp0"
 code .
 goto MENU
 

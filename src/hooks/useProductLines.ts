@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import type { DbProductLine } from '@/types/database';
+import { normalizePath, normalizeSlug } from '@/lib/urls';
 
 // Header/Footer montam em toda página e chamariam este fetch repetidamente
 // a cada navegação — um cache simples em módulo + dedupe do fetch em voo
@@ -31,7 +32,13 @@ async function fetchLines(): Promise<DbProductLine[]> {
     .then(({ data, error }) => {
       inFlight = null;
       if (error || !data) return cache ?? [];
-      cache = data as DbProductLine[];
+      // path/section_slug são digitados no admin: normaliza aqui para que
+      // nenhum link, rota ou comparação dependa do formato gravado.
+      cache = (data as DbProductLine[]).map((l) => ({
+        ...l,
+        path: normalizePath(l.path),
+        section_slug: normalizeSlug(l.section_slug),
+      }));
       cacheTime = Date.now();
       return cache;
     });

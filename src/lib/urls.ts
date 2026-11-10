@@ -14,6 +14,20 @@ export function withSlash(path: string): string {
   return `${pathname}/${rest}`;
 }
 
+// Path vindo do banco/admin → sempre absoluto, sem barra final:
+// "linha-t" / "/linha-t/" / " linha-t " → "/linha-t"; "" → "/".
+// Um path sem "/" inicial vira link relativo no HTML (ex.: em
+// /detector-de-gas/ apontaria para /detector-de-gas/linha-t/).
+export function normalizePath(path: string): string {
+  const clean = (path ?? '').trim().replace(/^\/+|\/+$/g, '');
+  return clean ? `/${clean}` : '/';
+}
+
+// Slug de seção do banco → sem barras: "/termografia/" → "termografia".
+export function normalizeSlug(slug: string): string {
+  return (slug ?? '').trim().replace(/^\/+|\/+$/g, '');
+}
+
 // "/linha-t" → "https://borotec.com.br/linha-t/"
 export function absoluteUrl(path: string): string {
   return `${SITE_URL}${withSlash(path)}`;

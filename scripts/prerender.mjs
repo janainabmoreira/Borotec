@@ -59,7 +59,22 @@ function validateHtml(route, html) {
   if (href !== expectedCanonical(route)) problems.push(`canonical=${href ?? "(none)"}`);
   const ogUrl = html.match(/<meta[^>]*property="og:url"[^>]*content="([^"]*)"/)?.[1];
   if (ogUrl !== expectedCanonical(route)) problems.push(`og:url=${ogUrl ?? "(none)"}`);
+  const relative = relativeHrefs(html);
+  if (relative.length) problems.push(`href relativo: ${relative.slice(0, 5).join(", ")}`);
   return problems;
+}
+
+// Todo href precisa ser absoluto: "/…", "http(s)://…", "mailto:", "tel:" ou
+// "#…". Um "detector-de-gas/" sem barra resolve contra a página atual e vira
+// /linha-t/detector-de-gas/ (404) em qualquer página que não seja a home.
+const ALLOWED_HREF = /^(\/|https?:|mailto:|tel:|#)/i;
+function relativeHrefs(html) {
+  const bad = new Set();
+  for (const m of html.matchAll(/\shref=(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi)) {
+    const value = (m[1] ?? m[2] ?? m[3] ?? "").trim();
+    if (!ALLOWED_HREF.test(value)) bad.add(value || "(vazio)");
+  }
+  return [...bad];
 }
 
 // O GTM roda durante o snapshot e injeta <script src="googletagmanager...">

@@ -51,7 +51,14 @@ export async function fetchBuildRoutes({ supabaseUrl, supabaseAnonKey }) {
   try {
     const linesRes = await fetch(`${supabaseUrl}/rest/v1/product_lines?select=id,path,category,section_slug,updated_at&active=eq.true`, { headers });
     if (linesRes.ok) {
-      const data = await linesRes.json();
+      // path/section_slug vêm digitados do admin — mesma normalização de
+      // src/lib/urls.ts (normalizePath/normalizeSlug), para a lista de rotas
+      // e o sitemap baterem com os links que o app gera.
+      const data = (await linesRes.json()).map((l) => ({
+        ...l,
+        path: `/${String(l.path ?? '').trim().replace(/^\/+|\/+$/g, '')}`,
+        section_slug: String(l.section_slug ?? '').trim().replace(/^\/+|\/+$/g, ''),
+      }));
       // Uma rota de índice por seção distinta (/boroscopios, /termografia, ...)
       // além da já garantida em STATIC_ROUTES para /boroscopios — uma seção
       // nova (criada ao cadastrar uma linha com "seção do menu" inédita)

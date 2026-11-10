@@ -630,9 +630,11 @@ const TextWithLinks = ({ text }: { text: string }) => {
   for (const m of text.matchAll(LINK_RE)) {
     const [whole, label, href] = m;
     parts.push(text.slice(last, m.index));
-    parts.push(href.startsWith('/')
-      ? <Link key={m.index} to={href} className="text-cyan hover:underline">{label}</Link>
-      : <a key={m.index} href={href} target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline">{label}</a>);
+    // Só é externo se tiver esquema (https:, mailto:…); "linha-t/x" sem "/"
+    // é interno e o <Link> o torna absoluto.
+    parts.push(/^([a-z][a-z0-9+.-]*:|\/\/)/i.test(href)
+      ? <a key={m.index} href={href} target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline">{label}</a>
+      : <Link key={m.index} to={href} className="text-cyan hover:underline">{label}</Link>);
     last = m.index! + whole.length;
   }
   parts.push(text.slice(last));
