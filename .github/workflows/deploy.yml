@@ -69,15 +69,17 @@ jobs:
         # Only creates/updates files, never deletes anything on the server
         # (old cache-busted assets accumulate in assets/ — fine for now).
         #
-        # Upload order matters: .htaccess rewrites every route without its own
-        # folder to /app-shell.html, so app-shell.html goes up FIRST and
-        # .htaccess LAST. --fail-early stops at the first failed transfer, so
-        # a failed app-shell.html upload never leaves a new .htaccess behind.
+        # Upload order matters: .htaccess serves /app-shell.html for every
+        # route without its own folder (ErrorDocument 404), so app-shell.html
+        # goes up FIRST and .htaccess LAST. --fail-early stops at the first
+        # failed transfer, so a failed app-shell.html upload never leaves a
+        # new .htaccess behind.
         #
-        # FTP_DIR is used relative to the FTP login dir (the server denies PWD;
-        # "/www/" and "www/" are the same folder there). Safety check: the
-        # target must already contain index.html, otherwise abort — so a wrong
-        # FTP_SERVER_DIR can't silently create a new folder and "deploy" there.
+        # Target folder: scripts/ftp-base.sh tries the FTP login dir itself
+        # (on KingHost it already IS the site root, /www in FileZilla), then
+        # FTP_DIR relative, then absolute — and only accepts a folder that
+        # already has index.html AND assets/. Nothing is uploaded otherwise,
+        # so a wrong FTP_SERVER_DIR can't create a new folder and "deploy" there.
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -85,13 +87,12 @@ jobs:
           FTP_DIR: ${{ steps.ftp-dir.outputs.dir }}
         run: |
           set -euo pipefail
-          BASE="ftp://$FTP_SERVER/${FTP_DIR#/}"
-          AUTH=(--user "$FTP_USERNAME:$FTP_PASSWORD" --ftp-pasv --connect-timeout 20 --retry 3 --silent --show-error --fail)
-
-          if ! curl "${AUTH[@]}" --list-only "$BASE" | tr -d '\r' | grep -qx 'index.html'; then
-            echo "::error::FTP_SERVER_DIR não parece ser a raiz do site (sem index.html). Nada foi enviado."
+          source scripts/ftp-base.sh
+          if ! BASE=$(resolve_ftp_base); then
+            echo "::error::Pasta do site não encontrada no FTP (nenhuma opção tem index.html e assets/). Nada foi enviado."
             exit 1
           fi
+          AUTH=(--user "$FTP_USERNAME:$FTP_PASSWORD" --ftp-pasv --connect-timeout 20 --retry 3 --silent --show-error --fail)
 
           cfg=$(mktemp)
           add() {

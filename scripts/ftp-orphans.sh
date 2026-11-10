@@ -7,7 +7,11 @@
 # Uso (no CI, depois do build): FTP_SERVER FTP_USERNAME FTP_PASSWORD FTP_DIR
 set -uo pipefail
 
-BASE="ftp://$FTP_SERVER/${FTP_DIR#/}"
+source "$(dirname "$0")/ftp-base.sh"
+if ! BASE=$(resolve_ftp_base); then
+  echo "::warning::Pasta do site não encontrada no FTP — listagem não feita."
+  exit 0
+fi
 MAX_DEPTH=5
 # Pastas que não são rotas: assets do build e imagens estáticas de public/.
 SKIP_RE='^(assets|blog/.*\.(webp|png|jpe?g)|\.well-known|cgi-bin)'
