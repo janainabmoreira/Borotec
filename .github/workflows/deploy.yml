@@ -1,15 +1,16 @@
 name: Build and Deploy (FTP)
 
-# Runs automatically on every push to main (code changes), and can also be
-# triggered manually from the Actions tab — use the manual trigger after
-# adding/editing a product or blog post in /admin, since those are saved
-# straight to Supabase and need a rebuild to get prerendered into the live
-# static site (the build step below runs `npm run build`, which fetches the
-# current catalog from Supabase and prerenders every page — see
-# scripts/prerender.mjs).
+# DESATIVADO no push desde 11/11/2026: a KingHost aceita o login FTP vindo do
+# GitHub Actions, mas não libera os arquivos (PWD dá 550 e "/www: No such file
+# or directory"); do PC da empresa o mesmo usuário vê a /www normalmente.
+# Publicar com `npm run deploy` (scripts/deploy-local.mjs), rodado do PC.
+#
+# Fica só a execução manual (aba Actions → Run workflow), que hoje vai falhar
+# na conferência da pasta ANTES de enviar qualquer coisa. Se a KingHost
+# liberar o acesso, voltar a incluir:
+#   push:
+#     branches: [main]
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
