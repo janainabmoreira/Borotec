@@ -97,21 +97,66 @@ function baseConfig(password) {
   ].join("\n");
 }
 
-// SIZE de vários arquivos em uma conexão. Retorna Map(arquivo → bytes | null).
-function remoteSizes(password, files) {
-  const marker = "@@FIM ";
-  const cfg = baseConfig(password) + "head\n" +
-    files.map((f) => `url = ${q(BASE + encodePath(f))}\nwrite-out = ${q(`\\n${marker}${f}\\n`)}\n`).join("");
+// Roda o curl em modo verbose e separa o diálogo FTP (comandos "> " e
+// respostas "< ") por transferência. Um marcador sai no stderr ao fim de cada
+// transferência (write-out com %{stderr}), na mesma ordem do diálogo.
+// ATENÇÃO: write-out no config é GLOBAL (vale o último) — por isso o marcador
+// usa %{url}, e não um nome fixo por arquivo. USER/PASS nunca são guardados.
+const MARK = "@@FIM ";
+function ftpRun(password, extraConfig, urls) {
+  const cfg = baseConfig(password) + "verbose\n" + extraConfig +
+    `write-out = ${q(`%{stderr}${MARK}%{exitcode} %{url}\\n`)}\n` +
+    urls.map((u) => `url = ${q(u)}\n`).join("");
   const r = spawnSync(CURL, ["-K", "-"], { input: cfg, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
-  const sizes = new Map(files.map((f) => [f, null]));
-  let current = null;
-  for (const line of r.stdout.replace(/\r/g, "").split("\n")) {
-    const m = line.match(/^content-length:\s*(\d+)/i);
-    if (m) current = Number(m[1]);
-    else if (line.startsWith(marker)) { sizes.set(line.slice(marker.length), current); current = null; }
+  const transfers = [];
+  let lines = [];
+  for (const raw of r.stderr.replace(/\r/g, "").split("\n")) {
+    if (raw.startsWith(MARK)) {
+      const [exitcode, url] = raw.slice(MARK.length).split(" ");
+      transfers.push({ url, exitcode: Number(exitcode), lines });
+      lines = [];
+    } else if (/^[<>] /.test(raw) && !/^> (USER|PASS)\b/i.test(raw) && !raw.includes(password)) {
+      lines.push(raw.trim());
+    }
   }
-  return { sizes, stderr: r.stderr.trim() };
+  // Uma conexão FTP nova = um "220" de boas-vindas do servidor.
+  const connections = transfers.filter((t) => t.lines.some((l) => l.startsWith("< 220"))).length;
+  return { transfers, stdout: r.stdout, status: r.status, connections };
 }
+
+// Resposta do servidor ao comando `cmd` (ex.: "SIZE") dentro de uma transferência.
+const replyTo = (lines, cmd) => {
+  const i = lines.findIndex((l) => l.startsWith(`> ${cmd}`));
+  return i >= 0 ? lines.slice(i + 1).find((l) => l.startsWith("< ")) ?? null : null;
+};
+
+// SIZE de vários arquivos, numa conexão só. Retorna, por arquivo, o tamanho
+// (ou null) e o diálogo FTP daquela transferência.
+function remoteSizes(password, files) {
+  const urlOf = new Map(files.map((f) => [BASE + encodePath(f), f]));
+  const run = ftpRun(password, "head\n", [...urlOf.keys()]);
+  const result = new Map(files.map((f) => [f, { size: null, exitcode: null, lines: [] }]));
+  for (const t of run.transfers) {
+    const f = urlOf.get(t.url);
+    if (!f) continue;
+    const size = replyTo(t.lines, "SIZE")?.match(/^< 213 (\d+)/)?.[1];
+    result.set(f, { size: size != null ? Number(size) : null, exitcode: t.exitcode, lines: t.lines });
+  }
+  const pwd = run.transfers[0] ? replyTo(run.transfers[0].lines, "PWD") : null;
+  return { result, pwd, connections: run.connections, login: run.transfers[0]?.lines ?? [] };
+}
+
+// Alternativa à trava por SIZE: NLST da pasta de login.
+function remoteList(password) {
+  const run = ftpRun(password, "list-only\n", [BASE]);
+  const names = run.stdout.replace(/\r/g, "").split("\n").map((s) => s.trim().replace(/^\.\//, "")).filter(Boolean);
+  return { names, exitcode: run.transfers[0]?.exitcode, lines: run.transfers[0]?.lines ?? [] };
+}
+
+// Diálogo FTP como o servidor respondeu (sem USER/PASS).
+const showDialog = (lines, indent = "      ") => {
+  for (const l of lines) console.log(`${indent}${l}`);
+};
 
 function listDist() {
   const out = [];
@@ -177,12 +222,25 @@ async function main() {
   step(4, "Conexão TLS e conferência da raiz do site (/www)");
   const rootFiles = ["index.html", "robots.txt", "sitemap.xml"];
   const root = remoteSizes(password, rootFiles);
-  for (const f of rootFiles) console.log(`  ${f}: ${root.sizes.get(f) ?? "NÃO encontrado"}${root.sizes.get(f) != null ? " bytes" : ""}`);
-  if (rootFiles.some((f) => root.sizes.get(f) == null)) {
-    if (root.stderr) console.log(`  curl: ${root.stderr.split("\n").slice(-3).join(" | ")}`);
-    fail("a pasta de login não parece ser a raiz do site (ou senha/conexão falhou) — nada foi enviado.");
+  console.log(`  Pasta de login (PWD): ${root.pwd ?? "sem resposta"} · conexões abertas: ${root.connections}`);
+  for (const f of rootFiles) {
+    const r = root.result.get(f);
+    console.log(`  ${f}: ${r.size != null ? `${r.size} bytes` : "NÃO confirmado"} (curl=${r.exitcode ?? "?"})`);
+    showDialog(r.lines);
   }
-  console.log("  OK: conectado com TLS (certificado validado) na raiz do site.");
+  if (rootFiles.every((f) => root.result.get(f).size != null)) {
+    console.log("  OK: conectado com TLS (certificado validado) na raiz do site (SIZE dos 3 arquivos).");
+  } else {
+    // Alternativa: a listagem (NLST) da pasta de login.
+    console.log("\n  SIZE não confirmou os 3 arquivos; conferindo pela listagem (NLST) da pasta de login...");
+    const list = remoteList(password);
+    showDialog(list.lines);
+    const need = ["index.html", "robots.txt", "assets"];
+    const missing = need.filter((n) => !list.names.includes(n));
+    console.log(`  NLST: ${list.names.length} itens; ${need.map((n) => `${n} ${missing.includes(n) ? "✗" : "✓"}`).join(", ")}`);
+    if (missing.length) fail("a pasta de login não parece ser a raiz do site (ou senha/conexão falhou) — nada foi enviado.");
+    console.log("  OK: conectado com TLS (certificado validado) na raiz do site (pela listagem).");
+  }
 
   const files = listDist();
   if (DRY_RUN) {
@@ -198,8 +256,11 @@ async function main() {
   step(6, "Conferência no servidor (tamanho = build → transferência binária)");
   const check = [".htaccess", "robots.txt", "sitemap.xml", ...files.filter((f) => f.endsWith(".html"))];
   const remote = remoteSizes(password, check);
-  const diff = check.filter((f) => remote.sizes.get(f) !== fs.statSync(path.join(distDir, f)).size);
-  for (const f of diff) console.log(`  DIFERENTE: ${f} local=${fs.statSync(path.join(distDir, f)).size} servidor=${remote.sizes.get(f) ?? "?"}`);
+  const diff = check.filter((f) => remote.result.get(f).size !== fs.statSync(path.join(distDir, f)).size);
+  for (const f of diff) {
+    console.log(`  DIFERENTE: ${f} local=${fs.statSync(path.join(distDir, f)).size} servidor=${remote.result.get(f).size ?? "?"}`);
+    showDialog(remote.result.get(f).lines.slice(-6));
+  }
   if (diff.length) fail(`${diff.length} arquivo(s) com tamanho diferente no servidor.`);
   console.log(`  OK: ${check.length} arquivos (.htaccess, robots.txt, sitemap.xml e todos os .html) com o mesmo tamanho do build.`);
 
