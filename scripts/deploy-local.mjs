@@ -173,13 +173,31 @@ function listDist() {
 
 async function upload(password, files) {
   const cfg = baseConfig(password) +
-    "ftp-create-dirs\nfail-early\nretry = 3\n" +
+    "verbose\nftp-create-dirs\nfail-early\nretry = 3\n" +
     `write-out = ${q("%{exitcode} %{url}\\n")}\n` +
     files.map((f) => `upload-file = ${q(path.join(distDir, f).split(path.sep).join("/"))}\nurl = ${q(BASE + encodePath(f))}\n`).join("");
   return new Promise((resolve) => {
-    const child = spawn(CURL, ["-K", "-"], { stdio: ["pipe", "pipe", "inherit"] });
+    const child = spawn(CURL, ["-K", "-"], { stdio: ["pipe", "pipe", "pipe"] });
     let sent = 0;
     let buf = "";
+    // Diálogo FTP (sem USER/PASS): guarda os últimos comandos/respostas para
+    // mostrar exatamente onde o servidor recusou, se o envio parar.
+    const dialog = [];
+    let errBuf = "";
+    child.stderr.setEncoding("utf8");
+    child.stderr.on("data", (chunk) => {
+      errBuf += chunk;
+      let i;
+      while ((i = errBuf.indexOf("\n")) >= 0) {
+        const line = errBuf.slice(0, i).replace(/\r$/, "");
+        errBuf = errBuf.slice(i + 1);
+        if (/^curl: /.test(line)) console.log(`  ${line}`);
+        else if (/^[<>] /.test(line) && !/^> (USER|PASS)\b/i.test(line) && !line.includes(password) && !/^< (Content-Length|Accept-ranges|Last-Modified)/i.test(line)) {
+          dialog.push(line);
+          if (dialog.length > 40) dialog.shift();
+        }
+      }
+    });
     child.stdout.setEncoding("utf8");
     child.stdout.on("data", (chunk) => {
       buf += chunk;
@@ -196,7 +214,13 @@ async function upload(password, files) {
         }
       }
     });
-    child.on("close", (code) => resolve({ code, sent }));
+    child.on("close", (code) => {
+      if (code !== 0) {
+        console.log("\n  Últimos comandos e respostas do servidor FTP antes da falha:");
+        for (const l of dialog.slice(-25)) console.log(`      ${l}`);
+      }
+      resolve({ code, sent });
+    });
     child.stdin.end(cfg);
   });
 }
