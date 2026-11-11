@@ -8,10 +8,11 @@
 set -uo pipefail
 
 source "$(dirname "$0")/ftp-base.sh"
-if ! BASE=$(resolve_ftp_base); then
+if ! resolve_ftp_base; then
   echo "::warning::Pasta do site não encontrada no FTP — listagem não feita."
   exit 0
 fi
+BASE="$FTP_BASE"
 MAX_DEPTH=5
 # Pastas que não são rotas: assets do build e imagens estáticas de public/.
 SKIP_RE='^(assets|blog/.*\.(webp|png|jpe?g)|\.well-known|cgi-bin)'
@@ -21,7 +22,7 @@ expected=$(cd dist && find . -name index.html -printf '%h\n' | sed 's#^\./\?##' 
 list_dirs() {
   local rel=$1 depth=$2
   [ "$depth" -gt "$MAX_DEPTH" ] && return
-  curl -sS --connect-timeout 20 --user "$FTP_USERNAME:$FTP_PASSWORD" "$BASE$rel" 2>/dev/null \
+  curl -sS --connect-timeout 20 "${FTP_OPTS[@]}" --user "$FTP_USERNAME:$FTP_PASSWORD" "$BASE$rel" 2>/dev/null \
     | tr -d '\r' | awk '/^d/ { name=$NF; if (name != "." && name != "..") print name }' \
     | while IFS= read -r name; do
         local child="${rel}${name}/"
