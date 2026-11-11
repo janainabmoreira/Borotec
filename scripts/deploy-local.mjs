@@ -171,7 +171,10 @@ function listDist() {
   return ["app-shell.html", ...rest, ".htaccess"];
 }
 
-async function upload(password, files) {
+// Envia `files` numa conexão; para no primeiro erro (fail-early), então os
+// enviados com sucesso são sempre os primeiros `sent` da lista.
+// `offset`/`total` só servem para a numeração do progresso.
+async function upload(password, files, offset = 0, total = files.length) {
   const cfg = baseConfig(password) +
     "verbose\nftp-create-dirs\nfail-early\nretry = 3\n" +
     `write-out = ${q("%{exitcode} %{url}\\n")}\n` +
@@ -208,9 +211,10 @@ async function upload(password, files) {
         // write-out sai também para a transferência que falhou: só conta as ok.
         if (!url || exitcode !== "0") continue;
         sent++;
+        const n = offset + sent;
         const name = decodeURIComponent(url.replace(BASE, ""));
-        if (sent === 1 || sent === files.length || name.endsWith(".html") || name === ".htaccess" || sent % 50 === 0) {
-          console.log(`  [${sent}/${files.length}] ${name}`);
+        if (sent === 1 || n === total || name.endsWith(".html") || name === ".htaccess" || n % 50 === 0) {
+          console.log(`  [${n}/${total}] ${name}`);
         }
       }
     });
@@ -273,9 +277,31 @@ async function main() {
   }
 
   step(5, `Envio de ${files.length} arquivos (binário; app-shell.html primeiro, .htaccess por último; nada é apagado)`);
-  const up = await upload(password, files);
-  if (up.code !== 0) fail(`o envio parou no arquivo ${up.sent + 1} de ${files.length} (curl=${up.code}). O .htaccess só sobe no fim, então o site segue funcionando; rode de novo.`);
-  console.log(`  Enviados ${up.sent}/${files.length}.`);
+  // O FTP da KingHost derruba transferências de vez em quando (vimos 450 e
+  // curl=18 em arquivos diferentes, com os anteriores enviados certo). Se um
+  // arquivo falhar, abre conexão nova e retoma DELE — até MAX_TRIES vezes no
+  // mesmo arquivo. Nada já enviado é reenviado; o .htaccess segue por último.
+  const MAX_TRIES = 5;
+  let done = 0;
+  let tries = 0;
+  let failedAt = -1;
+  let retries = 0;
+  while (done < files.length) {
+    const up = await upload(password, files.slice(done), done, files.length);
+    done += up.sent;
+    if (up.code === 0) break;
+    if (done !== failedAt) { failedAt = done; tries = 0; }
+    tries++;
+    retries++;
+    const name = files[done];
+    if (tries >= MAX_TRIES) {
+      fail(`o envio parou no arquivo ${done + 1} de ${files.length} (${name}, curl=${up.code}) depois de ${MAX_TRIES} tentativas. O .htaccess só sobe no fim, então o site segue funcionando. Copie o bloco "Últimos comandos e respostas" acima.`);
+    }
+    const wait = 3 * tries;
+    console.log(`  ↻ ${name} falhou (curl=${up.code}); tentativa ${tries + 1}/${MAX_TRIES} em ${wait}s, com conexão nova, retomando dele...`);
+    await new Promise((r) => setTimeout(r, wait * 1000));
+  }
+  console.log(`  Enviados ${done}/${files.length}${retries ? ` (${retries} retomada(s) depois de falha do servidor)` : ""}.`);
 
   step(6, "Conferência no servidor (tamanho = build → transferência binária)");
   const check = [".htaccess", "robots.txt", "sitemap.xml", ...files.filter((f) => f.endsWith(".html"))];
