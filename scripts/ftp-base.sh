@@ -1,28 +1,41 @@
 #!/usr/bin/env bash
-# Descobre COMO conectar no FTP e ONDE está a raiz do site. Usado pelo deploy
-# e pela listagem de pastas órfãs:
+# Descobre COMO conectar no FTP e ONDE está a raiz do site. Usado pelo deploy:
 #   source scripts/ftp-base.sh
 #   resolve_ftp_base || exit 1     # define FTP_BASE e FTP_OPTS (array)
-#   curl "${FTP_OPTS[@]}" ... "$FTP_BASE<arquivo>"
+#   curl "${FTP_OPTS[@]}" --user ... "$FTP_BASE<arquivo>"
 #
-# Testa as variações de conexão abaixo, na ordem, e em cada uma as pastas:
-#   1. a própria pasta de login ("./") — o FileZilla cai direto em /www;
-#   2. FTP_DIR relativo (ex.: "www/");
-#   3. FTP_DIR absoluto (ex.: "/www/" → "%2Fwww/").
-# Fica com a PRIMEIRA combinação cuja listagem tenha index.html E assets/.
-# Sem isso, retorna 1 e nada deve ser enviado.
+# O que se sabe do servidor (KingHost, diagnóstico de 10/11/2026):
+# - o login já cai na raiz do site (/www no FileZilla), mas PWD dá 550 e
+#   NLST/LIST da pasta atual dá "450 /www: No such file or directory" — por
+#   isso a trava NÃO usa listagem, e sim SIZE/MDTM (curl -I) em arquivos que
+#   só existem na raiz: index.html, robots.txt e sitemap.xml;
+# - o certificado TLS é o genérico "*.kinghost.net", não ftp.borotec.com.br:
+#   a 1ª variação conecta no IP de FTP_SERVER mas valida o certificado por um
+#   nome sob *.kinghost.net (--connect-to). --insecure fica só como reserva;
+# - IPv6 não existe nos runners do GitHub e o modo ativo não funciona.
+#
 # Exige FTP_SERVER, FTP_USERNAME, FTP_PASSWORD; FTP_DIR é opcional.
 
-# rótulo|opções do curl. Todas as variações com TLS vêm ANTES das sem
-# criptografia: o FTP simples só é usado se nenhuma com TLS funcionar.
-FTP_VARIANTS=(
-  "TLS explícito · passivo · IPv4|--ipv4 --ftp-pasv --ssl-reqd"
-  "TLS explícito sem validar certificado · passivo · IPv4|--ipv4 --ftp-pasv --ssl-reqd --insecure"
-  "TLS explícito · passivo · IPv6|--ipv6 --ftp-pasv --ssl-reqd"
-  "TLS explícito · ativo · IPv4|--ipv4 --ftp-port - --ssl-reqd"
-  "FTP simples (SEM criptografia) · passivo · IPv4|--ipv4 --ftp-pasv"
-  "FTP simples (SEM criptografia) · ativo · IPv4|--ipv4 --ftp-port -"
-)
+# Qualquer nome coberto por *.kinghost.net serve: o certificado é validado
+# por ele (cadeia GlobalSign), e --connect-to manda a conexão para FTP_SERVER.
+FTP_TLS_NAME="ftp-borotec.kinghost.net"
+
+# Define V_LABEL, V_HOST e V_OPTS da variação $1; retorna 1 depois da última.
+# Ordem: TLS validado → TLS sem validar (reserva) → FTP sem criptografia.
+ftp_variant() {
+  case "$1" in
+    0) V_LABEL="TLS explícito · certificado VALIDADO (*.kinghost.net) · passivo · IPv4"
+       V_HOST="$FTP_TLS_NAME"
+       V_OPTS=(--ipv4 --ftp-pasv --ssl-reqd --connect-to "$FTP_TLS_NAME:21:$FTP_SERVER:21") ;;
+    1) V_LABEL="TLS explícito · certificado NÃO validado (--insecure, reserva) · passivo · IPv4"
+       V_HOST="$FTP_SERVER"
+       V_OPTS=(--ipv4 --ftp-pasv --ssl-reqd --insecure) ;;
+    2) V_LABEL="FTP simples · SEM criptografia (último recurso) · passivo · IPv4"
+       V_HOST="$FTP_SERVER"
+       V_OPTS=(--ipv4 --ftp-pasv) ;;
+    *) return 1 ;;
+  esac
+}
 
 ftp_dir_candidates() {
   local dir="${FTP_DIR:-}"
@@ -36,32 +49,57 @@ ftp_dir_candidates() {
   fi
 }
 
+# Tamanho (bytes) de um arquivo no servidor via SIZE; vazio se não existir.
+ftp_size() {
+  curl -sS --connect-timeout 15 --max-time 40 -I "${FTP_OPTS[@]}" \
+    --user "$FTP_USERNAME:$FTP_PASSWORD" "$FTP_BASE$1" 2>/dev/null \
+    | tr -d '\r' | awk -F': ' 'tolower($1)=="content-length" {print $2}'
+}
+
 resolve_ftp_base() {
   FTP_BASE=""
   FTP_OPTS=()
-  local v label opts c url listing rc errf
-  errf=$(mktemp)
-  for v in "${FTP_VARIANTS[@]}"; do
-    label="${v%%|*}"
-    read -r -a opts <<<"${v#*|}"
+  local i=0 c f ok
+  while ftp_variant "$i"; do
     while IFS= read -r c; do
-      url="ftp://$FTP_SERVER/$c"
-      listing=$(curl -sS --connect-timeout 15 --max-time 40 "${opts[@]}" \
-        --user "$FTP_USERNAME:$FTP_PASSWORD" --list-only "$url" 2>"$errf")
-      rc=$?
-      listing=$(tr -d '\r' <<<"$listing" | sort)
-      if grep -qx 'index.html' <<<"$listing" && grep -qx 'assets' <<<"$listing"; then
-        FTP_BASE="$url"
-        FTP_OPTS=("${opts[@]}")
-        echo "::notice title=Conexão FTP escolhida::$label | pasta: ${c:-./ (pasta de login)}" >&2
-        echo "Conteúdo da pasta:" >&2
-        sed 's/^/  /' <<<"$listing" >&2
-        rm -f "$errf"
+      FTP_BASE="ftp://$V_HOST/$c"
+      FTP_OPTS=("${V_OPTS[@]}")
+      ok=1
+      for f in index.html robots.txt sitemap.xml; do
+        if [ -z "$(ftp_size "$f")" ]; then ok=0; break; fi
+      done
+      if [ "$ok" = 1 ]; then
+        echo "::notice title=Conexão FTP escolhida::$V_LABEL | pasta: ${c:-./ (pasta de login)}" >&2
         return 0
       fi
-      echo "Descartada: $label | pasta: ${c:-./} | curl=$rc | itens=$(grep -c . <<<"$listing") | $(tail -1 "$errf")" >&2
+      echo "Descartada: $V_LABEL | pasta: ${c:-./} | sem $f (SIZE)" >&2
     done < <(ftp_dir_candidates)
+    i=$((i + 1))
   done
-  rm -f "$errf"
+  FTP_BASE=""
+  FTP_OPTS=()
   return 1
+}
+
+# Grava e apaga .deploy-test na pasta escolhida. Confirma que STOR funciona e
+# que a transferência é binária (TYPE I) antes do upload real.
+ftp_write_test() {
+  local tmp out rc
+  tmp=$(mktemp)
+  printf 'teste de escrita do deploy\r\nlinha 2\n' > "$tmp"
+  out=$(curl -sS -v --connect-timeout 15 --max-time 40 "${FTP_OPTS[@]}" \
+    --user "$FTP_USERNAME:$FTP_PASSWORD" -T "$tmp" "${FTP_BASE}.deploy-test" \
+    --quote "-DELE .deploy-test" 2>&1)
+  rc=$?
+  rm -f "$tmp"
+  echo "$out" | grep -E '^[<>] (TYPE|STOR|DELE|2[0-9][0-9] |5[0-9][0-9] |4[0-9][0-9] )' | grep -v PASS >&2
+  if [ "$rc" -ne 0 ]; then
+    echo "::error::Teste de gravação (.deploy-test) falhou: curl=$rc" >&2
+    return 1
+  fi
+  if ! grep -q '^> TYPE I' <<<"$out"; then
+    echo "::error::Teste de gravação não usou modo binário (TYPE I)" >&2
+    return 1
+  fi
+  echo "Teste de gravação OK (.deploy-test enviado em TYPE I e apagado)." >&2
 }
